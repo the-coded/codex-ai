@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Codex** is a centralized repository that serves as the core hub of code, automation, and AI integration across multiple projects and pipelines. Inspired by ancient codices—volumes of knowledge meticulously compiled and preserved—Codex is designed to be the modern evolution of a knowledge base, bringing together essential code, automation patterns, and AI-driven workflows in one organized platform.
+**Codex** is a centralized repository that serves as the core hub of documentation generation, automation, and AI integration across multiple projects and pipelines. Inspired by ancient codices—volumes of knowledge meticulously compiled and preserved—Codex is designed to be the modern evolution of a knowledge base, bringing together essential documentation, automation patterns, and AI-driven workflows in one organized platform.
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -15,20 +15,20 @@
 
 ## Introduction
 
-Codex is more than just a code library; it is a **strategic knowledge repository** that simplifies automation, optimizes workflows, and unifies coding solutions in a single, accessible hub. With Codex, you can manage everything from pipelines to AI integrations, all within a centralized framework that supports complex project environments.
+Codex is more than just a documentation library; it is a **strategic knowledge repository** that simplifies automation, optimizes workflows, and unifies documentation solutions in a single, accessible hub. With Codex, you can manage everything from documentation pipelines to AI integrations, all within a centralized framework that supports complex project environments.
 
 ### Key Highlights:
-- **Centralized Hub**: Store, organize, and access code snippets, configurations, and automation scripts in one place.
-- **AI Integration**: Leverages AI within pipelines to execute stored functions, making workflow execution more dynamic and automated.
-- **Versatility**: Compatible with various languages, frameworks, and pipelines, making it a universal tool for different projects.
+- **Centralized Hub**: Generate, store, organize, and access documentation, configurations, and automation scripts in one place.
+- **AI Integration**: Leverages AI within pipelines to execute stored functions, making documentation generation and workflow execution more dynamic and automated.
+- **Versatility**: Compatible with various languages, frameworks, and pipelines, making it a universal tool for documentation across different projects.
 
 ## Features
 
-- **Unified Repository**: Centralizes code management, providing easy access to reusable components.
-- **Automated Pipelines**: Integrates automation scripts that can be triggered or adapted for specific workflows.
-- **AI Execution**: Executes functions stored within the Codex using AI, allowing for dynamic workflows.
-- **Multi-Language Support**: Supports Python, JavaScript, TypeScript, and other popular languages.
-- **Scalability**: Designed to scale with growing codebases and evolving project requirements.
+- **Unified Repository**: Centralizes documentation management, providing easy access to reusable components.
+- **Automated Pipelines**: Integrates automation scripts that can be triggered or adapted for specific documentation workflows.
+- **AI Execution**: Executes functions stored within the Codex using AI, allowing for dynamic documentation generation.
+- **Multi-Language Support**: Supports Python, JavaScript, TypeScript, and other popular languages for comprehensive documentation.
+- **Scalability**: Designed to scale with growing codebases and evolving documentation requirements.
 
 ## Installation
 
@@ -53,10 +53,10 @@ To install Codex, use the following steps:
 
 ## Use Cases
 
-Codex can be used across various scenarios:
-- **Pipeline Automation**: Automate build, test, and deployment pipelines using Codex's intelligent workflow integrations.
-- **Centralized Code Management**: Store and manage frequently used code snippets, configurations, and scripts in one place.
-- **AI-Driven Execution**: Leverage Codex’s ability to run AI-enhanced functions as part of your automation pipelines.
+Codex can be used across various documentation scenarios:
+- **Documentation Pipeline Automation**: Automate documentation generation, review, and deployment pipelines using Codex's intelligent workflow integrations.
+- **Centralized Documentation Management**: Generate, store, and manage documentation in one place.
+- **AI-Driven Documentation**: Leverage Codex's ability to run AI-enhanced functions as part of your documentation automation pipelines.
 
 ## Contributing
 
