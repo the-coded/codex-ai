@@ -1,0 +1,1 @@
+aider-chat @ git+https://github.com/paul-gauthier/aider.git@8ebd519615a6e1a46ce7e274ba4cc1f98936c8ec

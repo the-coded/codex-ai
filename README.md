@@ -1,4 +1,10 @@
+<div align="center">
+
 # Codex
+
+<img src="assets/codex.png" alt="Codex Logo" width="50%">  
+
+</div>
 
 ## Overview
 
