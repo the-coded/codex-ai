@@ -10,7 +10,7 @@ For command-line usage:
 """
 
 import argparse
-from .cli import run
+from .run import run
 
 def main():
     parser = argparse.ArgumentParser(description="Generate changelog documentation")

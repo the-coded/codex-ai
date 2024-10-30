@@ -11,6 +11,6 @@ For programmatic usage:
     run()
 """
 
-from .cli import run, get_paths
+from .run import run, get_paths
 
 __all__ = ['run', 'get_paths']

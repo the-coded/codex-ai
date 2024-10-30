@@ -105,7 +105,7 @@ project/
 └── changelog/
     ├── __init__.py          # Handles programmatic usage exports
     ├── __main__.py         # Handles command-line interface
-    ├── cli.py              # Core implementation
+    ├── run.py              # Core implementation
     ├── requirements.py      # Handles package installation
     ├── template.md         # Template for changelog generation
     └── prompt.md          # Instructions for changelog generation
@@ -130,4 +130,4 @@ your-project/
 2. File trees must be generated before each changelog generation
 3. Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)
 4. Default mode is "prod" when no mode is specified
-5. Core implementation is in cli.py, independent of usage pattern
+5. Core implementation is in run.py, independent of usage pattern
