@@ -41,10 +41,10 @@ Observação:
 
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
-from src.utils.list_files import list_files
-from src.utils.create_tree import create_file_structure
-from src.utils.save_tree_to_json import save_structure_to_json
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from utils.list_files import list_files
+from utils.create_tree import create_file_structure
+from utils.save_tree_to_json import save_structure_to_json
 
 # Lista de pastas a serem excluídas
 EXCLUDE_FOLDERS = [

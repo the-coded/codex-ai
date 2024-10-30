@@ -10,15 +10,15 @@ Funcionalidades:
 3. Executa cada comando, gerando os arquivos de estrutura JSON correspondentes.
 
 Uso:
-    python .nexus/src/general/file_tree/gen_all_trees.py
+    python gen_all_trees.py
 
 Exemplo de uso:
-    python .nexus/src/general/file_tree/gen_all_trees.py
+    python gen_all_trees.py
 
     # Saída:
-    # Comando executado com sucesso: python .nexus/src/general/file_tree/gen_dir_tree.py ./ .tmp/project_structure.json
-    # Comando executado com sucesso: python .nexus/src/general/file_tree/gen_git_tree.py
-    # Comando executado com sucesso: python .nexus/src/general/file_tree/gen_related_tree.py
+    # Comando executado com sucesso: python gen_dir_tree.py ./ .tmp/project_structure.json
+    # Comando executado com sucesso: python gen_git_tree.py
+    # Comando executado com sucesso: python gen_related_tree.py
     # Todos os arquivos de estrutura foram gerados com sucesso.
 
 Arquivos gerados:
@@ -27,18 +27,11 @@ Arquivos gerados:
     - .tmp/git-removed_structure.json: Estrutura dos arquivos removidos no último commit Git
     - .tmp/git-diff_structure.json: Estrutura de todas as mudanças (alterados e removidos) no último commit Git
     - .tmp/git-related_structure.json: Estrutura dos arquivos alterados e seus arquivos pais
-
-Observação:
-    Certifique-se de que os scripts gen_dir_tree.py, gen_git_tree.py, e gen_related_tree.py
-    existem e estão configurados corretamente, pois eles são chamados para gerar cada arquivo de estrutura.
 """
 
 import subprocess
 import os
 import sys
-
-# Adiciona o diretório pai ao sys.path para permitir importações relativas
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
 
 def run_command(command):
     """

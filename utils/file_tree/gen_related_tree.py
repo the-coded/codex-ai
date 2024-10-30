@@ -29,11 +29,9 @@ from typing import Dict, Any, List
 import os
 import sys
 
-# Adiciona o diretório pai ao sys.path para permitir importações relativas
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
-
-from src.utils.load_json import load_json
-from src.utils.save_tree_to_json import save_structure_to_json
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from utils.load_json import load_json
+from utils.save_tree_to_json import save_structure_to_json
 
 def find_related_files(structure: Dict[str, Any], target_file: str, current_path: List[str] = []) -> List[str]:
     """

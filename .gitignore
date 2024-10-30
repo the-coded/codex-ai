@@ -1,0 +1,34 @@
+# Generated logs
+.tmp/
+.nexus/.tmp/
+commit_full_log.txt
+commit_changes_log.txt
+
+# Python virtual environment
+venv/
+env/
+.env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Generated documentation
+docs/changelog/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

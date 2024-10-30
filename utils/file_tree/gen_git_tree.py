@@ -31,10 +31,10 @@ Observação:
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
-from src.utils.git_changes import get_git_changes
-from src.utils.create_tree import create_file_structure
-from src.utils.save_tree_to_json import save_structure_to_json
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from utils.git_changes import get_git_changes
+from utils.create_tree import create_file_structure
+from utils.save_tree_to_json import save_structure_to_json
 
 def main():
     default_output_changed = '.tmp/git-changed_structure.json'
