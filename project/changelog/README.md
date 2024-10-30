@@ -8,25 +8,25 @@ This module runs aider to generate formatted changelogs. The changelog command c
 
 ### Command-line Usage (via __main__.py)
 
-Development mode:
+Development mode (in codex-ai repository):
 ```bash
 python -m project.changelog --mode dev
 ```
 
-Production mode (default):
+Production mode (in repository with .nexus):
 ```bash
 python -m project.changelog
 ```
 
 ### Programmatic Usage (via __init__.py)
 
-Development mode:
+Development mode (in codex-ai repository):
 ```python
 from project.changelog import run
 run(mode="dev")
 ```
 
-Production mode (default):
+Production mode (in repository with .nexus):
 ```python
 from .nexus.project.changelog import run
 run()
@@ -43,7 +43,7 @@ When working directly in the codex-ai repository:
 source scripts/start.sh
 
 # 2. Install requirements (only needed once)
-python -m project.changelog.requirements
+python -m project.changelog.requirements --mode dev
 
 # 3. Generate file trees (needed before each changelog generation)
 python -m utils.file_tree.gen_all_trees
@@ -111,6 +111,7 @@ project/
     └── prompt.md          # Instructions for changelog generation
 
 utils/
+├── get_base_path.py       # Path handling for dev/prod modes
 └── file_tree/
     └── gen_all_trees.py   # Generates file trees used by changelog
 ```
@@ -130,4 +131,6 @@ your-project/
 2. File trees must be generated before each changelog generation
 3. Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)
 4. Default mode is "prod" when no mode is specified
-5. Core implementation is in run.py, independent of usage pattern
+5. Core implementation is in run.py, using shared utilities from utils/get_base_path.py
+6. Path handling for dev/prod modes is centralized in utils/get_base_path.py
+7. Production mode requires codex-ai to be cloned as .nexus in the target repository

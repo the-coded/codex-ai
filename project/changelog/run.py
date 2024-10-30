@@ -2,21 +2,23 @@
 Core implementation of the changelog generator.
 """
 
+from utils.get_base_path import get_base_path
+
 def get_paths(mode: str = "prod") -> tuple[str, str, str]:
     """
     Get the correct paths based on whether we're running in production or development mode.
     
     Args:
         mode (str): Running mode, either "prod" or "dev" (default: "prod")
-            - "prod": Running from .nexus/project in another repository
+            - "prod": Running from .nexus in another repository
             - "dev": Running locally from codex-ai repository
     
     Returns:
         tuple[str, str, str]: Template path, prompt path, and log path
     """
-    base = ".nexus/project" if mode == "prod" else "project"
-    template_path = f"{base}/changelog/template.md"
-    prompt_path = f"{base}/changelog/prompt.md"
+    base = get_base_path(mode)
+    template_path = f"{base}/project/changelog/template.md"
+    prompt_path = f"{base}/project/changelog/prompt.md"
     log_path = ".tmp/commit_full_log.txt"
     return template_path, prompt_path, log_path
 
@@ -26,7 +28,7 @@ def run(mode: str = "prod") -> None:
     
     Args:
         mode (str): Running mode, either "prod" or "dev" (default: "prod")
-            - "prod": Running from .nexus/project in another repository
+            - "prod": Running from .nexus in another repository
             - "dev": Running locally from codex-ai repository
     """
     template_path, prompt_path, log_path = get_paths(mode)
