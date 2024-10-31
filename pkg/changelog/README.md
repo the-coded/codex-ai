@@ -2,7 +2,7 @@
 
 This module runs aider to generate formatted changelogs. The changelog command can be used in two modes:
 - **dev**: Running directly from the codex-ai repository
-- **prod**: Running from .nexus/project when codex-ai is cloned as .nexus in another repository
+- **prod**: Running from .nexus/pkg when codex-ai is cloned as .nexus in another repository
 
 ## Usage Patterns
 
@@ -10,25 +10,25 @@ This module runs aider to generate formatted changelogs. The changelog command c
 
 Development mode (in codex-ai repository):
 ```bash
-python -m project.changelog --mode dev
+python -m pkg.changelog --mode dev
 ```
 
 Production mode (in repository with .nexus):
 ```bash
-python -m project.changelog
+python -m pkg.changelog
 ```
 
 ### Programmatic Usage (via __init__.py)
 
 Development mode (in codex-ai repository):
 ```python
-from project.changelog import run
+from pkg.changelog import run
 run(mode="dev")
 ```
 
 Production mode (in repository with .nexus):
 ```python
-from .nexus.project.changelog import run
+from .nexus.pkg.changelog import run
 run()
 ```
 
@@ -40,18 +40,21 @@ When working directly in the codex-ai repository:
 
 ```bash
 # 1. Activate virtual environment (only needed once)
-source scripts/start.sh
+source bin/start.sh
 
 # 2. Install requirements (only needed once)
-python -m project.changelog.requirements --mode dev
+python -m pkg.changelog.requirements --mode dev
 
 # 3. Generate file trees (needed before each changelog generation)
 python -m utils.file_tree.gen_all_trees
 
-# 4. Generate changelog (choose one):
-python -m project.changelog --mode dev  # Command-line usage
+# 4. Set your Anthropic API key (required for changelog generation)
+export ANTHROPIC_API_KEY=your_api_key_here
+
+# 5. Generate changelog (choose one):
+python -m pkg.changelog --mode dev  # Command-line usage
 # or
-python3 -c "from project.changelog import run; run(mode='dev')"  # Programmatic usage
+python3 -c "from pkg.changelog import run; run(mode='dev')"  # Programmatic usage
 ```
 
 ### Production Mode
@@ -63,20 +66,23 @@ When using codex-ai as a tool in another repository:
 git clone https://github.com/your-org/codex-ai.git .nexus
 
 # 2. Activate virtual environment (only needed once)
-source .nexus/scripts/start.sh
+source .nexus/bin/start.sh
 
 # 3. Install requirements (only needed once)
-python -m .nexus/project.changelog.requirements
+python -m .nexus/pkg.changelog.requirements
 
 # 4. Generate file trees (needed before each changelog generation)
 python -m .nexus/utils.file_tree.gen_all_trees
 
-# 5. Generate changelog (choose one):
-python -m .nexus/project.changelog  # Command-line usage
-# or
-python3 -c "from .nexus.project.changelog import run; run()"  # Programmatic usage
+# 5. Set your Anthropic API key (required for changelog generation)
+export ANTHROPIC_API_KEY=your_api_key_here
 
-# 6. Optional: Clean up when done
+# 6. Generate changelog (choose one):
+python -m .nexus/pkg.changelog  # Command-line usage
+# or
+python3 -c "from .nexus.pkg.changelog import run; run()"  # Programmatic usage
+
+# 7. Optional: Clean up when done
 rm -rf .nexus
 ```
 
@@ -92,8 +98,8 @@ aider \
   --sonnet \
   --cache-prompts \
   --no-stream \
-  --read .nexus/project/changelog/template.md \
-  --message-file .nexus/project/changelog/prompt.md \
+  --read .nexus/pkg/changelog/template.md \
+  --message-file .nexus/pkg/changelog/prompt.md \
   .tmp/commit_full_log.txt
 ```
 
@@ -101,7 +107,7 @@ aider \
 
 ### Development Mode (in codex-ai repository)
 ```
-project/
+pkg/
 └── changelog/
     ├── __init__.py          # Handles programmatic usage exports
     ├── __main__.py         # Handles command-line interface
@@ -120,7 +126,7 @@ utils/
 ```
 your-project/
 └── .nexus/               # Cloned codex-ai repository
-    └── project/
+    └── pkg/
         ├── changelog/    # Same structure as development mode
         └── utils/        # Same structure as development mode
 ```
@@ -129,8 +135,9 @@ your-project/
 
 1. Virtual environment activation and requirements installation only need to be done once
 2. File trees must be generated before each changelog generation
-3. Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)
-4. Default mode is "prod" when no mode is specified
-5. Core implementation is in run.py, using shared utilities from utils/get_base_path.py
-6. Path handling for dev/prod modes is centralized in utils/get_base_path.py
-7. Production mode requires codex-ai to be cloned as .nexus in the target repository
+3. The ANTHROPIC_API_KEY must be set before running pkg.changelog
+4. Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)
+5. Default mode is "prod" when no mode is specified
+6. Core implementation is in run.py, using shared utilities from utils/get_base_path.py
+7. Path handling for dev/prod modes is centralized in utils/get_base_path.py
+8. Production mode requires codex-ai to be cloned as .nexus in the target repository

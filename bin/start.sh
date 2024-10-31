@@ -14,7 +14,7 @@ get_python_executable() {
 
 # Main script
 main() {
-    # Get the project root directory (parent of scripts directory)
+    # Get the project root directory (parent of bin directory)
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
     

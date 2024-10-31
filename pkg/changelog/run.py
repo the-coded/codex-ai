@@ -2,6 +2,7 @@
 Core implementation of the changelog generator.
 """
 
+import subprocess
 from utils.get_base_path import get_base_path
 
 def get_paths(mode: str = "prod") -> tuple[str, str, str]:
@@ -17,10 +18,9 @@ def get_paths(mode: str = "prod") -> tuple[str, str, str]:
         tuple[str, str, str]: Template path, prompt path, and log path
     """
     base = get_base_path(mode)
-    template_path = f"{base}/project/changelog/template.md"
-    prompt_path = f"{base}/project/changelog/prompt.md"
+    prompt_path = f"{base}/pkg/changelog/prompt.md"
     log_path = ".tmp/commit_full_log.txt"
-    return template_path, prompt_path, log_path
+    return prompt_path, log_path
 
 def run(mode: str = "prod") -> None:
     """
@@ -31,7 +31,7 @@ def run(mode: str = "prod") -> None:
             - "prod": Running from .nexus in another repository
             - "dev": Running locally from codex-ai repository
     """
-    template_path, prompt_path, log_path = get_paths(mode)
+    prompt_path, log_path = get_paths(mode)
     
     command = f"""aider \\
   --subtree-only \\
@@ -40,10 +40,13 @@ def run(mode: str = "prod") -> None:
   --sonnet \\
   --cache-prompts \\
   --no-stream \\
-  --read {template_path} \\
   --message-file {prompt_path} \\
   {log_path}"""
     
     print()
-    print(command)
+    print(f"Running command: {command}")
+    print()
+    
+    subprocess.run(command, shell=True)
+    
     print()

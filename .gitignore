@@ -32,3 +32,6 @@ docs/changelog/
 # OS
 .DS_Store
 Thumbs.db
+
+# Aider
+.aider.*

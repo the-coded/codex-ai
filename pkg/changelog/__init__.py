@@ -3,11 +3,11 @@ Changelog generation module.
 
 For programmatic usage:
     # Development mode
-    from project.changelog import run
+    from pkg.changelog import run
     run(mode="dev")
 
     # Production mode (default)
-    from .nexus.project.changelog import run
+    from .nexus.pkg.changelog import run
     run()
 """
 

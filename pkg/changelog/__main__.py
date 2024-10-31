@@ -3,10 +3,10 @@ Command-line interface for changelog generation.
 
 For command-line usage:
     # Development mode
-    python -m project.changelog --mode dev
+    python -m pkg.changelog --mode dev
 
     # Production mode (default)
-    python -m project.changelog
+    python -m pkg.changelog
 """
 
 import argparse
