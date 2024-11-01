@@ -60,6 +60,10 @@ Note: Only include sections that have relevant changes. Omit any sections that w
    - Reference CVEs for security issues using [CVE-YYYY-XXXXX] format
 
 6. Add contributor acknowledgements section recognizing both backend and frontend developers
+
+Version/Date Format:
+- If commit message contains TAG_VERSION: Use [TAG_VERSION] - YYYY-MM-DD
+- If no TAG_VERSION present: Use [YYYY-MM-DD]
 </instructions>
 
 <examples>
@@ -115,7 +119,9 @@ Generate a new file named 'changelog.md' with the following structure and format
 2. File Format: Use markdown (.md) with the following structure:
 
 ```markdown
-# [Version] - YYYY-MM-DD
+# [Version/Date]
+Use TAG_VERSION if present in commit message: [TAG_VERSION] - YYYY-MM-DD
+Otherwise use date only: [YYYY-MM-DD]
 
 ### Summary
 [Brief overview of main changes]
@@ -141,6 +147,7 @@ Consider these questions when generating the changelog:
 4. What security implications do the changes have?
 5. What performance impacts to consider?
 6. What documentation needs to be updated?
+7. Is there a TAG_VERSION in the commit message to use for versioning?
 </thinking_prompts>
 
 <validation>
@@ -150,6 +157,7 @@ Before finalizing the changelog, verify:
 3. All references (issues, PRs, CVEs) are properly linked
 4. Both technical and functional changes are clearly described
 5. Contributor acknowledgements are complete and accurate
+6. Version/Date format follows the TAG_VERSION rule
 </validation>
 
 ---
@@ -159,7 +167,7 @@ Before finalizing the changelog, verify:
 <reference_template>
 The following is a complete example template showing the full structure and formatting of a changelog entry. Use this as a reference while maintaining the style and organization specified in the instructions above.
 
-## [TAG_NAME] - YYYY-MM-DD
+## [TAG_VERSION] - YYYY-MM-DD
 
 ### Summary
 Brief description of the main changes and improvements in this version.
