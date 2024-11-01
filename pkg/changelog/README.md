@@ -46,7 +46,7 @@ source bin/start.sh
 python -m pkg.changelog.requirements --mode dev
 
 # 3. Generate file trees (needed before each changelog generation)
-python -m utils.file_tree.gen_all_trees
+./bin/tree_generate_all.sh
 
 # 4. Set your Anthropic API key (required for changelog generation)
 export ANTHROPIC_API_KEY=your_api_key_here

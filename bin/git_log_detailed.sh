@@ -31,12 +31,12 @@ if [ $(git rev-list --parents -n 1 $last_commit_hash | wc -w) -gt 2 ]; then
         for commit in $(git rev-list --reverse $non_main_parent..$last_commit_hash); do
             log_commit $commit
         done
-    } > .tmp/commit_full_log.txt
+    } > .tmp/git_log_detailed.txt
 else
     {
         echo "Regular Commit: $last_commit_hash"
         log_commit $last_commit_hash
-    } > .tmp/commit_full_log.txt
+    } > .tmp/git_log_detailed.txt
 fi
 
-echo "=========================================" >> .tmp/commit_full_log.txt
+echo "=========================================" >> .tmp/git_log_detailed.txt

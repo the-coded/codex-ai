@@ -26,11 +26,11 @@ if [ $(git rev-list --parents -n 1 $last_commit_hash | wc -w) -gt 2 ]; then
         git log --pretty=format:"%H" --reverse $parent1..$last_commit_hash | while read commit; do
             log_commit $commit
         done
-    } > .tmp/commit_changes_log.txt
+    } > .tmp/git_log_simple.txt
 else
     {
         log_commit $last_commit_hash
-    } > .tmp/commit_changes_log.txt
+    } > .tmp/git_log_simple.txt
 fi &&
 
-echo "=========================================" >> .tmp/commit_changes_log.txt
+echo "=========================================" >> .tmp/git_log_simple.txt

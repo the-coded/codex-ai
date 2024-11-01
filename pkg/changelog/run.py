@@ -19,7 +19,7 @@ def get_paths(mode: str = "prod") -> tuple[str, str, str]:
     """
     base = get_base_path(mode)
     prompt_path = f"{base}/pkg/changelog/prompt.md"
-    log_path = ".tmp/commit_full_log.txt"
+    log_path = ".tmp/git_log_detailed.txt"
     return prompt_path, log_path
 
 def run(mode: str = "prod") -> None:
@@ -40,8 +40,9 @@ def run(mode: str = "prod") -> None:
   --sonnet \\
   --cache-prompts \\
   --no-stream \\
+  --read {log_path}  \\
   --message-file {prompt_path} \\
-  {log_path}"""
+  .tmp/changelog.md"""
     
     print()
     print(f"Running command: {command}")
