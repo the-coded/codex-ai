@@ -14,6 +14,13 @@ get_python_executable() {
 
 # Main script
 main() {
+    # Check if already in a virtual environment
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo "✅ Virtual environment is already active!"
+        echo "📂 Using: $VIRTUAL_ENV"
+        exit 0
+    fi
+
     # Get the project root directory (parent of bin directory)
     SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -28,7 +35,7 @@ main() {
 
     # Create virtual environment if it doesn't exist
     if [ ! -d "$VENV_PATH" ]; then
-        echo "Creating virtual environment in project root..."
+        echo "📦 Creating virtual environment in project root..."
         $PYTHON_EXECUTABLE -m venv "$VENV_PATH"
     fi
 
@@ -40,11 +47,18 @@ main() {
     fi
 
     # Activate the virtual environment
-    echo -e "\nActivating python environment..."
+    echo -e "\n🚀 Activating python environment..."
     source "$ACTIVATE_CMD"
-    echo -e "\nPython env activated!"
-    echo "Virtual environment location: $VENV_PATH"
-    echo "To deactivate the virtual environment when finished, type 'deactivate'.\n"
+    
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo -e "\n✅ Python env activated successfully!"
+        echo "📂 Virtual environment location: $VENV_PATH"
+        echo "💡 To deactivate the virtual environment when finished, type 'deactivate'.\n"
+    else
+        echo -e "\n❌ Failed to activate virtual environment!"
+        echo "💡 Try running: source bin/start.sh\n"
+        exit 1
+    fi
 }
 
 main
