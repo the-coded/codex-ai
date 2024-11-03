@@ -1,23 +1,5 @@
 #!/bin/bash
 
-# Function to get the Git directory
-get_git_dir() {
-    # Get the script's directory
-    local SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-    
-    # If we're in .nexus (prod mode), use parent directory's .git
-    if [[ "$SCRIPT_DIR" == *"/.nexus/bin" ]]; then
-        echo "$(dirname "$(dirname "$SCRIPT_DIR")")/.git"
-    else
-        # In dev mode, use current repository's .git
-        echo "$(dirname "$SCRIPT_DIR")/.git"
-    fi
-}
-
-# Set GIT_DIR to ensure we use the correct repository
-export GIT_DIR=$(get_git_dir)
-echo "Using git repository: $GIT_DIR"
-
 mkdir -p .tmp
 last_commit_hash=$(git rev-parse HEAD)
 
