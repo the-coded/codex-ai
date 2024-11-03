@@ -1,14 +1,14 @@
 # 📝 Changelog Generator
 
 This module runs aider to generate formatted changelogs. The changelog command can be used in two modes:
-- **🔧 dev**: Running directly from the codex-ai repository
-- **🚀 prod**: Running from .nexus/pkg when codex-ai is cloned as .nexus in another repository
+- **🔧 dev**: Running directly from the codex repository
+- **🚀 prod**: Running from .nexus/pkg when codex is cloned as .nexus in another repository
 
 ## 📋 Usage Patterns
 
 ### 💻 Command-line Usage (via __main__.py)
 
-Development mode (in codex-ai repository):
+Development mode (in codex repository):
 ```bash
 python -m pkg.changelog --mode dev
 ```
@@ -24,7 +24,7 @@ python -m pkg.changelog
 
 ### 🔧 Programmatic Usage (via __init__.py)
 
-Development mode (in codex-ai repository):
+Development mode (in codex repository):
 ```python
 from pkg.changelog import run
 run(mode="dev")
@@ -42,7 +42,7 @@ run()
 
 ### 🔧 Development Mode
 
-When working directly in the codex-ai repository:
+When working directly in the codex repository:
 
 ```bash
 # 1. Activate virtual environment (only needed once)
@@ -65,11 +65,11 @@ python3 -c "from pkg.changelog import run; run(mode='dev')"  # Programmatic usag
 
 ### 🚀 Production Mode
 
-When using codex-ai as a tool in another repository:
+When using codex as a tool in another repository:
 
 ```bash
-# 1. Clone codex-ai as .nexus
-git clone https://github.com/your-org/codex-ai.git .nexus
+# 1. Clone codex as .nexus
+git clone https://github.com/your-org/codex.git .nexus
 
 # 2. Activate virtual environment (only needed once)
 source .nexus/bin/start.sh
@@ -114,7 +114,7 @@ aider \
 
 ## 📁 Directory Structure
 
-### 🔧 Development Mode (in codex-ai repository)
+### 🔧 Development Mode (in codex repository)
 ```
 pkg/
 └── changelog/
@@ -133,7 +133,7 @@ utils/
 ### 🚀 Production Mode (in another repository)
 ```
 your-project/
-└── .nexus/               # Cloned codex-ai repository
+└── .nexus/               # Cloned codex repository
     └── pkg/
         ├── changelog/    # Same structure as development mode
         └── utils/        # Same structure as development mode
@@ -149,5 +149,5 @@ your-project/
 6. 🛠️ Core implementation is in run.py, using shared utilities from utils/get_base_path.py
 7. 🔧 Path handling for dev/prod modes is centralized in utils/get_base_path.py
 8. 📦 Production mode requires:
-   - codex-ai to be cloned as .nexus in the target repository
+   - codex to be cloned as .nexus in the target repository
    - .nexus to be added to PYTHONPATH

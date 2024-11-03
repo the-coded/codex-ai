@@ -12,7 +12,7 @@ def get_paths(mode: str = "prod") -> tuple[str, str, str]:
     Args:
         mode (str): Running mode, either "prod" or "dev" (default: "prod")
             - "prod": Running from .nexus in another repository
-            - "dev": Running locally from codex-ai repository
+            - "dev": Running locally from codex repository
     
     Returns:
         tuple[str, str, str]: Template path, prompt path, and log path
@@ -29,7 +29,7 @@ def run(mode: str = "prod") -> None:
     Args:
         mode (str): Running mode, either "prod" or "dev" (default: "prod")
             - "prod": Running from .nexus in another repository
-            - "dev": Running locally from codex-ai repository
+            - "dev": Running locally from codex repository
     """
     prompt_path, log_path = get_paths(mode)
     

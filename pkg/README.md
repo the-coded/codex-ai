@@ -21,8 +21,8 @@ Changelog generation from git commits.
 ## ⭐ Common Features
 
 All packages share common characteristics:
-- **🔄 Dual Mode Support**: Run in development (directly from codex-ai) or production (from .nexus)
-- **🛠️ Flexible Usage**: Can be used as a module or imported programmatically
+- **🔄 Dual Mode Support**: Run in development (directly from codex) or production (from .nexus)
+- **�️ Flexible Usage**: Can be used as a module or imported programmatically
 - **🔍 Error Handling**: Comprehensive error handling and reporting
 - **📂 Path Resolution**: Automatic path handling for different environments
 
@@ -87,7 +87,7 @@ Each package should:
 ## 🌍 Environment Modes
 
 ### 🔧 Development Mode
-- Run directly from codex-ai repository
+- Run directly from codex repository
 - Use local paths and resources
 - Helpful for package development and testing
 

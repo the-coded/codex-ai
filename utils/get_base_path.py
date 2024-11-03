@@ -7,7 +7,7 @@ on whether the code is running in development or production mode.
 Example usage:
     from utils.get_base_path import get_base_path
 
-    # Development mode (running directly from codex-ai)
+    # Development mode (running directly from codex)
     base = get_base_path("dev")  # Returns "."
     file_path = f"{base}/config.json"  # "./config.json"
 
@@ -27,7 +27,7 @@ def get_base_path(mode: str = "prod") -> str:
     Args:
         mode (str): Running mode, either "prod" or "dev" (default: "prod")
             - "prod": Running from .nexus in another repository
-            - "dev": Running locally from codex-ai repository
+            - "dev": Running locally from codex repository
     
     Returns:
         str: Base path for file operations

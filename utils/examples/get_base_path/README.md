@@ -5,7 +5,7 @@ This directory contains examples demonstrating how to use the `get_base_path` ut
 ## 📖 Overview
 
 The `get_base_path` utility helps manage file paths in different execution contexts:
-- 🔧 Development mode (running directly from codex-ai)
+- 🔧 Development mode (running directly from codex)
 - 🚀 Production mode (running from .nexus in another repository)
 
 ## 📁 Files
