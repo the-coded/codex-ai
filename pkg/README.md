@@ -21,7 +21,7 @@ Changelog generation from git commits.
 ## ⭐ Common Features
 
 All packages share common characteristics:
-- **🔄 Dual Mode Support**: Run in development (directly from codex) or production (from .nexus)
+- **🔄 Dual Mode Support**: Run in development (directly from codex) or production (from .codex)
 - **�️ Flexible Usage**: Can be used as a module or imported programmatically
 - **🔍 Error Handling**: Comprehensive error handling and reporting
 - **📂 Path Resolution**: Automatic path handling for different environments
@@ -44,7 +44,11 @@ from pkg.<package_name> import run
 run(mode="dev", **options)
 
 # Production mode
-from .nexus.pkg.<package_name> import run
+# First, add .codex to PYTHONPATH
+export PYTHONPATH=/path/to/project/.codex
+
+# Then import and use the package
+from pkg.<package_name> import run
 run(**options)
 ```
 
@@ -92,8 +96,8 @@ Each package should:
 - Helpful for package development and testing
 
 ### 🚀 Production Mode
-- Run from .nexus in another repository
-- Use .nexus-prefixed paths
+- Run from .codex in another repository
+- Use .codex-prefixed paths
 - Default mode for end users
 
 ## 🛠️ Utilities

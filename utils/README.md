@@ -10,7 +10,7 @@ Path resolution utility that handles different execution contexts (development/p
 from utils.get_base_path import get_base_path
 
 base = get_base_path("dev")  # Returns "."
-base = get_base_path("prod")  # Returns ".nexus"
+base = get_base_path("prod")  # Returns ".codex"
 ```
 
 ### 📄 load_json

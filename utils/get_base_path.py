@@ -11,9 +11,9 @@ Example usage:
     base = get_base_path("dev")  # Returns "."
     file_path = f"{base}/config.json"  # "./config.json"
 
-    # Production mode (running from .nexus in another repository)
-    base = get_base_path("prod")  # Returns ".nexus"
-    file_path = f"{base}/config.json"  # ".nexus/config.json"
+    # Production mode (running from .codex in another repository)
+    base = get_base_path("prod")  # Returns ".codex"
+    file_path = f"{base}/config.json"  # ".codex/config.json"
 
 The utility helps maintain consistent path resolution across different
 execution contexts, ensuring files are accessed from the correct location
@@ -26,20 +26,20 @@ def get_base_path(mode: str = "prod") -> str:
     
     Args:
         mode (str): Running mode, either "prod" or "dev" (default: "prod")
-            - "prod": Running from .nexus in another repository
+            - "prod": Running from .codex in another repository
             - "dev": Running locally from codex repository
     
     Returns:
         str: Base path for file operations
-            - Returns ".nexus" for prod mode
+            - Returns ".codex" for prod mode
             - Returns "." for dev mode
     
     Examples:
         >>> get_base_path("prod")
-        '.nexus'
+        '.codex'
         >>> get_base_path("dev")
         '.'
         >>> get_base_path()  # defaults to "prod"
-        '.nexus'
+        '.codex'
     """
-    return ".nexus" if mode == "prod" else "."
+    return ".codex" if mode == "prod" else "."

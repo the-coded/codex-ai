@@ -6,7 +6,7 @@ This directory contains examples demonstrating how to use the `get_base_path` ut
 
 The `get_base_path` utility helps manage file paths in different execution contexts:
 - 🔧 Development mode (running directly from codex)
-- 🚀 Production mode (running from .nexus in another repository)
+- 🚀 Production mode (running from .codex in another repository)
 
 ## 📁 Files
 
@@ -29,11 +29,11 @@ base = get_base_path("dev")  # Returns "."
 config_path = f"{base}/config.json"  # "./config.json"
 
 # Production mode
-base = get_base_path("prod")  # Returns ".nexus"
-config_path = f"{base}/config.json"  # ".nexus/config.json"
+base = get_base_path("prod")  # Returns ".codex"
+config_path = f"{base}/config.json"  # ".codex/config.json"
 
 # Default mode (prod)
-base = get_base_path()  # Returns ".nexus"
+base = get_base_path()  # Returns ".codex"
 ```
 
 ## 🎯 Common Use Cases
