@@ -13,14 +13,13 @@
 Just as ancient codices preserved humanity's knowledge through generations, our Codex aims to preserve and evolve development knowledge through AI-powered automation and standardization.
 
 ## 📋 Table of Contents
-- [Introduction](#introduction)
-- [Features](#features)
-- [Technical Documentation](#technical-documentation)
-- [Installation](#installation)
-- [Getting Started](#getting-started)
-- [Use Cases](#use-cases)
-- [Contributing](#contributing)
-- [License](#license)
+- [- 🔭 Overview](#-overview)
+- [- 🌟 Introduction](#-introduction)
+- [- 🎯 Features](#-features)
+- [- 📖 Technical Documentation](#-technical-documentation)
+- [- 🚀 Installation](#-installation)
+- [- 💡 Use Cases](#-use-cases)
+- [- 🤝 Contributing](#-contributing)
 
 ## 🌟 Introduction
 
@@ -62,10 +61,6 @@ To install Codex, use the following steps:
     pip install -r requirements.txt
     ```
 
-## 🎮 Getting Started
-
-(Section under construction – to be updated soon.)
-
 ## 💡 Use Cases
 
 Codex can be used across various documentation scenarios:
@@ -81,11 +76,6 @@ We welcome contributions to Codex! To contribute:
 2. Create a new branch for your feature or bug fix.
 3. Commit your changes with clear messages.
 4. Submit a pull request to the main branch.
-
-### 📝 Coding Guidelines
-- Follow PEP 8 for Python code.
-- Include documentation for new features.
-- Write unit tests for new functionality.
 
 ---
 
