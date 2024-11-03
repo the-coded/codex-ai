@@ -15,6 +15,10 @@ python -m pkg.changelog --mode dev
 
 Production mode (in repository with .nexus):
 ```bash
+# Add .nexus to PYTHONPATH first
+PYTHONPATH=/path/to/project/.nexus python -m pkg.changelog
+# or
+export PYTHONPATH=/path/to/project/.nexus
 python -m pkg.changelog
 ```
 
@@ -28,7 +32,9 @@ run(mode="dev")
 
 Production mode (in repository with .nexus):
 ```python
-from .nexus.pkg.changelog import run
+import sys
+sys.path.append('/path/to/project/.nexus')  # Add .nexus to Python path
+from pkg.changelog import run
 run()
 ```
 
@@ -40,7 +46,7 @@ When working directly in the codex-ai repository:
 
 ```bash
 # 1. Activate virtual environment (only needed once)
-source bin/start.sh
+source bin/start.sh --mode dev
 
 # 2. Install aider-chat (only needed once)
 python shared/require_aider-chat.py
@@ -77,12 +83,15 @@ python -m .nexus/utils.file_tree.gen_all_trees
 # 5. Set your Anthropic API key (required for changelog generation)
 export ANTHROPIC_API_KEY=your_api_key_here
 
-# 6. Generate changelog (choose one):
-python -m .nexus/pkg.changelog  # Command-line usage
-# or
-python3 -c "from .nexus.pkg.changelog import run; run()"  # Programmatic usage
+# 6. Add .nexus to PYTHONPATH
+export PYTHONPATH=$PWD/.nexus
 
-# 7. Optional: Clean up when done
+# 7. Generate changelog (choose one):
+python -m pkg.changelog  # Command-line usage
+# or
+python3 -c "from pkg.changelog import run; run()"  # Programmatic usage
+
+# 8. Optional: Clean up when done
 rm -rf .nexus
 ```
 
@@ -139,4 +148,6 @@ your-project/
 5. 🚀 Default mode is "prod" when no mode is specified
 6. 🛠️ Core implementation is in run.py, using shared utilities from utils/get_base_path.py
 7. 🔧 Path handling for dev/prod modes is centralized in utils/get_base_path.py
-8. 📦 Production mode requires codex-ai to be cloned as .nexus in the target repository
+8. 📦 Production mode requires:
+   - codex-ai to be cloned as .nexus in the target repository
+   - .nexus to be added to PYTHONPATH

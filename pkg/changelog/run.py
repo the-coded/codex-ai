@@ -40,6 +40,7 @@ def run(mode: str = "prod") -> None:
   --sonnet \\
   --cache-prompts \\
   --no-stream \\
+  --no-check-updates \\
   --read {log_path}  \\
   --message-file {prompt_path} \\
   .tmp/changelog.md"""
