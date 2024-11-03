@@ -1,0 +1,19 @@
+Subject: ${subject}
+To: ${recipient_name}
+From: ${sender_name}
+Priority: ${priority}
+
+Dear ${recipient_name},
+
+${message}
+
+Project Details:
+- Status: ${status}
+- Progress: ${progress}%
+- Next Steps: ${next_steps}
+
+${closing_message}
+
+Best regards,
+${sender_name}
+${sender_title}
