@@ -31,7 +31,7 @@ if ! command -v jq &> /dev/null; then
 fi
 
 # List of folders to exclude
-EXCLUDE_FOLDERS="dist|node_modules|venv|examples|.git|.vscode|.tmp|.github|.aider.tags.cache.v3"
+EXCLUDE_FOLDERS="dist|node_modules|venv|examples|.git|.vscode|.tmp|.github|.aider.tags.cache.v3|__pycache__"
 
 # Function to create JSON structure
 generate_structure() {
