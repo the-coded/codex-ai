@@ -29,12 +29,16 @@ def main():
     Main entry point for shared utilities.
     Dynamically loads and executes the requested module.
     """
-    if len(sys.argv) != 2:
-        print("❌ Error: Module name required")
+    # If no arguments, assume we're being called as 'python -m shared.require_aider'
+    if len(sys.argv) == 1:
+        module_name = 'require_aider'
+    # If one argument, it's either the module name or 'shared.require_aider'
+    elif len(sys.argv) == 2:
+        module_name = sys.argv[1].replace('shared.', '')
+    else:
+        print("❌ Error: Too many arguments")
         print_usage()
         sys.exit(1)
-
-    module_name = sys.argv[1].replace('shared.', '')
     
     if module_name not in AVAILABLE_MODULES:
         print(f"❌ Error: Unknown module '{module_name}'")
