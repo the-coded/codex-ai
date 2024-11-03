@@ -50,15 +50,11 @@ To install Codex, use the following steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/codex.git
+    git clone https://github.com/the-coded/codex-ai.git
     ```
 2. Navigate to the Codex directory:
     ```bash
     cd codex
-    ```
-3. Install dependencies:
-    ```bash
-    pip install -r requirements.txt
     ```
 
 ## 💡 Use Cases
