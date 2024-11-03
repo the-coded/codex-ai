@@ -42,8 +42,8 @@ When working directly in the codex-ai repository:
 # 1. Activate virtual environment (only needed once)
 source bin/start.sh
 
-# 2. Install requirements (only needed once)
-python -m pkg.changelog.requirements --mode dev
+# 2. Install aider-chat (only needed once)
+python shared/require_aider-chat.py
 
 # 3. Generate file trees (needed before each changelog generation)
 ./bin/tree_generate_all.sh
@@ -68,8 +68,8 @@ git clone https://github.com/your-org/codex-ai.git .nexus
 # 2. Activate virtual environment (only needed once)
 source .nexus/bin/start.sh
 
-# 3. Install requirements (only needed once)
-python -m .nexus/pkg.changelog.requirements
+# 3. Install aider-chat (only needed once)
+python .nexus/shared/require_aider-chat.py
 
 # 4. Generate file trees (needed before each changelog generation)
 python -m .nexus/utils.file_tree.gen_all_trees
@@ -112,7 +112,6 @@ pkg/
     ├── __init__.py          # Handles programmatic usage exports
     ├── __main__.py         # Handles command-line interface
     ├── run.py              # Core implementation
-    ├── requirements.py      # Handles package installation
     ├── template.md         # Template for changelog generation
     └── prompt.md          # Instructions for changelog generation
 
@@ -133,7 +132,7 @@ your-project/
 
 ## Usage Notes
 
-1. Virtual environment activation and requirements installation only need to be done once
+1. Virtual environment activation and aider-chat installation only need to be done once
 2. File trees must be generated before each changelog generation
 3. The ANTHROPIC_API_KEY must be set before running pkg.changelog
 4. Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)
