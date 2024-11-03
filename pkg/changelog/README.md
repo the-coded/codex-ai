@@ -52,13 +52,16 @@ source bin/start.sh --mode dev
 ./bin/git_log_detailed.sh
 ./bin/git_log_simple.sh
 
-# 3. Install aider-chat (only needed once)
-python shared/require_aider-chat.py
-
-# 4. Set your Anthropic API key (required for changelog generation)
+# 3. Set your Anthropic API key (required for changelog generation)
 export ANTHROPIC_API_KEY=your_api_key_here
 
-# 5. Generate changelog (choose one):
+# 4. Add project root to PYTHONPATH
+export PYTHONPATH=$PWD
+
+# 5. Install aider (only needed once)
+python -m shared.require_aider
+
+# 6. Generate changelog (choose one):
 python -m pkg.changelog --mode dev  # Command-line usage
 # or
 python3 -c "from pkg.changelog import run; run(mode='dev')"  # Programmatic usage
@@ -79,14 +82,14 @@ source .codex/bin/start.sh
 ./.codex/bin/git_log_detailed.sh
 ./.codex/bin/git_log_simple.sh
 
-# 4. Install aider-chat (only needed once)
-python .codex/shared/require_aider-chat.py
-
-# 5. Set your Anthropic API key (required for changelog generation)
+# 4. Set your Anthropic API key (required for changelog generation)
 export ANTHROPIC_API_KEY=your_api_key_here
 
-# 6. Add .codex to PYTHONPATH
+# 5. Add .codex to PYTHONPATH
 export PYTHONPATH=$PWD/.codex
+
+# 6. Install aider (only needed once)
+python -m shared.require_aider
 
 # 7. Generate changelog (choose one):
 python -m pkg.changelog  # Command-line usage
@@ -143,7 +146,7 @@ your-project/
 
 ## 📝 Usage Notes
 
-1. ✨ Virtual environment activation and aider-chat installation only need to be done once
+1. ✨ Virtual environment activation and aider installation only need to be done once
 2. 🔄 Git logs must be generated before each changelog generation
 3. 🔑 The ANTHROPIC_API_KEY must be set before running pkg.changelog
 4. 🎯 Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)

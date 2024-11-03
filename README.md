@@ -50,7 +50,7 @@ To install Codex, use the following steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/the-coded/codex-ai.git
+    git clone https://github.com/your-org/codex.git
     ```
 2. Navigate to the Codex directory:
     ```bash
