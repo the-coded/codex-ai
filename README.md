@@ -13,13 +13,13 @@
 Just as ancient codices preserved humanity's knowledge through generations, our Codex aims to preserve and evolve development knowledge through AI-powered automation and standardization.
 
 ## 📋 Table of Contents
-- [- 🔭 Overview](#-overview)
-- [- 🌟 Introduction](#-introduction)
-- [- 🎯 Features](#-features)
-- [- 📖 Technical Documentation](#-technical-documentation)
-- [- 🚀 Installation](#-installation)
-- [- 💡 Use Cases](#-use-cases)
-- [- 🤝 Contributing](#-contributing)
+- [🔭 Overview](#-overview)
+- [🌟 Introduction](#-introduction)
+- [🎯 Features](#-features)
+- [📖 Technical Documentation](#-technical-documentation)
+- [🚀 Installation](#-installation)
+- [💡 Use Cases](#-use-cases)
+- [🤝 Contributing](#-contributing)
 
 ## 🌟 Introduction
 
