@@ -1,35 +1,66 @@
 """
-load_json.py
+JSON loading utility with error handling.
 
-Este módulo contém uma função para carregar arquivos JSON.
+This module provides functionality to safely load and parse JSON files,
+with comprehensive error handling and validation.
 
-Funções:
-    load_json(file_path: str) -> Dict[str, Any]:
-        Carrega um arquivo JSON e retorna seu conteúdo como um dicionário.
-
-Exemplo de uso:
+Example usage:
     from utils.load_json import load_json
 
-    json_data = load_json('caminho/para/arquivo.json')
-    print(json_data)
+    # Load and parse a JSON file
+    data = load_json('config.json')
 """
 
 import json
-from typing import Dict, Any
+import sys
+from typing import Any, Dict
 
 def load_json(file_path: str) -> Dict[str, Any]:
     """
-    Carrega um arquivo JSON e retorna seu conteúdo como um dicionário.
-
+    Load and parse a JSON file.
+    
     Args:
-        file_path (str): O caminho para o arquivo JSON a ser carregado.
-
+        file_path (str): Path to the JSON file to load
+    
     Returns:
-        Dict[str, Any]: O conteúdo do arquivo JSON como um dicionário.
-
+        Dict[str, Any]: Parsed JSON data as a dictionary
+    
     Raises:
-        FileNotFoundError: Se o arquivo não for encontrado.
-        json.JSONDecodeError: Se o arquivo não for um JSON válido.
+        FileNotFoundError: If the file doesn't exist
+        json.JSONDecodeError: If the file contains invalid JSON
+        IOError: If there's an error reading the file
     """
-    with open(file_path, 'r') as file:
-        return json.load(file)
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"❌ Error: File not found: {file_path}")
+        raise
+    except json.JSONDecodeError as e:
+        print(f"❌ Error: Invalid JSON in {file_path}: {e}")
+        raise
+    except IOError as e:
+        print(f"❌ Error reading {file_path}: {e}")
+        raise
+
+def main():
+    """
+    Main function to demonstrate JSON loading.
+    Called when running as a module: python -m utils.load_json
+    """
+    if len(sys.argv) != 2:
+        print("❌ Error: JSON file path required")
+        print("💡 Usage: python -m utils.load_json <json_file>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+    try:
+        data = load_json(file_path)
+        print("✅ Successfully loaded JSON file")
+        print("\n📄 File contents:")
+        print(json.dumps(data, indent=2))
+    except Exception:
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

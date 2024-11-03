@@ -20,6 +20,8 @@ execution contexts, ensuring files are accessed from the correct location
 whether running in development or production mode.
 """
 
+import sys
+
 def get_base_path(mode: str = "prod") -> str:
     """
     Get the base path based on running mode.
@@ -43,3 +45,25 @@ def get_base_path(mode: str = "prod") -> str:
         '.codex'
     """
     return ".codex" if mode == "prod" else "."
+
+def main():
+    """
+    Main function to demonstrate get_base_path usage.
+    Called when running as a module: python -m utils.get_base_path
+    """
+    if len(sys.argv) > 2:
+        print("❌ Error: Too many arguments")
+        print("💡 Usage: python -m utils.get_base_path [mode]")
+        sys.exit(1)
+
+    mode = sys.argv[1] if len(sys.argv) == 2 else "prod"
+    if mode not in ["dev", "prod"]:
+        print("❌ Error: Mode must be 'dev' or 'prod'")
+        sys.exit(1)
+
+    base_path = get_base_path(mode)
+    print(f"🔍 Base path for {mode} mode: {base_path}")
+    print(f"💡 Example usage: {base_path}/config.json")
+
+if __name__ == "__main__":
+    main()
