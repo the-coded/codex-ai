@@ -3,7 +3,8 @@
 # This script generates all JSON tree structures:
 # 1. Complete project tree
 # 2. Git changes (changed, removed, and all changes)
-# 3. Sibling files of changed files
+# 3. Git release changes (changed, removed, and all changes between releases)
+# 4. Sibling files of changed files
 
 # Function to run a command and capture its output
 run_command() {
@@ -26,6 +27,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 commands=(
     "$SCRIPT_DIR/tree_project.sh ./ .tmp/tree_project.json"
     "$SCRIPT_DIR/tree_git_changes.sh"
+    "$SCRIPT_DIR/tree_git_release_changes.sh"
     "$SCRIPT_DIR/tree_git_siblings.sh"
 )
 
@@ -40,5 +42,8 @@ echo "  - tree_project.json (complete project structure)"
 echo "  - tree_git_changed.json (files changed in last commit)"
 echo "  - tree_git_removed.json (files removed in last commit)"
 echo "  - tree_git_all.json (all git changes)"
+echo "  - tree_release_changed.json (files changed between releases, if releases exist)"
+echo "  - tree_release_removed.json (files removed between releases, if releases exist)"
+echo "  - tree_release_all.json (all release changes, if releases exist)"
 echo "  - tree_git_siblings.json (sibling files of changed files)"
 echo ""
