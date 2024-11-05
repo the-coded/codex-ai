@@ -1,6 +1,6 @@
 # 📦 Packages
 
-This directory contains reusable packages that provide various functionalities for the project. Each package is designed to be used either as a module or programmatically, with support for both development and production environments.
+This directory contains reusable packages that provide various functionalities for the project. Each package is designed to be used either as a module or programmatically, with automatic environment detection.
 
 ## 🎯 Available Packages
 
@@ -21,8 +21,8 @@ Changelog generation from git commits.
 ## ⭐ Common Features
 
 All packages share common characteristics:
-- **🔄 Dual Mode Support**: Run in development (directly from codex) or production (from .codex)
-- **�️ Flexible Usage**: Can be used as a module or imported programmatically
+- **🔄 Environment Detection**: Automatically detects if running from project root or .codex
+- **🔧 Flexible Usage**: Can be used as a module or imported programmatically
 - **🔍 Error Handling**: Comprehensive error handling and reporting
 - **📂 Path Resolution**: Automatic path handling for different environments
 
@@ -30,24 +30,24 @@ All packages share common characteristics:
 
 ### 💻 Module Usage
 ```bash
-# Development mode
-python -m pkg.<package_name> --mode dev [options]
+# From project root
+export PYTHONPATH=$PWD
+python -m pkg.<package_name> [options]
 
-# Production mode
+# From another project
+export PYTHONPATH=/path/to/project/.codex
 python -m pkg.<package_name> [options]
 ```
 
 ### 🔧 Programmatic Usage
 ```python
-# Development mode
+# From project root
+export PYTHONPATH=$PWD
 from pkg.<package_name> import run
-run(mode="dev", **options)
+run(**options)
 
-# Production mode
-# First, add .codex to PYTHONPATH
+# From another project
 export PYTHONPATH=/path/to/project/.codex
-
-# Then import and use the package
 from pkg.<package_name> import run
 run(**options)
 ```
@@ -74,7 +74,7 @@ pkg/
 When creating new packages:
 1. Follow the established package structure
 2. Support both module and programmatic usage
-3. Implement dev/prod mode support
+3. Use automatic environment detection
 4. Provide comprehensive documentation
 5. Include usage examples
 
@@ -82,28 +82,29 @@ When creating new packages:
 
 Each package should:
 - 🎯 Have a clear, single responsibility
-- 🔄 Support both development and production modes
+- 🔄 Support automatic environment detection
 - 📚 Include comprehensive documentation
 - 🖥️ Provide both CLI and programmatic interfaces
 - ⚠️ Handle errors gracefully
 - 🛠️ Use shared utilities when appropriate
 
-## 🌍 Environment Modes
+## 🌍 Environment Detection
 
-### 🔧 Development Mode
-- Run directly from codex repository
-- Use local paths and resources
-- Helpful for package development and testing
+The environment is automatically detected:
+- **🔧 Project Root**: When running directly from the repository
+  - Has pkg/ and utils/ directories
+  - Uses local paths ("./")
+  - Helpful for package development and testing
 
-### 🚀 Production Mode
-- Run from .codex in another repository
-- Use .codex-prefixed paths
-- Default mode for end users
+- **🚀 Another Project**: When running from .codex in another repository
+  - Has .codex/ directory
+  - Uses .codex-prefixed paths
+  - Default for end users
 
 ## 🛠️ Utilities
 
 Packages can use shared utilities from the utils/ directory:
-- `🔍 get_base_path`: Path resolution for dev/prod modes
+- `🔍 get_base_path`: Automatic environment detection and path resolution
 - `📄 load_json`: JSON file loading and parsing
 - `📝 load_template`: Template processing
 
