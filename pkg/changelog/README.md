@@ -10,7 +10,11 @@ This module runs aider to generate formatted changelogs. The changelog command c
 
 Development mode (in codex repository):
 ```bash
+# Generate regular git logs (default)
 python -m pkg.changelog --mode dev
+
+# Generate release logs
+python -m pkg.changelog --mode dev --type release
 ```
 
 Production mode (in repository with .codex):
@@ -19,7 +23,11 @@ Production mode (in repository with .codex):
 PYTHONPATH=/path/to/project/.codex python -m pkg.changelog
 # or
 export PYTHONPATH=/path/to/project/.codex
+
+# Generate regular git logs (default)
 python -m pkg.changelog
+# Generate release logs
+python -m pkg.changelog --type release
 ```
 
 ### 🔧 Programmatic Usage (via __init__.py)
@@ -27,15 +35,23 @@ python -m pkg.changelog
 Development mode (in codex repository):
 ```python
 from pkg.changelog import run
+
+# Generate regular git logs (default)
 run(mode="dev")
+
+# Generate release logs
+run(mode="dev", type="release")
 ```
 
 Production mode (in repository with .codex):
 ```python
-import sys
-sys.path.append('/path/to/project/.codex')  # Add .codex to Python path
 from pkg.changelog import run
-run()
+
+# Generate regular git logs (default)
+run()  # equivalent to run(mode="prod", type="log")
+
+# Generate release logs
+run(type="release")  # equivalent to run(mode="prod", type="release")
 ```
 
 ## 🚀 Complete Workflows
@@ -48,23 +64,21 @@ When working directly in the codex repository:
 # 1. Activate virtual environment (only needed once)
 source bin/start.sh --mode dev
 
-# 2. Generate git logs (needed before each changelog generation)
-./bin/git_log_detailed.sh
-./bin/git_log_simple.sh
-
-# 3. Set your Anthropic API key (required for changelog generation)
-export ANTHROPIC_API_KEY=your_api_key_here
-
-# 4. Add project root to PYTHONPATH
+# 2. Add project root to PYTHONPATH
 export PYTHONPATH=$PWD
 
-# 5. Install aider (only needed once)
+# 3. Install aider (only needed once)
 python -m shared.require_aider
 
-# 6. Generate changelog (choose one):
-python -m pkg.changelog --mode dev  # Command-line usage
+# 4. Set your Anthropic API key (required for changelog generation)
+export ANTHROPIC_API_KEY=your_api_key_here
+
+# 5. Generate changelog (choose one):
+python -m pkg.changelog --mode dev  # Command-line usage (regular logs)
+python -m pkg.changelog --mode dev --type release  # Command-line usage (release logs)
 # or
-python3 -c "from pkg.changelog import run; run(mode='dev')"  # Programmatic usage
+python3 -c "from pkg.changelog import run; run(mode='dev')"  # Programmatic usage (regular logs)
+python3 -c "from pkg.changelog import run; run(mode='dev', type='release')"  # Programmatic usage (release logs)
 ```
 
 ### 🚀 Production Mode
@@ -78,9 +92,8 @@ git clone https://github.com/your-org/codex.git .codex
 # 2. Activate virtual environment (only needed once)
 source .codex/bin/start.sh
 
-# 3. Generate git logs (needed before each changelog generation)
-./.codex/bin/git_log_detailed.sh
-./.codex/bin/git_log_simple.sh
+# 3. Install aider (only needed once)
+python -m shared.require_aider
 
 # 4. Set your Anthropic API key (required for changelog generation)
 export ANTHROPIC_API_KEY=your_api_key_here
@@ -88,15 +101,14 @@ export ANTHROPIC_API_KEY=your_api_key_here
 # 5. Add .codex to PYTHONPATH
 export PYTHONPATH=$PWD/.codex
 
-# 6. Install aider (only needed once)
-python -m shared.require_aider
-
-# 7. Generate changelog (choose one):
-python -m pkg.changelog  # Command-line usage
+# 6. Generate changelog (choose one):
+python -m pkg.changelog  # Command-line usage (regular logs)
+python -m pkg.changelog --type release  # Command-line usage (release logs)
 # or
-python3 -c "from pkg.changelog import run; run()"  # Programmatic usage
+python3 -c "from pkg.changelog import run; run()"  # Programmatic usage (regular logs)
+python3 -c "from pkg.changelog import run; run(type='release')"  # Programmatic usage (release logs)
 
-# 8. Optional: Clean up when done
+# 7. Optional: Clean up when done
 rm -rf .codex
 ```
 
@@ -114,7 +126,7 @@ aider \
   --no-stream \
   --read .codex/pkg/changelog/template.md \
   --message-file .codex/pkg/changelog/prompt.md \
-  .tmp/commit_full_log.txt
+  .tmp/changelog.md
 ```
 
 ## 📁 Directory Structure
@@ -131,8 +143,7 @@ pkg/
 
 utils/
 ├── get_base_path.py       # Path handling for dev/prod modes
-└── file_tree/
-    └── gen_all_trees.py   # Generates file trees used by changelog
+└── get_token_count.py     # Token counting utility
 ```
 
 ### 🚀 Production Mode (in another repository)
@@ -147,12 +158,15 @@ your-project/
 ## 📝 Usage Notes
 
 1. ✨ Virtual environment activation and aider installation only need to be done once
-2. 🔄 Git logs must be generated before each changelog generation
-3. 🔑 The ANTHROPIC_API_KEY must be set before running pkg.changelog
-4. 🎯 Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)
-5. 🚀 Default mode is "prod" when no mode is specified
-6. 🛠️ Core implementation is in run.py, using shared utilities from utils/get_base_path.py
-7. 🔧 Path handling for dev/prod modes is centralized in utils/get_base_path.py
-8. 📦 Production mode requires:
+2. 🔑 The ANTHROPIC_API_KEY must be set before running pkg.changelog
+3. 🎯 Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)
+4. 🚀 Default mode is "prod" when no mode is specified
+5. 📋 Default type is "log" when no type is specified
+6. 🔄 Git logs are generated automatically based on type:
+   - type="log": Regular git logs
+   - type="release": Release logs
+7. 🔍 Large logs are automatically simplified if they exceed 185,000 tokens
+8. 🛠️ Core implementation is in run.py, using shared utilities from utils/
+9. 📦 Production mode requires:
    - codex to be cloned as .codex in the target repository
    - .codex to be added to PYTHONPATH
