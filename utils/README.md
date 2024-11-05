@@ -5,12 +5,12 @@ This directory contains utility functions used throughout the project. These uti
 ## 🎯 Available Utilities
 
 ### 🔍 get_base_path
-Path resolution utility that handles different execution contexts (development/production).
+Path resolution utility that automatically detects the execution context.
 ```python
 from utils.get_base_path import get_base_path
 
-base = get_base_path("dev")  # Returns "."
-base = get_base_path("prod")  # Returns ".codex"
+base = get_base_path()  # Returns "." if in project root
+                       # Returns ".codex" if in another project
 ```
 
 ### 📄 load_json
@@ -42,7 +42,7 @@ For detailed technical documentation, implementation examples, and best practice
 ```
 utils/
 ├── README.md           # This file
-├── get_base_path.py   # Path resolution utility
+├── get_base_path.py   # Path resolution with environment detection
 ├── load_json.py       # JSON loading utility
 ├── load_template.py   # Template processing utility
 └── examples/          # Detailed examples and documentation

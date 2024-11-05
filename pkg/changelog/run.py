@@ -10,19 +10,16 @@ from utils.get_token_count import get_token_count
 
 LogType = Literal["log", "release"]
 
-def generate_logs(mode: str = "prod", type: LogType = "log") -> None:
+def generate_logs(type: LogType = "log") -> None:
     """
     Generate git logs using the appropriate scripts.
     
     Args:
-        mode (str): Running mode, either "prod" or "dev" (default: "prod")
-            - "prod": Running from .codex in another repository
-            - "dev": Running locally from codex repository
         type (LogType): Type of logs to generate, either "log" or "release" (default: "log")
             - "log": Generate regular git logs
             - "release": Generate release logs
     """
-    base = get_base_path(mode)
+    base = get_base_path()
     script_prefix = f"{base}/bin"
 
     try:
@@ -40,14 +37,11 @@ def generate_logs(mode: str = "prod", type: LogType = "log") -> None:
         print(f"❌ Error generating {'release' if type == 'release' else ''} logs: {e}")
         sys.exit(1)
 
-def get_paths(mode: str = "prod", type: LogType = "log") -> tuple[str, str]:
+def get_paths(type: LogType = "log") -> tuple[str, str]:
     """
-    Get the correct paths based on whether we're running in production or development mode.
+    Get the correct paths based on the current environment.
     
     Args:
-        mode (str): Running mode, either "prod" or "dev" (default: "prod")
-            - "prod": Running from .codex in another repository
-            - "dev": Running locally from codex repository
         type (LogType): Type of logs to use, either "log" or "release" (default: "log")
             - "log": Use regular git logs
             - "release": Use release logs
@@ -55,7 +49,7 @@ def get_paths(mode: str = "prod", type: LogType = "log") -> tuple[str, str]:
     Returns:
         tuple[str, str]: Prompt path and log path
     """
-    base = get_base_path(mode)
+    base = get_base_path()
     prompt_path = f"{base}/pkg/changelog/prompt.md"
     token_threshold = 185_000
     detailed_path = f".tmp/git_{type}_detailed.txt"
@@ -76,23 +70,20 @@ def get_paths(mode: str = "prod", type: LogType = "log") -> tuple[str, str]:
 
     return prompt_path, log_path
 
-def run(mode: str = "prod", type: LogType = "log") -> None:
+def run(type: LogType = "log") -> None:
     """
     Runs the aider command to generate changelog documentation.
     
     Args:
-        mode (str): Running mode, either "prod" or "dev" (default: "prod")
-            - "prod": Running from .codex in another repository
-            - "dev": Running locally from codex repository
         type (LogType): Type of logs to generate, either "log" or "release" (default: "log")
             - "log": Generate regular git logs
             - "release": Generate release logs
     """
     # Generate logs first
-    generate_logs(mode, type)
+    generate_logs(type)
     
     # Get paths
-    prompt_path, log_path = get_paths(mode, type)
+    prompt_path, log_path = get_paths(type)
     
     # Install aider right before using it
     subprocess.run(["python", "-m", "shared.require_aider"], check=True)
