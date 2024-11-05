@@ -2,9 +2,6 @@
 
 mkdir -p .tmp
 
-# Create or truncate the output file
-> .tmp/git_release_simple.txt
-
 # Function to output to both console and file
 output() {
     echo "$1" | tee -a .tmp/git_release_simple.txt
@@ -12,18 +9,21 @@ output() {
 
 # Check if we're in a git repository
 if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
-    output "Error: Not in a git repository."
+    echo "Error: Not in a git repository."
     exit 1
 fi
 
 # Try to get current tag
 if ! current_tag=$(git describe --tags --abbrev=0 2>/dev/null); then
-    output "Warning: No tags/releases found in the repository."
-    output "To create a release, use:"
-    output "  git tag v1.0.0 (or desired version)"
-    output "  git push origin v1.0.0"
+    echo "Warning: No tags/releases found in the repository."
+    echo "To create a release, use:"
+    echo "  git tag v1.0.0 (or desired version)"
+    echo "  git push origin v1.0.0"
     exit 1
 fi
+
+# Create or truncate the output file only if we have tags
+> .tmp/git_release_simple.txt
 
 # Try to get previous tag
 if ! previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null); then
