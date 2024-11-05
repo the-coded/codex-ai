@@ -94,6 +94,9 @@ def run(mode: str = "prod", type: LogType = "log") -> None:
     # Get paths
     prompt_path, log_path = get_paths(mode, type)
     
+    # Install aider right before using it
+    subprocess.run(["python", "-m", "shared.require_aider"], check=True)
+    
     # Build and run aider command
     command = f"""aider \\
   --subtree-only \\
