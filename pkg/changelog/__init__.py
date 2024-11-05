@@ -2,17 +2,12 @@
 Changelog generation module.
 
 For programmatic usage:
-    # Generate regular git logs (default)
     from pkg.changelog import run
-    run()  # equivalent to run(type="log")
+    run()  # Will use release logs if available, otherwise regular logs
 
-    # Generate release logs
-    from pkg.changelog import run
-    run(type="release")
-
-Note: The module automatically detects if it's running from:
-- Project root (when developing)
-- Another project with .codex/ (when used as a tool)
+Note: The module automatically detects:
+- Environment: Project root or another project with .codex/
+- Log type: Release logs if available, otherwise regular logs
 """
 
 from .run import run, get_paths

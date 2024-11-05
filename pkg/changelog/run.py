@@ -4,47 +4,54 @@ Core implementation of the changelog generator.
 
 import subprocess
 import sys
+import os
 from typing import Literal
 from utils.get_base_path import get_base_path
 from utils.get_token_count import get_token_count
 
 LogType = Literal["log", "release"]
 
-def generate_logs(type: LogType = "log") -> None:
+def generate_logs() -> None:
     """
-    Generate git logs using the appropriate scripts.
-    
-    Args:
-        type (LogType): Type of logs to generate, either "log" or "release" (default: "log")
-            - "log": Generate regular git logs
-            - "release": Generate release logs
+    Generate all git logs. Release logs will only be generated
+    if we're in a release.
     """
     base = get_base_path()
     script_prefix = f"{base}/bin"
 
-    try:
-        if type == "log":
-            print("\n📝 Generating git logs...")
-            subprocess.run([f"{script_prefix}/git_log_detailed.sh"], check=True)
-            subprocess.run([f"{script_prefix}/git_log_simple.sh"], check=True)
-            print("✅ Git logs generated successfully")
-        else:  # release
-            print("\n📝 Generating release logs...")
-            subprocess.run([f"{script_prefix}/git_release_detailed.sh"], check=True)
-            subprocess.run([f"{script_prefix}/git_release_simple.sh"], check=True)
-            print("✅ Release logs generated successfully")
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Error generating {'release' if type == 'release' else ''} logs: {e}")
-        sys.exit(1)
+    # Delete existing logs to avoid false positives
+    log_files = [
+        ".tmp/git_log_detailed.txt",
+        ".tmp/git_log_simple.txt",
+        ".tmp/git_release_detailed.txt",
+        ".tmp/git_release_simple.txt"
+    ]
+    
+    print("\n🗑️  Cleaning up old logs...")
+    for log_file in log_files:
+        if os.path.exists(log_file):
+            os.remove(log_file)
+            print(f"   Deleted: {log_file}")
 
-def get_paths(type: LogType = "log") -> tuple[str, str]:
+    try:
+        # Generate regular logs
+        print("\n📝 Generating git logs...")
+        subprocess.run([f"{script_prefix}/git_log_detailed.sh"], check=True)
+        subprocess.run([f"{script_prefix}/git_log_simple.sh"], check=True)
+        print("✅ Git logs generated successfully")
+
+        # Try to generate release logs
+        print("\n📝 Generating release logs...")
+        subprocess.run([f"{script_prefix}/git_release_detailed.sh"], check=True)
+        subprocess.run([f"{script_prefix}/git_release_simple.sh"], check=True)
+        print("✅ Release logs generated successfully")
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️  No release logs generated, using regular logs")
+
+def get_paths() -> tuple[str, str]:
     """
     Get the correct paths based on the current environment.
-    
-    Args:
-        type (LogType): Type of logs to use, either "log" or "release" (default: "log")
-            - "log": Use regular git logs
-            - "release": Use release logs
+    If release logs exist, use them. Otherwise, use regular logs.
     
     Returns:
         tuple[str, str]: Prompt path and log path
@@ -52,8 +59,22 @@ def get_paths(type: LogType = "log") -> tuple[str, str]:
     base = get_base_path()
     prompt_path = f"{base}/pkg/changelog/prompt.md"
     token_threshold = 185_000
-    detailed_path = f".tmp/git_{type}_detailed.txt"
-    simple_path = f".tmp/git_{type}_simple.txt"
+
+    # Check if release logs exist
+    release_detailed = ".tmp/git_release_detailed.txt"
+    release_simple = ".tmp/git_release_simple.txt"
+    log_detailed = ".tmp/git_log_detailed.txt"
+    log_simple = ".tmp/git_log_simple.txt"
+
+    # If release logs exist, use them
+    if os.path.exists(release_detailed) or os.path.exists(release_simple):
+        print("\n📦 Using release logs")
+        detailed_path = release_detailed
+        simple_path = release_simple
+    else:
+        print("\n📦 Using regular logs")
+        detailed_path = log_detailed
+        simple_path = log_simple
 
     # Check if we should use simple logs based on token count
     token_count = get_token_count(detailed_path)
@@ -70,20 +91,15 @@ def get_paths(type: LogType = "log") -> tuple[str, str]:
 
     return prompt_path, log_path
 
-def run(type: LogType = "log") -> None:
+def run() -> None:
     """
     Runs the aider command to generate changelog documentation.
-    
-    Args:
-        type (LogType): Type of logs to generate, either "log" or "release" (default: "log")
-            - "log": Generate regular git logs
-            - "release": Generate release logs
     """
-    # Generate logs first
-    generate_logs(type)
+    # Generate all logs
+    generate_logs()
     
     # Get paths
-    prompt_path, log_path = get_paths(type)
+    prompt_path, log_path = get_paths()
     
     # Install aider right before using it
     subprocess.run(["python", "-m", "shared.require_aider"], check=True)

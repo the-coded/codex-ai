@@ -1,31 +1,28 @@
 # 📝 Changelog Generator
 
-This module runs aider to generate formatted changelogs. The module automatically detects if it's running from:
-- **🔧 Development**: When running directly from the project root
-- **🚀 Production**: When running from another project with .codex/
+This module runs aider to generate formatted changelogs. The module automatically detects:
+- **🔧 Environment**: When running from project root vs another project with .codex/
+- **📦 Log Type**: Release logs if available, otherwise regular logs
 
 ## 📋 Usage Patterns
 
 ### 💻 Command-line Usage (via __main__.py)
 
 ```bash
-# Generate regular git logs (default)
-python -m pkg.changelog
+# Add project root to PYTHONPATH first
+export PYTHONPATH=$PWD
+# or
+export PYTHONPATH=$PWD/.codex
 
-# Generate release logs
-python -m pkg.changelog --type release
+# Generate changelog
+python -m pkg.changelog
 ```
 
 ### 🔧 Programmatic Usage (via __init__.py)
 
 ```python
 from pkg.changelog import run
-
-# Generate regular git logs (default)
-run()  # equivalent to run(type="log")
-
-# Generate release logs
-run(type="release")
+run()  # Will use release logs if available, otherwise regular logs
 ```
 
 ## 🚀 Complete Workflows
@@ -44,12 +41,10 @@ export PYTHONPATH=$PWD
 # 3. Set your Anthropic API key (required for changelog generation)
 export ANTHROPIC_API_KEY=your_api_key_here
 
-# 4. Generate changelog (choose one):
-python -m pkg.changelog  # Command-line usage (regular logs)
-python -m pkg.changelog --type release  # Command-line usage (release logs)
+# 4. Generate changelog
+python -m pkg.changelog  # Command-line usage
 # or
-python3 -c "from pkg.changelog import run; run()"  # Programmatic usage (regular logs)
-python3 -c "from pkg.changelog import run; run(type='release')"  # Programmatic usage (release logs)
+python3 -c "from pkg.changelog import run; run()"  # Programmatic usage
 ```
 
 ### 🚀 Production Mode
@@ -69,12 +64,10 @@ export ANTHROPIC_API_KEY=your_api_key_here
 # 4. Add .codex to PYTHONPATH
 export PYTHONPATH=$PWD/.codex
 
-# 5. Generate changelog (choose one):
-python -m pkg.changelog  # Command-line usage (regular logs)
-python -m pkg.changelog --type release  # Command-line usage (release logs)
+# 5. Generate changelog
+python -m pkg.changelog  # Command-line usage
 # or
-python3 -c "from pkg.changelog import run; run()"  # Programmatic usage (regular logs)
-python3 -c "from pkg.changelog import run; run(type='release')"  # Programmatic usage (release logs)
+python3 -c "from pkg.changelog import run; run()"  # Programmatic usage
 
 # 6. Optional: Clean up when done
 rm -rf .codex
@@ -127,16 +120,15 @@ your-project/
 
 1. ✨ Virtual environment activation only needs to be done once
 2. 🔑 The ANTHROPIC_API_KEY must be set before running pkg.changelog
-3. 🎯 Choose between command-line usage (via __main__.py) or programmatic usage (via __init__.py)
-4. 📋 Default type is "log" when no type is specified
-5. 🔄 Git logs are generated automatically based on type:
-   - type="log": Regular git logs
-   - type="release": Release logs
-6. 🔍 Large logs are automatically simplified if they exceed 185,000 tokens
-7. 🛠️ Core implementation in run.py uses shared utilities from utils/
-8. 🔧 Environment is automatically detected:
+3. 🔄 Git logs are generated automatically:
+   - Regular logs are always generated
+   - Release logs are generated if we're in a release
+   - Release logs are used if available, otherwise regular logs
+4. 🔍 Large logs are automatically simplified if they exceed 185,000 tokens
+5. 🛠️ Core implementation is in run.py, using shared utilities
+6. 🔧 Environment is automatically detected:
    - Development: When running from project root
    - Production: When running from another project with .codex/
-9. 📦 Production mode requires:
+7. 📦 Production mode requires:
    - codex to be cloned as .codex in the target repository
    - .codex to be added to PYTHONPATH
