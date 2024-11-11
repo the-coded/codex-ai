@@ -30,13 +30,30 @@ fi
 # Create or truncate the output file only if we have tags
 > .tmp/git_release_simple.txt
 
+# Get all tags sorted by version date
+all_tags=($(git tag --sort=-creatordate))
+
+# Find the current tag's index
+current_index=-1
+for i in "${!all_tags[@]}"; do
+    if [[ "${all_tags[$i]}" = "$current_tag" ]]; then
+        current_index=$i
+        break
+    fi
+done
+
 # Try to get previous tag
-if ! previous_tag=$(git describe --tags --abbrev=0 "$current_tag^" 2>/dev/null); then
+if [[ $current_index -eq -1 ]]; then
+    info "Error: Current tag not found in tag list"
+    exit 1
+elif [[ $current_index -eq $(( ${#all_tags[@]} - 1 )) ]]; then
     info "Warning: This is the first release ($current_tag). No previous release to compare."
     info "Showing all changes up to the current release..."
     # Get the first commit of the repository
     first_commit=$(git rev-list --max-parents=0 HEAD)
     previous_tag=$first_commit
+else
+    previous_tag="${all_tags[$((current_index + 1))]}"
 fi
 
 log_commit() {
