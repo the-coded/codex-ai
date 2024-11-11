@@ -30,14 +30,24 @@ fi
 # Create or truncate the output file only if we have tags
 > .tmp/git_release_simple.txt
 
-# Get all tags sorted by version date
-all_tags=($(git tag --sort=-creatordate))
+# Debug: List all tags
+info "Debug: Listing all tags..."
+git tag -l --sort=-v:refname | while read tag; do
+    info "  $tag"
+done
+
+# Get all tags sorted by version
+mapfile -t all_tags < <(git tag -l --sort=-v:refname)
+
+# Debug: Show current tag
+info "Debug: Current tag is: $current_tag"
 
 # Find the current tag's index
 current_index=-1
 for i in "${!all_tags[@]}"; do
     if [[ "${all_tags[$i]}" = "$current_tag" ]]; then
         current_index=$i
+        info "Debug: Found current tag at index $i"
         break
     fi
 done
@@ -54,6 +64,7 @@ elif [[ $current_index -eq $(( ${#all_tags[@]} - 1 )) ]]; then
     previous_tag=$first_commit
 else
     previous_tag="${all_tags[$((current_index + 1))]}"
+    info "Debug: Previous tag is: $previous_tag"
 fi
 
 log_commit() {
