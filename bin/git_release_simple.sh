@@ -30,14 +30,21 @@ fi
 # Create or truncate the output file only if we have tags
 > .tmp/git_release_simple.txt
 
-# Debug: List all tags
-info "Debug: Listing all tags..."
-git tag -l --sort=-v:refname | while read tag; do
+# Debug: List all tags without sorting first
+info "Debug: Listing all tags (raw)..."
+git tag -l | while read tag; do
     info "  $tag"
 done
 
-# Get all tags sorted by version
-mapfile -t all_tags < <(git tag -l --sort=-v:refname)
+# Get all tags sorted by creation date (newest first)
+info "Debug: Getting tags sorted by creation date..."
+mapfile -t all_tags < <(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags/)
+
+# Debug: Show sorted tags
+info "Debug: Sorted tags:"
+for tag in "${all_tags[@]}"; do
+    info "  $tag ($(git log -1 --format=%ai $tag))"
+done
 
 # Debug: Show current tag
 info "Debug: Current tag is: $current_tag"
