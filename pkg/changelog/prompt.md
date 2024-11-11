@@ -42,7 +42,7 @@ Note: Only include sections that have relevant changes. Omit any sections that w
    <commit_format>
    - Commit message
    - Commit date
-   - Commit author
+   - Author name and email
    - Commit short_hash
    </commit_format>
 
@@ -59,7 +59,7 @@ Note: Only include sections that have relevant changes. Omit any sections that w
    - Link to pull requests using [#PRNumber] format
    - Reference CVEs for security issues using [CVE-YYYY-XXXXX] format
 
-6. Add contributor acknowledgements section recognizing both backend and frontend developers
+6. Add contributor acknowledgements section recognizing the developers
 
 Version/Date Format:
 - If commit message contains TAG_VERSION: Use [TAG_VERSION] - YYYY-MM-DD
@@ -114,7 +114,7 @@ Here are examples of well-formatted entries for each section:
 <output_format>
 Generate a new file named 'changelog.md' with the following structure and format:
 
-1. File Location: Create the file in the root directoryof the project.
+1. File Location: Create the file in the root directory of the project.
 
 2. File Format: Use markdown (.md) with the following structure:
 
@@ -135,7 +135,7 @@ Otherwise use date only: [YYYY-MM-DD]
 [Detailed commit information following the specified format]
 
 ### Contributor Acknowledgements
-[List of contributors and their contributions]
+[List of contributors (name and email) and their contributions]
 ```
 </output_format>
 
@@ -255,7 +255,7 @@ Example: Version 2.1.0 focuses on enhancing both the user interface and backend 
 
 ### Commit: [type]: brief description
 - Date: YYYY-MM-DD HH:MM:SS +/-TTTT
-- Author: Author Name
+- Author: John Smith <john.smith@github.com>
 - Hash: abcdef1
 
 #### File Changes
@@ -269,8 +269,8 @@ Example: Version 2.1.0 focuses on enhancing both the user interface and backend 
 
 ### Contributor Acknowledgements
 Thanks to the following contributors who helped with this release:
-- @username1 - Implemented two-factor authentication
-- @username2 - Refactored the UserDashboard for improved performance
-- @username3 - Optimized database queries
-- @username4 - Added dark mode support and updated the color scheme
+- John Smith <john.smith@github.com> - Implemented two-factor authentication
+- Jane Doe <jane.doe@github.com> - Refactored the UserDashboard for improved performance
+- Bob Wilson <bob.wilson@github.com> - Optimized database queries
+- Alice Brown <alice.brown@github.com> - Added dark mode support and updated the color scheme
 </reference_template>

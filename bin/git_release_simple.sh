@@ -61,7 +61,7 @@ log_commit() {
     local is_merge=$2
     echo "" | output_to_file
     echo "${is_merge:+Merge }Commit: $commit_hash" | output_to_file
-    git show --pretty=format:"%an - %ad%n%s%n%b" --name-status $commit_hash -- . ':(exclude)yarn.lock' ':(exclude)_old' | output_to_file
+    git show --pretty=format:"%an <%ae> - %ad%n%s%n%b" --name-status $commit_hash -- . ':(exclude)yarn.lock' ':(exclude)_old' | output_to_file
     echo "" | output_to_file
     echo "-----------------------------------------" | output_to_file
 }

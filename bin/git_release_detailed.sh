@@ -61,7 +61,7 @@ log_commit() {
     local commit_hash=$1
     echo "" | output_to_file
     echo "Commit: $commit_hash" | output_to_file
-    git show --pretty=format:"Author: %an%nDate: %ad%nMessage: %s%n%nBody:%n%b" --patch $commit_hash | output_to_file
+    git show --pretty=format:"Author: %an <%ae>%nDate: %ad%nMessage: %s%n%nBody:%n%b" --patch $commit_hash | output_to_file
     echo "" | output_to_file
     echo "-----------------------------------------" | output_to_file
 }
