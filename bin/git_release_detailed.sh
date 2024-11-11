@@ -32,13 +32,13 @@ fi
 
 # Debug: List all tags without sorting first
 info "Debug: Listing all tags (raw)..."
-git tag -l | while read tag; do
+git tag | while read tag; do
     info "  $tag"
 done
 
 # Get all tags sorted by creation date (newest first)
 info "Debug: Getting tags sorted by creation date..."
-mapfile -t all_tags < <(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags/)
+mapfile -t all_tags < <(git tag --sort=-creatordate)
 
 # Debug: Show sorted tags
 info "Debug: Sorted tags:"
