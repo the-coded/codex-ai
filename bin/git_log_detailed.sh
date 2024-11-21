@@ -3,12 +3,16 @@
 mkdir -p .tmp
 last_commit_hash=$(git rev-parse HEAD)
 
+# Define files to exclude from changelog
+# These are typically auto-generated or non-essential for changelog
+EXCLUDE_PATHSPEC=":(exclude)yarn.lock :(exclude)package-lock.json :(exclude)pnpm-lock.yaml :(exclude)*.pyc :(exclude)__pycache__/** :(exclude).env :(exclude)dist/** :(exclude)build/** :(exclude)*.log :(exclude).DS_Store :(exclude)coverage/** :(exclude).nyc_output/** :(exclude)*.min.js :(exclude)*.min.css :(exclude)_old/**"
+
 # Function to log commit details
 log_commit() {
     local commit_hash=$1
     echo ""
     echo "Commit: $commit_hash"
-    git show --pretty=format:"Author: %an%nDate: %ad%nMessage: %s%n%nBody:%n%b" --patch $commit_hash
+    git show --pretty=format:"Author: %an%nDate: %ad%nMessage: %s%n%nBody:%n%b" --patch $commit_hash -- . $EXCLUDE_PATHSPEC
     echo ""
     echo "-----------------------------------------"
 }

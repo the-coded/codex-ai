@@ -12,6 +12,10 @@ info() {
     echo "$1"
 }
 
+# Define files to exclude from changelog
+# These are typically auto-generated or non-essential for changelog
+EXCLUDE_PATHSPEC=":(exclude)yarn.lock :(exclude)package-lock.json :(exclude)pnpm-lock.yaml :(exclude)*.pyc :(exclude)__pycache__/** :(exclude).env :(exclude)dist/** :(exclude)build/** :(exclude)*.log :(exclude).DS_Store :(exclude)coverage/** :(exclude).nyc_output/** :(exclude)*.min.js :(exclude)*.min.css :(exclude)_old/**"
+
 # Check if we're in a git repository
 if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     info "Error: Not in a git repository."
@@ -81,7 +85,7 @@ log_commit() {
     local is_merge=$2
     echo "" | output_to_file
     echo "${is_merge:+Merge }Commit: $commit_hash" | output_to_file
-    git show --pretty=format:"%an <%ae> - %ad%n%s%n%b" --name-status $commit_hash -- . ':(exclude)yarn.lock' ':(exclude)_old' | output_to_file
+    git show --pretty=format:"%an <%ae> - %ad%n%s%n%b" --name-status $commit_hash -- . $EXCLUDE_PATHSPEC | output_to_file
     echo "" | output_to_file
     echo "-----------------------------------------" | output_to_file
 }
@@ -114,8 +118,8 @@ done
 
 # Show a summary of changes between releases
 info "Generating changes summary..."
-if ! git diff --stat ${previous_tag}..${current_tag} -- . ':(exclude)yarn.lock' ':(exclude)_old' | output_to_file; then
-    info "Error generating changes summary between $previous_tag and $current_tag"
+if ! git diff --stat ${previous_tag}..${current_tag} -- . $EXCLUDE_PATHSPEC | output_to_file; then
+    info "Error generating diff between $previous_tag and $current_tag"
 fi
 
 echo "=========================================" | output_to_file

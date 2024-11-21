@@ -12,6 +12,10 @@ info() {
     echo "$1"
 }
 
+# Define files to exclude from changelog
+# These are typically auto-generated or non-essential for changelog
+EXCLUDE_PATHSPEC=":(exclude)yarn.lock :(exclude)package-lock.json :(exclude)pnpm-lock.yaml :(exclude)*.pyc :(exclude)__pycache__/** :(exclude).env :(exclude)dist/** :(exclude)build/** :(exclude)*.log :(exclude).DS_Store :(exclude)coverage/** :(exclude).nyc_output/** :(exclude)*.min.js :(exclude)*.min.css :(exclude)_old/**"
+
 # Check if we're in a git repository
 if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     info "Error: Not in a git repository."
@@ -81,7 +85,7 @@ log_commit() {
     local commit_hash=$1
     echo "" | output_to_file
     echo "Commit: $commit_hash" | output_to_file
-    git show --pretty=format:"Author: %an <%ae>%nDate: %ad%nMessage: %s%n%nBody:%n%b" --patch $commit_hash | output_to_file
+    git show --pretty=format:"Author: %an <%ae>%nDate: %ad%nMessage: %s%n%nBody:%n%b" --patch $commit_hash -- . $EXCLUDE_PATHSPEC | output_to_file
     echo "" | output_to_file
     echo "-----------------------------------------" | output_to_file
 }
@@ -119,7 +123,7 @@ done
 
 # Show the full diff between releases
 info "Generating full diff..."
-if ! git diff ${previous_tag}..${current_tag} | output_to_file; then
+if ! git diff ${previous_tag}..${current_tag} -- . $EXCLUDE_PATHSPEC | output_to_file; then
     info "Error generating diff between $previous_tag and $current_tag"
 fi
 

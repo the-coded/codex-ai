@@ -1,6 +1,11 @@
 #!/bin/bash
 
 mkdir -p .tmp &&
+
+# Define files to exclude from changelog
+# These are typically auto-generated or non-essential for changelog
+EXCLUDE_PATHSPEC=":(exclude)yarn.lock :(exclude)package-lock.json :(exclude)pnpm-lock.yaml :(exclude)*.pyc :(exclude)__pycache__/** :(exclude).env :(exclude)dist/** :(exclude)build/** :(exclude)*.log :(exclude).DS_Store :(exclude)coverage/** :(exclude).nyc_output/** :(exclude)*.min.js :(exclude)*.min.css :(exclude)_old/**"
+
 last_commit_hash=$(git rev-parse HEAD) &&
 
 log_commit() {
@@ -8,7 +13,7 @@ log_commit() {
     local is_merge=$2
     echo ""
     echo "${is_merge:+Merge }Commit: $commit_hash"
-    git show --pretty=format:"%an - %ad%n%s%n%b" --name-status $commit_hash -- . ':(exclude)yarn.lock' ':(exclude)_old'
+    git show --pretty=format:"%an - %ad%n%s%n%b" --name-status $commit_hash -- . $EXCLUDE_PATHSPEC
     echo ""
     echo "-----------------------------------------"
 }
