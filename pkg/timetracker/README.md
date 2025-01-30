@@ -205,17 +205,22 @@ Você pode executar a análise de duas formas:
 
 1. Script único (recomendado):
 ```bash
-node .codex/pkg/timetracker/index.js
+cd .codex/pkg/timetracker
+npm start
 ```
 
 2. Scripts individuais:
 ```bash
+cd .codex/pkg/timetracker
+
 # Análise de mudanças
-node .codex/pkg/timetracker/analyze-git-changes.js
+node analyze-git-changes.js
 
 # Relatório de horas
-node .codex/pkg/timetracker/git-hours-report.js
+node git-hours-report.js
 ```
+
+> **Nota**: Os scripts usam ES Modules, então é necessário ter o `"type": "module"` no package.json ou usar a extensão .mjs.
 
 ### Exemplos de Saída
 

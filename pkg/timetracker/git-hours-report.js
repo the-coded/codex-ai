@@ -1,8 +1,8 @@
-const fs = require('fs');
+import { readFileSync, writeFileSync } from 'fs';
 
 function processGitAnalysis() {
   // Read the analysis data
-  const analysisData = JSON.parse(fs.readFileSync('analyze-git-changes.json', 'utf8'));
+  const analysisData = JSON.parse(readFileSync('analyze-git-changes.json', 'utf8'));
 
   // Group commits by date (YYYY-MM-DD)
   const commitsByDate = new Map();
@@ -168,10 +168,10 @@ try {
   const stats = processGitAnalysis();
 
   // Write JSON report
-  fs.writeFileSync('git-hours-report.json', JSON.stringify(stats, null, 2));
+  writeFileSync('git-hours-report.json', JSON.stringify(stats, null, 2));
 
   // Write Markdown report
-  fs.writeFileSync('git-hours-report.md', generateMarkdown(stats));
+  writeFileSync('git-hours-report.md', generateMarkdown(stats));
 
   console.log('Reports generated successfully!');
   console.log('- git-hours-report.json');

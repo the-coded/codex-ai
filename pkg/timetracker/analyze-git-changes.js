@@ -1,5 +1,5 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
+import { execSync } from 'child_process';
+import { writeFileSync } from 'fs';
 
 // ===== Constants =====
 
@@ -458,10 +458,10 @@ try {
   const commits = getDetailedGitLog();
   
   // Write JSON report
-  fs.writeFileSync('analyze-git-changes.json', JSON.stringify(commits, null, 2));
+  writeFileSync('analyze-git-changes.json', JSON.stringify(commits, null, 2));
   
   // Write Markdown report
-  fs.writeFileSync('analyze-git-changes.md', generateMarkdown(commits));
+  writeFileSync('analyze-git-changes.md', generateMarkdown(commits));
   
   console.log('Analysis completed successfully!');
   console.log('- analyze-git-changes.json');
