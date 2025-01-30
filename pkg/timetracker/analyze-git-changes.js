@@ -1,57 +1,258 @@
 const { execSync } = require('child_process');
 const fs = require('fs');
 
-// Constants for time estimation
-const TIME_FACTORS = {
-  PLANNING: {
-    BASE: {
-      FEATURE: 0.5,    // Base planning time for features
-      FIX: 0.15,       // Base planning time for fixes
-      PUBLISH: 0.1,    // Base planning time for publishes
-      DEFAULT: 0.25    // Base planning time for other changes
-    },
-    COMPLEXITY_MULTIPLIER: {
-      LOW: 1,
-      MEDIUM: 2,
-      HIGH: 3
-    },
-    SIZE_MULTIPLIER: (lines) => {
-      if (lines <= 5) return 0.5;      // Tiny changes
-      if (lines <= 20) return 1;       // Small changes
-      if (lines <= 100) return 1.5;    // Medium changes
-      if (lines <= 500) return 2;      // Large changes
-      return 3;                        // Huge changes
+// ===== Constants =====
+
+// File patterns
+const STRUCTURAL_PATTERNS = [
+  '/components/',
+  '/layouts/',
+  '/pages/',
+  '/views/',
+  '/styles/',
+  '/assets/',
+  '/themes/'
+];
+
+const ALGORITHMIC_PATTERNS = [
+  '/utils/',
+  '/helpers/',
+  '/services/',
+  '/hooks/',
+  '/commands/',
+  '/lib/',
+  '/core/'
+];
+
+// File types
+const STRUCTURAL_FILE_TYPES = ['css', 'scss', 'less', 'html', 'jsx', 'tsx', 'svg'];
+const ALGORITHMIC_FILE_TYPES = ['js', 'ts', 'jsx', 'tsx'];
+
+// Complexity types and levels
+const COMPLEXITY_TYPES = {
+  STRUCTURAL: 'STRUCTURAL',
+  ALGORITHMIC: 'ALGORITHMIC'
+};
+
+const COMPLEXITY_LEVELS = {
+  STRUCTURAL: {
+    TRIVIAL: 0.5,    // Mudanças muito simples
+    BASIC: 0.8,      // Mudanças básicas
+    MODERATE: 1.2,   // Mudanças moderadas
+    COMPLEX: 1.6,    // Mudanças complexas
+    VERY_COMPLEX: 2.0 // Mudanças muito complexas
+  },
+  ALGORITHMIC: {
+    TRIVIAL: 0.5,    // Mudanças muito simples
+    BASIC: 1.0,      // Mudanças básicas
+    MODERATE: 1.5,   // Mudanças moderadas
+    COMPLEX: 2.0,    // Mudanças complexas
+    VERY_COMPLEX: 2.5 // Mudanças muito complexas
+  }
+};
+
+// Commit types and their time multipliers
+const COMMIT_TYPES = {
+  FEATURE: { name: 'FEATURE', multiplier: 1.0 },   // Tempo base
+  FIX: { name: 'FIX', multiplier: 0.5 },          // Metade do tempo
+  PUBLISH: { name: 'PUBLISH', multiplier: 0.1 },   // 10% do tempo
+  MERGE: { name: 'MERGE', multiplier: 0.0 },       // Sem tempo adicional
+  DEFAULT: { name: 'DEFAULT', multiplier: 0.8 }    // 80% do tempo base
+};
+
+// Base times for different file categories
+const FILE_CATEGORIES = {
+  // Logic files (high complexity, more planning)
+  LOGIC: {
+    extensions: ['js', 'ts', 'jsx', 'tsx'],
+    baseTime: {
+      planning: 1.0,     // 1h
+      implementation: 0.04  // ~2.4min por linha
     }
   },
-  IMPLEMENTATION: {
-    PER_LINE: 0.05,  // Base hours per line
-    COMPLEXITY: {
-      LOW: 1,
-      MEDIUM: 1.5,
-      HIGH: 2
+  // Config files (low complexity, quick changes)
+  CONFIG: {
+    extensions: ['json', 'yml', 'yaml', 'lock', 'gitignore', 'npmrc', 'env'],
+    baseTime: {
+      planning: 0.25,    // 15min
+      implementation: 0.01  // ~0.6min por linha
+    }
+  },
+  // Style files (medium complexity, visual focus)
+  STYLE: {
+    extensions: ['css', 'scss', 'sass', 'less', 'stylus'],
+    baseTime: {
+      planning: 0.5,     // 30min
+      implementation: 0.02  // ~1.2min por linha
+    }
+  },
+  // Documentation files (low complexity, text focus)
+  DOCS: {
+    extensions: ['md', 'mdx', 'txt', 'doc', 'docx', 'html'],
+    baseTime: {
+      planning: 0.3,     // 18min
+      implementation: 0.015  // ~0.9min por linha
     }
   }
 };
 
-// Get commit type from message
-function getCommitType(message) {
-  if (message.startsWith('feat:')) return 'FEATURE';
-  if (message.startsWith('fix:')) return 'FIX';
-  if (message.includes('Publish') || message.includes('v0.')) return 'PUBLISH';
-  return 'DEFAULT';
+// Time multipliers
+const PLANNING_BASE = 0.3;           // 30% base
+const PLANNING_NET_WEIGHT = 0.7;     // +70% pelo net ratio
+const PLANNING_DELETION_FACTOR = 0.2; // -80% para deleções
+const DELETION_TIME_FACTOR = 0.1;    // 10% do tempo para deleções
+
+// Get file extension using regex
+function getFileExtension(filename) {
+  // Pega a extensão principal (.ts, .tsx, etc)
+  const baseMatch = filename.match(/\.([a-zA-Z0-9]+)(?:\})?$/);
+  if (!baseMatch) return 'unknown';
+
+  // Checa se tem .stories ou .test antes da extensão
+  const specialMatch = filename.match(/\.(stories|test|spec)\.([a-zA-Z0-9]+)(?:\})?$/);
+  if (specialMatch) {
+    return specialMatch[2]; // Retorna a extensão real (ts/tsx)
+  }
+
+  return baseMatch[1];
 }
 
-// Calculate complexity based on changes
-function calculateComplexity(stats) {
-  const score = (
-    (stats.filesChanged * 0.3) +
-    ((stats.additions + stats.deletions) * 0.5) +
-    (Object.keys(stats.fileTypes).length * 0.2)
-  );
+// Analyze complexity type and level
+function analyzeComplexity(stats) {
+  // Structural indicators
+  const structuralScore = calculateStructuralScore(stats);
+  
+  // Algorithmic indicators
+  const algorithmicScore = calculateAlgorithmicScore(stats);
 
-  if (score > 100) return 'HIGH';
-  if (score > 50) return 'MEDIUM';
-  return 'LOW';
+  // Determine dominant type
+  const type = structuralScore > algorithmicScore 
+    ? COMPLEXITY_TYPES.STRUCTURAL 
+    : COMPLEXITY_TYPES.ALGORITHMIC;
+
+  // Calculate final score based on type
+  const score = type === COMPLEXITY_TYPES.STRUCTURAL 
+    ? structuralScore 
+    : algorithmicScore;
+
+  // Determine level based on score
+  const level = getComplexityLevel(score);
+
+  return { type, level };
+}
+
+function calculateStructuralScore(stats) {
+  let score = 0;
+
+  // Check file patterns
+  stats.files.forEach(file => {
+    if (STRUCTURAL_PATTERNS.some(pattern => file.includes(pattern))) {
+      score += 10;
+    }
+  });
+
+  // Check file types
+  Object.entries(stats.fileTypes).forEach(([type, count]) => {
+    if (STRUCTURAL_FILE_TYPES.includes(type)) {
+      score += count * 5;
+    }
+  });
+
+  // File count impact
+  score += stats.filesChanged * 2;
+
+  // Style changes have high structural impact
+  const styleFiles = stats.files.filter(f => 
+    f.endsWith('.css') || 
+    f.endsWith('.scss') || 
+    f.endsWith('.less')
+  ).length;
+  score += styleFiles * 8;
+
+  return score;
+}
+
+function calculateAlgorithmicScore(stats) {
+  let score = 0;
+
+  // Check file patterns
+  stats.files.forEach(file => {
+    if (ALGORITHMIC_PATTERNS.some(pattern => file.includes(pattern))) {
+      score += 15;
+    }
+  });
+
+  // Check file types
+  Object.entries(stats.fileTypes).forEach(([type, count]) => {
+    if (ALGORITHMIC_FILE_TYPES.includes(type)) {
+      score += count * 8;
+    }
+  });
+
+  // Lines per file (more lines = more algorithmic complexity)
+  // Agora considera adições com peso maior que deleções
+  const avgLinesPerFile = (stats.additions + stats.deletions * 0.10) / stats.filesChanged;
+  score += Math.min(avgLinesPerFile / 10, 20);
+
+  // Deletion ratio (reduzido e limitado)
+  const deletionRatio = stats.deletions / (stats.additions || 1);
+  score += Math.min(deletionRatio, 1.5) * 5; // Máximo de 1.5x e reduzido de 15 para 5
+
+  return score;
+}
+
+function getComplexityLevel(score) {
+  if (score <= 10) return 'TRIVIAL';
+  if (score <= 30) return 'BASIC';
+  if (score <= 60) return 'MODERATE';
+  if (score <= 100) return 'COMPLEX';
+  return 'VERY_COMPLEX';
+}
+
+
+// Get commit type from message
+function getCommitType(message) {
+  // Commits de merge
+  if (message.startsWith('Merge')) return COMMIT_TYPES.MERGE.name;
+  
+  // Commits de feature
+  if (message.startsWith('feat:')) return COMMIT_TYPES.FEATURE.name;
+  if (message.match(/^v?\d+\.\d+\.\d+.*\s+-\s+.*feature/i)) return COMMIT_TYPES.FEATURE.name;
+  if (message.match(/^.*first commit.*mvp/i)) return COMMIT_TYPES.FEATURE.name;
+  
+  // Commits de fix
+  if (message.startsWith('fix:')) return COMMIT_TYPES.FIX.name;
+  if (message.match(/^v?\d+\.\d+\.\d+.*\s+-\s+.*fix/i)) return COMMIT_TYPES.FIX.name;
+  
+  // Commits de release
+  if (message.match(/^release\/v\d+/i)) return COMMIT_TYPES.PUBLISH.name;
+  if (message.match(/^v?\d+\.\d+\.\d+\s*$/)) return COMMIT_TYPES.PUBLISH.name;
+  if (message.match(/^Publish\s+v?\d+\.\d+\.\d+$/)) return COMMIT_TYPES.PUBLISH.name;
+  if (message.match(/^New Release:/i)) return COMMIT_TYPES.PUBLISH.name;
+  
+  // Verificar se versão tem fix/feature
+  if (message.match(/^v?\d+\.\d+\.\d+.*fix/i)) return COMMIT_TYPES.FIX.name;
+  if (message.match(/^v?\d+\.\d+\.\d+.*feat/i)) return COMMIT_TYPES.FEATURE.name;
+  
+  return COMMIT_TYPES.DEFAULT.name;
+}
+
+// Get file category and base time
+function getFileCategory(fileType) {
+  for (const [category, info] of Object.entries(FILE_CATEGORIES)) {
+    if (info.extensions.includes(fileType)) {
+      return {
+        category,
+        baseTime: info.baseTime
+      };
+    }
+  }
+  
+  // Default to LOGIC if unknown
+  return {
+    category: 'LOGIC',
+    baseTime: FILE_CATEGORIES.LOGIC.baseTime
+  };
 }
 
 // Get detailed git log with patches
@@ -68,24 +269,28 @@ function getDetailedGitLog() {
         commits.push(currentCommit);
       }
       const [hash, author, date, message] = line.split('|');
-      currentCommit = {
-        hash,
-        author,
-        date,
-        message,
-        stats: {
-          filesChanged: 0,
-          additions: 0,
-          deletions: 0,
-          fileTypes: {},
-          files: []
-        }
-      };
+      if (author !== 'github-ci') { // Ignore CI commits
+        currentCommit = {
+          hash,
+          author,
+          date,
+          message,
+          stats: {
+            filesChanged: 0,
+            additions: 0,
+            deletions: 0,
+            fileTypes: {},
+            files: []
+          }
+        };
+      } else {
+        currentCommit = null;
+      }
     } else if (line.trim() && currentCommit) {
       // This is a file stat line
       const [additions, deletions, file] = line.split('\t');
       if (file) {
-        const fileType = file.split('.').pop() || 'unknown';
+        const fileType = getFileExtension(file);
         currentCommit.stats.fileTypes[fileType] = (currentCommit.stats.fileTypes[fileType] || 0) + 1;
         currentCommit.stats.filesChanged++;
         currentCommit.stats.files.push(file);
@@ -101,17 +306,52 @@ function getDetailedGitLog() {
 
   return commits.map(commit => {
     const type = getCommitType(commit.message);
-    const complexity = calculateComplexity(commit.stats);
+    const { type: complexityType, level: complexityLevel } = analyzeComplexity(commit.stats);
     
-    // Calculate time estimates
-    const totalLines = commit.stats.additions + commit.stats.deletions;
-    const planningHours = TIME_FACTORS.PLANNING.BASE[type] * 
-      TIME_FACTORS.PLANNING.COMPLEXITY_MULTIPLIER[complexity] *
-      TIME_FACTORS.PLANNING.SIZE_MULTIPLIER(totalLines);
+    // Calculate weighted time based on file categories
+    let totalPlanningHours = 0;
+    let totalImplementationHours = 0;
     
-    const implementationHours = totalLines * 
-      TIME_FACTORS.IMPLEMENTATION.PER_LINE * 
-      TIME_FACTORS.IMPLEMENTATION.COMPLEXITY[complexity];
+    Object.entries(commit.stats.fileTypes).forEach(([fileType, count]) => {
+      const { baseTime } = getFileCategory(fileType);
+      const typeRatio = count / commit.stats.filesChanged;
+      
+      // Separar adições e deleções
+      const addedLines = commit.stats.additions * typeRatio;
+      const deletedLines = commit.stats.deletions * typeRatio;
+      const totalLines = addedLines + deletedLines;
+      
+      // Get complexity multiplier based on type and level
+      const complexityMultiplier = COMPLEXITY_LEVELS[complexityType][complexityLevel];
+      
+      // Calculate net ratio para planning
+      const netRatio = totalLines > 0 
+        ? Math.max(0, (commit.stats.additions - commit.stats.deletions)) / totalLines
+        : 0;
+      
+      // Planning multiplier base + net ratio weight
+      let planningMultiplier = PLANNING_BASE + (netRatio * PLANNING_NET_WEIGHT);
+      
+      // Reduz ainda mais se for mais deleção que adição
+      if (commit.stats.deletions > commit.stats.additions) {
+        planningMultiplier *= PLANNING_DELETION_FACTOR;
+      }
+      
+      // Get commit type multiplier
+      const typeMultiplier = COMMIT_TYPES[type].multiplier;
+      
+      // Calculate hours for this file type
+      totalPlanningHours += baseTime.planning * 
+        complexityMultiplier *
+        typeRatio *
+        planningMultiplier *
+        typeMultiplier;
+      
+      // Adições têm peso total, deleções têm peso reduzido
+      totalImplementationHours += 
+        (addedLines * baseTime.implementation * complexityMultiplier * typeMultiplier) +
+        (deletedLines * baseTime.implementation * complexityMultiplier * DELETION_TIME_FACTOR * typeMultiplier);
+    });
 
     return {
       hash: commit.hash,
@@ -119,12 +359,13 @@ function getDetailedGitLog() {
       date: commit.date,
       message: commit.message,
       type,
-      complexity,
+      complexityType,
+      complexityLevel,
       stats: commit.stats,
       timeEstimates: {
-        planning: planningHours,
-        implementation: implementationHours,
-        total: planningHours + implementationHours
+        planning: totalPlanningHours,
+        implementation: totalImplementationHours,
+        total: totalPlanningHours + totalImplementationHours
       }
     };
   });
@@ -144,7 +385,8 @@ function generateMarkdown(commits) {
   }, { filesChanged: 0, additions: 0, deletions: 0, totalHours: 0 });
 
   const complexityCount = commits.reduce((acc, commit) => {
-    acc[commit.complexity] = (acc[commit.complexity] || 0) + 1;
+    const key = `${commit.complexityType}/${commit.complexityLevel}`;
+    acc[key] = (acc[key] || 0) + 1;
     return acc;
   }, {});
 
@@ -159,8 +401,9 @@ function generateMarkdown(commits) {
   markdown += '## Commits Detail\n\n';
   commits.forEach(commit => {
     markdown += `### ${commit.hash} - ${commit.date} - ${commit.message}\n`;
+    markdown += `- **Author**: ${commit.author}\n`;
     markdown += `- **Type**: ${commit.type}\n`;
-    markdown += `- **Complexity**: ${commit.complexity}\n`;
+    markdown += `- **Complexity**: ${commit.complexityType}/${commit.complexityLevel}\n`;
     markdown += '- **Changes**:\n';
     markdown += `  * Files: ${commit.stats.filesChanged}\n`;
     markdown += `  * Added: ${commit.stats.additions} lines\n`;
@@ -180,7 +423,7 @@ function generateMarkdown(commits) {
   markdown += '## Complexity Analysis\n';
   Object.entries(complexityCount).forEach(([complexity, count]) => {
     const percentage = ((count / commits.length) * 100).toFixed(1);
-    markdown += `- ${complexity} Complexity Changes: ${percentage}% (${count} commits)\n`;
+    markdown += `- ${complexity}: ${percentage}% (${count} commits)\n`;
   });
   markdown += '\n';
 
