@@ -43,6 +43,11 @@ Codex is more than just a documentation library; it is a **strategic knowledge r
 For detailed technical documentation:
 - **📦 [Packages Documentation](pkg/README.md)**: Documentation for reusable packages and automation modules
 - **🛠️ [Utilities Documentation](utils/README.md)**: Documentation for common utilities and helper functions
+- **🛠️ [Scripts Documentation](bin/README.md)**: Documentation for bash scripts and automation tools
+- **🔄 [Shared Scripts Documentation](shared/README.md)**: Documentation for shared scripts and dependencies
+- **💻 [Local Development Guide](docs/local-development.md)**: How to use Codex locally for development and testing
+- **🔄 [Pipeline Execution Guide](docs/pipeline-execution.md)**: How to integrate Codex with CI/CD pipelines
+- **🤖 [Aider Integration Guide](docs/aider-integration.md)**: How to use aider-chat with Codex for AI-powered development
 
 ## 🚀 Installation
 
