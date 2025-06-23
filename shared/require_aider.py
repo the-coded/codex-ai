@@ -2,7 +2,7 @@
 Aider requirement checker and installer.
 
 This script checks if aider-chat is installed in the current virtual environment
-and installs version 0.60.0 if it's not present.
+and installs version 0.84.0 if it's not present.
 
 Usage:
     python -m shared.require_aider
@@ -29,11 +29,11 @@ def is_package_installed(package_name: str) -> bool:
 
 def install_aider():
     """
-    Install aider-chat version 0.60.0 using pip.
+    Install aider-chat version 0.84.0 using pip.
     """
     try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "aider-chat==0.60.0"])
-        print("✅ Successfully installed aider-chat 0.60.0")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "aider-chat==0.84.0"])
+        print("✅ Successfully installed aider-chat 0.84.0")
     except subprocess.CalledProcessError as e:
         print(f"❌ Error installing aider-chat: {e}")
         sys.exit(1)
@@ -46,7 +46,7 @@ def main():
     if is_package_installed("aider-chat"):
         print("✅ aider-chat is already installed")
     else:
-        print("📦 Installing aider-chat 0.60.0...")
+        print("📦 Installing aider-chat 0.84.0...")
         install_aider()
 
 if __name__ == "__main__":
