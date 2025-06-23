@@ -1,83 +1,320 @@
-<div align="center">
+# 🤖 Codex-AI
 
-# 📚 Codex
+> AI-powered development toolkit for intelligent changelog generation, time tracking, and code analysis.
 
-<img src="assets/codex.png" alt="Codex Logo" width="50%">  
+[![PyPI version](https://badge.fury.io/py/codex-ai.svg)](https://pypi.org/project/codex-ai/)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-</div>
+## 🚀 Quick Start
 
-## 🔭 Overview
+```bash
+# Install from PyPI
+pip install codex-ai
 
-**Codex** is a centralized repository that serves as the core hub of documentation generation, automation, and AI integration across multiple projects and pipelines. Inspired by ancient codices—volumes of knowledge meticulously compiled and preserved—Codex is designed to be the modern evolution of a knowledge base, bringing together essential documentation, automation patterns, and AI-driven workflows in one organized platform.
+# Initialize configuration
+codex-ai init
 
-Just as ancient codices preserved humanity's knowledge through generations, our Codex aims to preserve and evolve development knowledge through AI-powered automation and standardization.
+# Generate AI-powered changelog
+codex-ai changelog
 
-## 📋 Table of Contents
-- [🔭 Overview](#-overview)
-- [🌟 Introduction](#-introduction)
-- [🎯 Features](#-features)
-- [📖 Technical Documentation](#-technical-documentation)
-- [🚀 Installation](#-installation)
-- [💡 Use Cases](#-use-cases)
-- [🤝 Contributing](#-contributing)
+# Analyze development time
+codex-ai timetrack --report
 
-## 🌟 Introduction
+# Generate uidocs documentation (auto-detects types)
+codex-ai uidocs
+```
 
-Codex is more than just a documentation library; it is a **strategic knowledge repository** that simplifies automation, optimizes workflows, and unifies documentation solutions in a single, accessible hub. With Codex, you can manage everything from documentation pipelines to AI integrations, all within a centralized framework that supports complex project environments.
+## ✨ Features
 
-### ✨ Key Highlights:
-- **🏛️ Centralized Hub**: Generate, store, organize, and access documentation, configurations, and automation scripts in one place.
-- **🤖 AI Integration**: Leverages AI (like Claude, GPT) within pipelines to execute stored functions, making documentation generation and workflow execution more dynamic and automated.
-- **🔄 Versatility**: Compatible with various languages, frameworks, and pipelines, making it a universal tool for documentation across different projects.
+- **📝 Smart Changelogs**: AI-generated from Git history using Claude models
+- **⏱️ Time Tracking**: Intelligent commit time analysis with complexity factors
+- **📚 Documentation**: Auto-generate docs for React, Sass, and Storybook
+- **📊 Code Analysis**: Project insights, Git analysis, and complexity metrics
+- **🔧 Flexible Configuration**: Environment variables, config files, and CLI options
+- **🎯 AI Model Fallbacks**: Automatic fallback from Claude-4 → 3.7 → 3.5
 
-## 🎯 Features
+## 📦 Installation
 
-- **📚 Unified Repository**: Centralizes documentation management, providing easy access to reusable components.
-- **⚡ Automated Pipelines**: Integrates automation scripts that can be triggered or adapted for specific documentation workflows.
-- **🤖 AI Execution**: Executes functions stored within the Codex using AI, allowing for dynamic documentation generation.
-- **🌐 Multi-Language Support**: Supports Python, JavaScript, TypeScript, and other popular languages for comprehensive documentation.
-- **📈 Scalability**: Designed to scale with growing codebases and evolving documentation requirements.
+### From PyPI (Recommended)
+```bash
+pip install codex-ai
+```
 
-## 📖 Technical Documentation
+### From Source (Development)
+```bash
+git clone https://github.com/the-coded/codex-ai.git
+cd codex-ai
+pip install -e .
+```
 
-For detailed technical documentation:
-- **📦 [Packages Documentation](pkg/README.md)**: Documentation for reusable packages and automation modules
-- **🛠️ [Utilities Documentation](utils/README.md)**: Documentation for common utilities and helper functions
-- **🛠️ [Scripts Documentation](bin/README.md)**: Documentation for bash scripts and automation tools
-- **🔄 [Shared Scripts Documentation](shared/README.md)**: Documentation for shared scripts and dependencies
-- **💻 [Local Development Guide](docs/local-development.md)**: How to use Codex locally for development and testing
-- **🔄 [Pipeline Execution Guide](docs/pipeline-execution.md)**: How to integrate Codex with CI/CD pipelines
-- **🤖 [Aider Integration Guide](docs/aider-integration.md)**: How to use aider-chat with Codex for AI-powered development
+### Development Dependencies
+```bash
+pip install -r requirements-dev.txt
+```
 
-## 🚀 Installation
+## ⚙️ Configuration
 
-To install Codex, use the following steps:
+### 1. Initialize Configuration Files
+```bash
+codex-ai init
+```
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/your-org/codex.git
-    ```
-2. Navigate to the Codex directory:
-    ```bash
-    cd codex
-    ```
+This creates:
+- `.env` - Environment variables
+- `codex.config.yaml` - Configuration file
 
-## 💡 Use Cases
+### 2. Set API Key
+Edit `.env` file:
+```bash
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
 
-Codex can be used across various documentation scenarios:
-- **🔄 Documentation Pipeline Automation**: Automate documentation generation, review, and deployment pipelines using Codex's intelligent workflow integrations.
-- **📚 Centralized Documentation Management**: Generate, store, and manage documentation in one place.
-- **🤖 AI-Driven Documentation**: Leverage Codex's ability to run AI-enhanced functions (using tools like Claude, GPT) as part of your documentation automation pipelines.
-- **📈 Knowledge Evolution**: Continuously improve documentation through AI analysis and suggestions.
+### 3. Customize Settings (Optional)
+Edit `codex.config.yaml`:
+```yaml
+ai:
+  default_model: claude_4_sonnet
+  fallback_models:
+    - claude_3_7_sonnet
+    - claude_3_5_sonnet
+  max_tokens: 180000
+
+output:
+  default_format: markdown
+  directory: .tmp
+  verbose: false
+```
+
+## 🎯 Usage
+
+### 📝 Changelog Generation
+```bash
+# Basic changelog
+codex-ai changelog
+
+# Custom output file
+codex-ai changelog --output CHANGELOG.md
+
+# Since specific date or tag
+codex-ai changelog --since "2024-01-01"
+codex-ai changelog --since "v1.0.0"
+
+# Dry run (preview only)
+codex-ai changelog --dry-run
+
+# Custom AI model
+codex-ai changelog --model claude_3_7_sonnet
+```
+
+### ⏱️ Time Tracking
+```bash
+# Basic time analysis
+codex-ai timetrack
+
+# Generate detailed report
+codex-ai timetrack --report
+
+# Filter by author
+codex-ai timetrack --author "John Doe" --report
+
+# Date range analysis
+codex-ai timetrack --since "2024-01-01" --until "2024-12-31"
+
+# Different output formats
+codex-ai timetrack --report --format json
+codex-ai timetrack --report --format html
+codex-ai timetrack --report --format csv
+```
+
+### 📚 uidocs Documentation Generation
+```bash
+# Generate documentation (automatically detects React, Sass, Storybook)
+codex-ai uidocs
+
+# Custom project structure JSON file
+codex-ai uidocs --json-path ./custom-structure.json
+
+# Custom output directory
+codex-ai uidocs --output-dir ./documentation
+
+# Preview what would be generated
+codex-ai uidocs --dry-run
+
+# Custom AI model
+codex-ai uidocs --model claude_3_7_sonnet
+```
+
+### 📊 Project Analysis
+```bash
+# Git analysis
+codex-ai analyze --git
+
+# Project structure analysis
+codex-ai analyze --project
+
+# Code complexity analysis
+codex-ai analyze --complexity
+
+# Combined analysis with custom output
+codex-ai analyze --git --project --complexity --output analysis.json
+```
+
+## 🔧 Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ANTHROPIC_API_KEY` | Anthropic API key (required) | - |
+| `CODEX_DEFAULT_MODEL` | Default AI model | `claude_4_sonnet` |
+| `CODEX_OUTPUT_FORMAT` | Default output format | `markdown` |
+| `CODEX_OUTPUT_DIR` | Default output directory | `.tmp` |
+| `CODEX_VERBOSE` | Enable verbose output | `false` |
+
+## 🤖 AI Models
+
+Codex-AI uses a smart fallback strategy:
+
+1. **🥇 Claude-4 Sonnet** (1M tokens) - Primary choice for complex tasks
+2. **🥈 Claude-3.7 Sonnet** (500K tokens) - Fallback for medium tasks  
+3. **🥉 Claude-3.5 Sonnet** (200K tokens) - Fallback for simple tasks
+
+The system automatically selects the appropriate model based on:
+- Token count of the input
+- Model availability
+- Configuration preferences
+
+## 📁 Project Structure
+
+```
+codex-ai/
+├── commands/           # CLI command implementations
+├── core/              # Core business logic
+│   ├── git/          # Git operations and analysis
+│   ├── time/         # Time tracking algorithms
+│   ├── ai/           # AI model integration
+│   └── uidocs/        # uidocs documentation (React, Sass, Storybook)
+├── constants/         # Configuration constants
+├── utils/            # Utility functions
+├── formatters/       # Output formatting
+├── templates/        # Markdown templates and prompts
+├── cli.py           # Main CLI interface
+├── config.py        # Configuration management
+└── setup.py         # Package configuration
+```
+
+## 🔄 Migration from Legacy Version
+
+If you're migrating from the old shell script version:
+
+1. **Install Codex-AI**: `pip install codex-ai`
+2. **Initialize**: `codex-ai init`
+3. **Set API Key**: Edit `.env` file
+4. **Replace Commands**:
+   - `./bin/changelog.sh` → `codex-ai changelog`
+   - `./pkg/timetracker/` → `codex-ai timetrack`
+   - `./pkg/uidocs/` → `codex-ai docs`
+
+## 🧪 Development
+
+### Setup Development Environment
+```bash
+git clone https://github.com/the-coded/codex-ai.git
+cd codex-ai
+pip install -r requirements-dev.txt
+pip install -e .
+```
+
+### Local Development & Testing
+📖 **[Local Development Guide](docs/local-developing.md)** - Complete guide for:
+- Installing in development mode (`pip install -e .`)
+- Verifying installation type (local vs PyPI)
+- Development workflow and testing commands
+- Troubleshooting common issues
+
+### Run Tests
+```bash
+pytest
+```
+
+### Code Quality
+```bash
+black .
+isort .
+mypy .
+flake8 .
+```
+
+## 📋 Examples
+
+### Complete Workflow Example
+```bash
+# 1. Setup
+pip install codex-ai
+codex-ai init
+# Edit .env with your ANTHROPIC_API_KEY
+
+# 2. Generate changelog for release
+codex-ai changelog --since "v1.0.0" --output CHANGELOG.md
+
+# 3. Analyze development time for sprint
+codex-ai timetrack --since "2024-01-01" --report --format html
+
+# 4. Generate documentation
+codex-ai docs --type react --output-dir ./docs
+
+# 5. Project analysis for review
+codex-ai analyze --git --complexity --output analysis.json
+```
+
+### Pipeline Integration (GitHub Actions)
+```yaml
+name: Generate Documentation
+on: [push]
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install codex-ai
+      - run: codex-ai changelog --output CHANGELOG.md
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - run: codex-ai docs --type react
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+```
 
 ## 🤝 Contributing
 
-We welcome contributions to Codex! To contribute:
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes with clear messages.
-4. Submit a pull request to the main branch.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Run quality checks
+6. Submit a pull request
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- **Issues**: [GitHub Issues](https://github.com/the-coded/codex-ai/issues)
+- **Documentation**: [README](https://github.com/the-coded/codex-ai#readme)
+- **Email**: gabriel@laplanta.com.br
+
+## 🏷️ Version History
+
+- **1.0.0** - Initial release with full feature parity
+  - AI-powered changelog generation
+  - Time tracking analysis
+  - Documentation generation (React, Sass, Storybook)
+  - Project analysis tools
+  - Complete CLI interface
 
 ---
 
-Made with ❤️ by the-coded - Frontend Team
+**Made with ❤️ by [laplanta](https://laplanta.com.br)**
