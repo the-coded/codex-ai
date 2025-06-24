@@ -94,6 +94,88 @@ class GitLogAnalyzer:
         """Get hash of the last commit (HEAD)."""
         return self._run_git_command(["git", "rev-parse", "HEAD"])
     
+    def get_commit_count(self, since_commit: Optional[str] = None, branch: Optional[str] = None) -> int:
+        """
+        Get count of commits in range.
+        
+        Args:
+            since_commit: Start commit/tag/date (exclusive)
+            branch: Branch to analyze (default: current)
+            
+        Returns:
+            Number of commits
+        """
+        try:
+            cmd = ["git", "rev-list", "--count"]
+            
+            if since_commit:
+                if branch:
+                    cmd.append(f"{since_commit}..{branch}")
+                else:
+                    cmd.append(f"{since_commit}..HEAD")
+            else:
+                if branch:
+                    cmd.append(branch)
+                else:
+                    cmd.append("HEAD")
+            
+            count_output = self._run_git_command(cmd)
+            return int(count_output.strip())
+        except (RuntimeError, ValueError):
+            return 0
+    
+    def generate_detailed_log(self, output_file: str, since_commit: Optional[str] = None, branch: Optional[str] = None) -> bool:
+        """
+        Generate detailed git log to file.
+        
+        Args:
+            output_file: Output file path
+            since_commit: Start commit/tag/date (exclusive)
+            branch: Branch to analyze (default: current)
+            
+        Returns:
+            True if successful
+        """
+        try:
+            commits = self.analyze_commit_range(since_commit, branch, 'detailed')
+            
+            output_lines = []
+            for commit in commits:
+                output_lines.append(self.format_commit_output(commit, 'detailed'))
+            
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write('\n'.join(output_lines))
+            
+            return True
+        except Exception:
+            return False
+    
+    def generate_simple_log(self, output_file: str, since_commit: Optional[str] = None, branch: Optional[str] = None) -> bool:
+        """
+        Generate simple git log to file.
+        
+        Args:
+            output_file: Output file path
+            since_commit: Start commit/tag/date (exclusive)
+            branch: Branch to analyze (default: current)
+            
+        Returns:
+            True if successful
+        """
+        try:
+            commits = self.analyze_commit_range(since_commit, branch, 'simple')
+            
+            output_lines = []
+            for commit in commits:
+                output_lines.append(self.format_commit_output(commit, 'simple'))
+            
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write('\n'.join(output_lines))
+            
+            return True
+        except Exception:
+            return False
+    
     def is_merge_commit(self, commit_hash: str) -> bool:
         """
         Check if a commit is a merge commit.
@@ -198,8 +280,18 @@ class GitLogAnalyzer:
             until = "HEAD"
         
         if since is None:
-            # Just analyze the last commit
-            return [self.analyze_last_commit(mode)]
+            # Get all commits from the beginning
+            try:
+                commits_output = self._run_git_command([
+                    "git", "rev-list", "--reverse", until
+                ])
+                if not commits_output:
+                    return []
+                
+                commit_hashes = commits_output.split('\n')
+                return [self._analyze_commit(commit, mode) for commit in commit_hashes]
+            except RuntimeError:
+                return []
         
         # Get commits in range
         range_spec = f"{since}..{until}"

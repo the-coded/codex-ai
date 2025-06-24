@@ -93,12 +93,12 @@
   - [x] `calculator.py` (port do analyze-git-changes.js) ✅
   - [x] `report_generator.py` (port do git-hours-report.js) ✅
   - [x] Convenience functions (port do index.js) ✅
-- [ ] `core/ai/`
-  - [ ] `__init__.py`
-  - [ ] `model_selector.py`
-  - [ ] `aider_interface.py`
-  - [ ] `token_manager.py`
-  - [ ] `prompt_processor.py`
+- [x] `core/ai/` ✅
+  - [x] `__init__.py` ✅
+  - [x] `model_selector.py` ✅
+  - [x] `aider_interface.py` ✅
+  - [x] `token_manager.py` ✅
+  - [x] `prompt_processor.py` ✅
 - [ ] `core/uidocs/`
   - [ ] `__init__.py`
   - [ ] `sources.py` (LocalSource, PipelineSource, AllFilesSource)
@@ -177,11 +177,11 @@
 ## 📝 **FASE 4: Templates e AI Integration**
 
 ### 4.1 Markdown Templates
-- [ ] `templates/prompts/`
-  - [ ] `changelog_prompt.md`
-  - [ ] `uidocs_react_prompt.md`
-  - [ ] `uidocs_sass_prompt.md`
-  - [ ] `uidocs_storybook_prompt.md`
+- [x] `templates/prompts/` ✅
+  - [x] `changelog_prompt.md` ✅
+  - [x] `uidocs_react_prompt.md` ✅
+  - [x] `uidocs_sass_prompt.md` ✅
+  - [x] `uidocs_storybook_prompt.md` ✅
   - [ ] `analysis_prompt.md`
 - [ ] `templates/outputs/`
   - [ ] `changelog_template.md`
@@ -330,7 +330,7 @@
 ---
 
 *Updated: 2025-01-24*  
-*Progress: Fase 1 (100%) + Fase 2 (50%) + Fase 3 (55%) = ~52/100+ tasks completed (52%)*
+*Progress: Fase 1 (100%) + Fase 2 (70%) + Fase 3 (55%) = ~60/100+ tasks completed (60%)*
 
 **🧹 LIMPEZA CONCLUÍDA:**
 - ✅ Removidas todas as referências obsoletas ao comando `analyze`

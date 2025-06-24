@@ -16,18 +16,13 @@ from typing import Dict, List, Optional, Any
 AI_MODELS = {
     "CLAUDE_4_SONNET": {
         "name": "anthropic/claude-4-sonnet-20250514",
-        "max_tokens": 1000000,  # 1M tokens
-        "priority": 1           # First choice
+        "max_tokens": 200000,   # 200K context window (confirmed by Anthropic docs)
+        "priority": 1           # Default choice
     },
     "CLAUDE_3_7_SONNET": {
         "name": "anthropic/claude-3-7-sonnet-latest", 
-        "max_tokens": 500000,   # 500K tokens
-        "priority": 2           # Fallback 1
-    },
-    "CLAUDE_3_5_SONNET": {
-        "name": "anthropic/claude-3-5-sonnet-latest",
-        "max_tokens": 200000,   # 200K tokens
-        "priority": 3           # Fallback 2
+        "max_tokens": 200000,   # 200K context window (confirmed by Anthropic docs)
+        "priority": 2           # Fallback only
     }
 }
 

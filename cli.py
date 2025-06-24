@@ -164,6 +164,7 @@ Configuration:
     changelog_parser.add_argument(
         '--model',
         type=str,
+        choices=['claude_4_sonnet', 'claude_3_7_sonnet', 'claude_3_5_sonnet'],
         help='AI model to use (overrides config)'
     )
     changelog_parser.add_argument(
@@ -300,7 +301,22 @@ def run_changelog_command(args, config: CodexConfig) -> int:
     try:
         # Import here to avoid circular imports
         from commands.changelog import run_changelog
-        return run_changelog(args, config)
+        
+        # Set defaults from config
+        output_file = args.output or ".tmp/changelog.md"
+        verbose = config.get_verbose(cli_value=args.verbose)
+        
+        # Only pass model_name if explicitly specified by user
+        # Let changelog auto-select if not specified
+        success = run_changelog(
+            output_file=output_file,
+            since_commit=args.since,
+            model_name=args.model,  # None if not specified
+            verbose=verbose
+        )
+        
+        return 0 if success else 1
+        
     except ImportError as e:
         print(f"❌ Changelog command not yet implemented: {e}")
         print("🚧 This feature is under development")
