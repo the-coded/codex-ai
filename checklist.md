@@ -2,8 +2,8 @@
 
 ## 📊 Progress Overview
 - [x] **Fase 1**: Setup e Migração (100%) ✅
-- [ ] **Fase 2**: Core Implementation (30%) 🔄
-- [ ] **Fase 3**: Commands Implementation (25%) 🔄
+- [ ] **Fase 2**: Core Implementation (50%) 🔄
+- [ ] **Fase 3**: Commands Implementation (40%) 🔄
 - [ ] **Fase 4**: Templates e AI Integration (0%)
 - [ ] **Fase 5**: Testing e Validation (0%)
 - [x] **Fase 6**: Documentation e Cleanup (80%) ✅
@@ -88,12 +88,11 @@
   - [x] `tree_generator.py` (port de bin/tree_*.sh) ✅
   - [x] `commit_parser.py` ✅
   - [x] `changes_tracker.py` ✅
-- [ ] `core/timetracker/`
-  - [ ] `__init__.py`
-  - [ ] `calculator.py` (port do JS timetracker)
-  - [ ] `complexity_analyzer.py` (port do JS)
-  - [ ] `report_generator.py` (port do JS)
-  - [ ] `algorithms.py`
+- [x] `core/timetracker/` ✅
+  - [x] `__init__.py` ✅
+  - [x] `calculator.py` (port do analyze-git-changes.js) ✅
+  - [x] `report_generator.py` (port do git-hours-report.js) ✅
+  - [x] Convenience functions (port do index.js) ✅
 - [ ] `core/ai/`
   - [ ] `__init__.py`
   - [ ] `model_selector.py`
@@ -149,11 +148,13 @@
   - [ ] AI model selection
   - [ ] Aider integration
   - [ ] Output generation
-- [ ] `commands/timetrack.py`
-  - [ ] Commit analysis (port do JS)
-  - [ ] Time calculation
-  - [ ] Report generation
-  - [ ] Multiple output formats
+- [x] `commands/timetrack.py` ✅
+  - [x] Commit analysis (port do JS) ✅
+  - [x] Time calculation ✅
+  - [x] Report generation ✅
+  - [x] Multiple output formats (JSON, Markdown, CSV, HTML) ✅
+  - [x] Filtering (author, date range) ✅
+  - [x] CLI integration ✅
 - [ ] `commands/uidocs.py`
   - [ ] Mode detection (local vs pipeline vs auto)
   - [ ] Local mode: staged/modified files detection
@@ -324,5 +325,5 @@
 
 ---
 
-*Updated: 2025-01-23*  
-*Progress: Fase 1 (100%) + Fase 2 (20%) + Fase 3 (10%) = ~25/100+ tasks completed (25%)*
+*Updated: 2025-01-24*  
+*Progress: Fase 1 (100%) + Fase 2 (50%) + Fase 3 (40%) = ~45/100+ tasks completed (45%)*

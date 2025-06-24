@@ -177,37 +177,44 @@ Configuration:
         'timetrack',
         help='Analyze development time from Git commits'
     )
-    timetrack_parser.add_argument(
-        '--report',
-        action='store_true',
-        help='Generate detailed report'
-    )
-    timetrack_parser.add_argument(
-        '--format',
-        choices=['json', 'markdown', 'html', 'csv'],
-        default='markdown',
-        help='Report format (default: markdown)'
-    )
-    timetrack_parser.add_argument(
-        '--author',
-        type=str,
-        help='Filter commits by author'
-    )
-    timetrack_parser.add_argument(
-        '--since',
-        type=str,
-        help='Analyze commits since date (YYYY-MM-DD)'
-    )
-    timetrack_parser.add_argument(
-        '--until',
-        type=str,
-        help='Analyze commits until date (YYYY-MM-DD)'
-    )
-    timetrack_parser.add_argument(
-        '--output', '-o',
-        type=str,
-        help='Output file path'
-    )
+    
+    # Import and add timetrack arguments
+    try:
+        from commands.timetrack import add_timetrack_arguments
+        add_timetrack_arguments(timetrack_parser)
+    except ImportError:
+        # Fallback to basic arguments if import fails
+        timetrack_parser.add_argument(
+            '--report',
+            action='store_true',
+            help='Generate detailed time tracking report'
+        )
+        timetrack_parser.add_argument(
+            '--format',
+            choices=['json', 'markdown', 'csv', 'html'],
+            default='markdown',
+            help='Output format for reports (default: markdown)'
+        )
+        timetrack_parser.add_argument(
+            '--author',
+            type=str,
+            help='Filter commits by author name (partial match)'
+        )
+        timetrack_parser.add_argument(
+            '--since',
+            type=str,
+            help='Filter commits since date (YYYY-MM-DD format)'
+        )
+        timetrack_parser.add_argument(
+            '--until',
+            type=str,
+            help='Filter commits until date (YYYY-MM-DD format)'
+        )
+        timetrack_parser.add_argument(
+            '--output', '-o',
+            type=str,
+            help='Save report to file (format auto-detected from extension)'
+        )
     
     # uidocs command (intelligent documentation generation)
     uidocs_parser = subparsers.add_parser(
