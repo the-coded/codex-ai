@@ -69,85 +69,91 @@ def run_changelog(
         # Get effective token limit with safety margin
         token_limit = get_effective_token_limit("CLAUDE_4_SONNET")
         
-        # Generate git log and check if it fits
-        with tempfile.TemporaryDirectory() as temp_dir:
-            log_file = os.path.join(temp_dir, "git_log.txt")
-            
-            # Try detailed first
+        # Generate git log using .tmp/ directly (like old system that worked)
+        os.makedirs(".tmp", exist_ok=True)
+        log_file = ".tmp/git_log.txt"
+        
+        # Clean any existing output file to avoid conflicts
+        if os.path.exists(output_file):
+            os.remove(output_file)
             if verbose:
-                print("📋 Generating detailed git log...")
+                print(f"🗑️ Cleaned existing output file: {output_file}")
+        
+        # Try detailed first
+        if verbose:
+            print("📋 Generating detailed git log...")
+        
+        success = git_analyzer.generate_detailed_log(log_file, since_commit, branch)
+        if not success:
+            print("❌ Failed to generate git log")
+            return False
+        
+        # Count tokens using our utility
+        with open(log_file, 'r') as f:
+            log_content = f.read()
+        tokens = count_tokens(log_content)
+        
+        if verbose:
+            print(f"📊 Detailed log tokens: {tokens:,}")
+        
+        # Check if detailed log fits in model
+        if tokens > token_limit:
+            if verbose:
+                print(f"⚠️ Detailed log too large ({tokens:,} tokens), trying simple...")
             
-            success = git_analyzer.generate_detailed_log(log_file, since_commit, branch)
+            # Try simple log
+            success = git_analyzer.generate_simple_log(log_file, since_commit, branch)
             if not success:
-                print("❌ Failed to generate git log")
+                print("❌ Failed to generate simple git log")
                 return False
             
-            # Count tokens using our utility
             with open(log_file, 'r') as f:
                 log_content = f.read()
             tokens = count_tokens(log_content)
             
             if verbose:
-                print(f"📊 Detailed log tokens: {tokens:,}")
+                print(f"📊 Simple log tokens: {tokens:,}")
             
-            # Check if detailed log fits in model
             if tokens > token_limit:
-                if verbose:
-                    print(f"⚠️ Detailed log too large ({tokens:,} tokens), trying simple...")
-                
-                # Try simple log
-                success = git_analyzer.generate_simple_log(log_file, since_commit, branch)
-                if not success:
-                    print("❌ Failed to generate simple git log")
-                    return False
-                
-                with open(log_file, 'r') as f:
-                    log_content = f.read()
-                tokens = count_tokens(log_content)
-                
-                if verbose:
-                    print(f"📊 Simple log tokens: {tokens:,}")
-                
-                if tokens > token_limit:
-                    print(f"❌ Even simple log too large ({tokens:,} tokens)")
-                    return False
-            
-            # Create prompt file in temp directory too
-            prompt_file = os.path.join(temp_dir, "prompt.md")
-            prompt_content = get_changelog_prompt()
-            
-            with open(prompt_file, 'w') as f:
-                f.write(prompt_content)
-            
-            if verbose:
-                print("🤖 Running AI generation...")
-                print(f"📁 Working directory: {os.getcwd()}")
-                print(f"📄 Log file path: {log_file}")
-                print(f"📄 Prompt file path: {prompt_file}")
-                print(f"📄 Output file path: {output_file}")
-                print(f"📄 Log file exists: {os.path.exists(log_file)}")
-                print(f"📄 Prompt file exists: {os.path.exists(prompt_file)}")
-            
-            # Run Aider for changelog generation
-            result = run_changelog_generation(
-                model=model,
-                log_file=log_file,
-                prompt_file=prompt_file,
-                output_file=output_file
-            )
-            
-            if result.success:
-                if verbose:
-                    print(f"✅ Changelog generated successfully: {output_file}")
-                    if result.output:
-                        print("📄 AI Output:")
-                        print(result.output)
-                return True
-            else:
-                print(f"❌ Failed to generate changelog: {result.error}")
-                if verbose and result.command:
-                    print(f"🔧 Command: {result.command}")
+                print(f"❌ Even simple log too large ({tokens:,} tokens)")
                 return False
+        
+        # Create prompt file in .tmp/ too (like old system)
+        prompt_file = ".tmp/prompt.md"
+        prompt_content = get_changelog_prompt()
+        
+        with open(prompt_file, 'w') as f:
+            f.write(prompt_content)
+        
+        if verbose:
+            print("🤖 Running AI generation...")
+            print(f"📁 Working directory: {os.getcwd()}")
+            print(f"📄 Log file path: {log_file}")
+            print(f"📄 Prompt file path: {prompt_file}")
+            print(f"📄 Output file path: {output_file}")
+            print(f"📄 Log file exists: {os.path.exists(log_file)}")
+            print(f"📄 Prompt file exists: {os.path.exists(prompt_file)}")
+        
+        # Run Aider for changelog generation
+        result = run_changelog_generation(
+            model=model,
+            log_file=log_file,
+            prompt_file=prompt_file,
+            output_file=output_file
+        )
+        
+        if result.success:
+            if verbose:
+                print(f"✅ Changelog generated successfully: {output_file}")
+                if result.output:
+                    print("📄 AI Output:")
+                    print(result.output)
+            return True
+        else:
+            print(f"❌ Failed to generate changelog: {result.error}")
+            if verbose and result.command:
+                print(f"🔧 Command: {result.command}")
+            return False
                 
     except Exception as e:
         print(f"❌ Error generating changelog: {e}")

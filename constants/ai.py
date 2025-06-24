@@ -49,8 +49,8 @@ AIDER_BASE_FLAGS = [
     "--yes",              # Always say yes to confirmations (non-interactive)
     "--cache-prompts",    # Enable prompt caching for performance
     "--no-stream",        # Disable streaming for clean log output
-    "--no-check-update",  # Don't check for aider updates (no interruptions)
-    "--no-auto-commit"    # Don't auto-commit (pipeline handles commits)
+    "--no-check-update"   # Don't check for aider updates (no interruptions)
+    # Removed --no-auto-commit (was in new system but not in working old system)
 ]
 
 # ===== AIDER COMMAND TEMPLATES =====
@@ -60,8 +60,8 @@ AIDER_BASE_FLAGS = [
 
 AIDER_COMMAND_TEMPLATES = {
     "CHANGELOG": {
-        "additional_flags": ["--no-git"],  # Changelog uses --no-git
-        "pattern": "aider {base_flags} --model {model} --read {log_file} --message-file {prompt_file} {output_file}"
+        "additional_flags": ["--no-git", "--sonnet"],  # Changelog uses --no-git and --sonnet (like old system)
+        "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} {output_file}"
     },
     "uidocs_REACT": {
         "additional_flags": [],
