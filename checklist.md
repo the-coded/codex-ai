@@ -186,7 +186,7 @@
 - [ ] `templates/outputs/`
   - [ ] `changelog_template.md`
   - [ ] `timetrack_report_template.md`
-  - [ ] `docs_template.md`
+  - [ ] `uidocs_template.md`
 - [ ] `templates/README.md`
 
 ### 4.2 AI Integration
@@ -200,7 +200,7 @@
 - [ ] `formatters/__init__.py`
 - [ ] `formatters/time.py`
 - [ ] `formatters/git.py`
-- [ ] `formatters/docs.py`
+- [ ] `formatters/uidocs.py`
 - [ ] `formatters/base.py`
 - [ ] Support para JSON, YAML, Markdown, HTML
 
@@ -335,5 +335,8 @@
 **🧹 LIMPEZA CONCLUÍDA:**
 - ✅ Removidas todas as referências obsoletas ao comando `analyze`
 - ✅ CLI atualizado para usar `map-tree` em vez de `analyze`
+- ✅ Removidas todas as referências obsoletas ao comando `docs`
+- ✅ CLI atualizado para usar `uidocs` em vez de `docs`
 - ✅ Documentação e examples atualizados
 - ✅ Comando `map-tree` funcionando perfeitamente
+- ✅ Package metadata regenerado com correções
