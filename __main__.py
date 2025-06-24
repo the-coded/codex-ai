@@ -5,7 +5,7 @@ Usage:
     python -m codex_ai changelog
     python -m codex_ai timetrack --report
     python -m codex_ai docs --type react
-    python -m codex_ai analyze --git
+    python -m codex_ai map-tree --git
 """
 
 from cli import main

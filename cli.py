@@ -2,7 +2,7 @@
 CLI interface for Codex-AI.
 
 Main entry point for the command-line interface using argparse.
-Supports all commands: changelog, timetrack, docs, analyze.
+Supports all commands: changelog, timetrack, map-tree, uidocs.
 """
 
 import argparse
@@ -26,10 +26,10 @@ Examples:
   codex-ai changelog --output changelog.md --dry-run
   codex-ai timetrack --report           # Time analysis with report
   codex-ai timetrack --author "John" --since "2024-01-01"
+  codex-ai map-tree --all              # Map project structure and changes
+  codex-ai map-tree --project --output structure.json
   codex-ai uidocs                       # Generate documentation (auto-detects types)
   codex-ai uidocs --output-dir ./documentation
-  codex-ai analyze --git               # Git analysis
-  codex-ai analyze --project --output analysis.json
 
 Environment Variables:
   ANTHROPIC_API_KEY                     # Required for AI features
@@ -216,6 +216,39 @@ Configuration:
             help='Save report to file (format auto-detected from extension)'
         )
     
+    # Map-tree command
+    map_tree_parser = subparsers.add_parser(
+        'map-tree',
+        help='Map project structure and changes for AI analysis'
+    )
+    
+    # Import and add map-tree arguments
+    try:
+        from commands.map_tree import add_map_tree_arguments
+        add_map_tree_arguments(map_tree_parser)
+    except ImportError:
+        # Fallback to basic arguments if import fails
+        map_tree_parser.add_argument(
+            '--all',
+            action='store_true',
+            help='Generate all tree structures (default)'
+        )
+        map_tree_parser.add_argument(
+            '--project',
+            action='store_true',
+            help='Generate project structure only'
+        )
+        map_tree_parser.add_argument(
+            '--git',
+            action='store_true',
+            help='Generate git changes only'
+        )
+        map_tree_parser.add_argument(
+            '--output', '-o',
+            type=str,
+            help='Save to custom file'
+        )
+    
     # uidocs command (intelligent documentation generation)
     uidocs_parser = subparsers.add_parser(
         'uidocs',
@@ -242,38 +275,6 @@ Configuration:
         '--dry-run',
         action='store_true',
         help='Preview what would be generated without executing'
-    )
-    
-    # Analyze command
-    analyze_parser = subparsers.add_parser(
-        'analyze',
-        help='Analyze project structure and Git history'
-    )
-    analyze_parser.add_argument(
-        '--git',
-        action='store_true',
-        help='Analyze Git history and changes'
-    )
-    analyze_parser.add_argument(
-        '--project',
-        action='store_true',
-        help='Analyze project structure'
-    )
-    analyze_parser.add_argument(
-        '--complexity',
-        action='store_true',
-        help='Analyze code complexity'
-    )
-    analyze_parser.add_argument(
-        '--output', '-o',
-        type=str,
-        help='Output file path'
-    )
-    analyze_parser.add_argument(
-        '--format',
-        choices=['json', 'yaml', 'markdown', 'html'],
-        default='json',
-        help='Output format (default: json)'
     )
     
     return parser
@@ -339,18 +340,18 @@ def run_uidocs_command(args, config: CodexConfig) -> int:
         return 1
 
 
-def run_analyze_command(args, config: CodexConfig) -> int:
-    """Run project analysis command."""
+def run_map_tree_command(args, config: CodexConfig) -> int:
+    """Run map-tree analysis command."""
     try:
         # Import here to avoid circular imports
-        from commands.analyze import run_analyze
-        return run_analyze(args, config)
+        from commands.map_tree import run_map_tree
+        return run_map_tree(args, config)
     except ImportError as e:
-        print(f"❌ Analyze command not yet implemented: {e}")
+        print(f"❌ Map-tree command not yet implemented: {e}")
         print("🚧 This feature is under development")
         return 1
     except Exception as e:
-        print(f"❌ Error running analyze command: {e}")
+        print(f"❌ Error running map-tree command: {e}")
         return 1
 
 
@@ -387,8 +388,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         'config': run_config_command,
         'changelog': run_changelog_command,
         'timetrack': run_timetrack_command,
+        'map-tree': run_map_tree_command,
         'uidocs': run_uidocs_command,
-        'analyze': run_analyze_command,
     }
     
     handler = command_handlers.get(args.command)

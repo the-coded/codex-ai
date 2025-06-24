@@ -15,7 +15,7 @@ Usage:
     codex-ai changelog  # Generate AI-powered changelog
     codex-ai timetrack  # Analyze development time
     codex-ai docs       # Generate documentation
-    codex-ai analyze    # Project analysis
+    codex-ai map-tree   # Project structure mapping
 """
 
 __version__ = "1.0.0"

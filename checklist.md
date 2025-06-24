@@ -155,6 +155,15 @@
   - [x] Multiple output formats (JSON, Markdown, CSV, HTML) ✅
   - [x] Filtering (author, date range) ✅
   - [x] CLI integration ✅
+- [x] `commands/map_tree.py` ✅
+  - [x] Project structure mapping (port do tree_project.sh) ✅
+  - [x] Git changes analysis (port do tree_git_changes.sh) ✅
+  - [x] Release changes analysis (port do tree_git_release_changes.sh) ✅
+  - [x] Sibling files analysis (port do tree_git_siblings.sh) ✅
+  - [x] Multiple output formats (JSON, YAML, Markdown) ✅
+  - [x] CLI integration (codex-ai map-tree) ✅
+  - [x] Error handling e validação ✅
+  - [x] Equivalente ao tree_generate_all.sh ✅
 - [ ] `commands/uidocs.py`
   - [ ] Mode detection (local vs pipeline vs auto)
   - [ ] Local mode: staged/modified files detection
@@ -162,11 +171,6 @@
   - [ ] File filtering and type detection
   - [ ] React/Sass/Storybook processing
   - [ ] AI integration
-- [ ] `commands/analyze.py`
-  - [ ] Project structure analysis (port dos tree_*.sh)
-  - [ ] Git changes analysis
-  - [ ] Complexity analysis
-  - [ ] Report generation
 
 ---
 
@@ -326,4 +330,10 @@
 ---
 
 *Updated: 2025-01-24*  
-*Progress: Fase 1 (100%) + Fase 2 (50%) + Fase 3 (40%) = ~45/100+ tasks completed (45%)*
+*Progress: Fase 1 (100%) + Fase 2 (50%) + Fase 3 (55%) = ~52/100+ tasks completed (52%)*
+
+**🧹 LIMPEZA CONCLUÍDA:**
+- ✅ Removidas todas as referências obsoletas ao comando `analyze`
+- ✅ CLI atualizado para usar `map-tree` em vez de `analyze`
+- ✅ Documentação e examples atualizados
+- ✅ Comando `map-tree` funcionando perfeitamente

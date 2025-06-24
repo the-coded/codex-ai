@@ -4,13 +4,13 @@ Commands module for Codex-AI.
 Contains all CLI command implementations:
 - changelog: Generate AI-powered changelogs
 - timetrack: Analyze development time from commits
-- docs: Generate documentation for React/Sass
-- analyze: Project structure and Git analysis
+- map_tree: Map project structure and changes for AI analysis
+- uidocs: Generate documentation for React/Sass/Storybook
 """
 
 __all__ = [
     "changelog",
     "timetrack", 
-    "docs",
-    "analyze"
+    "map_tree",
+    "uidocs"
 ]
