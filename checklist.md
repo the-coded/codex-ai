@@ -2,8 +2,8 @@
 
 ## 📊 Progress Overview
 - [x] **Fase 1**: Setup e Migração (100%) ✅
-- [ ] **Fase 2**: Core Implementation (0%)  
-- [ ] **Fase 3**: Commands Implementation (0%)
+- [ ] **Fase 2**: Core Implementation (20%) 🔄
+- [ ] **Fase 3**: Commands Implementation (10%) 🔄
 - [ ] **Fase 4**: Templates e AI Integration (0%)
 - [ ] **Fase 5**: Testing e Validation (0%)
 - [ ] **Fase 6**: Documentation e Cleanup (0%)
@@ -31,7 +31,7 @@
 - [x] `config.py` (root) ✅
 - [x] `.env.example` ✅
 - [x] Estrutura de diretórios ✅
-- [x] `requirements.txt` ✅
+- [x] `pyproject.toml` (single source of truth) ✅
 - [x] `requirements-dev.txt` ✅
 - [x] Todos os `__init__.py` dos pacotes ✅
 - [x] Sistema de configuração hierárquica ✅
@@ -45,6 +45,10 @@
 
 ### 2.1 Constants
 - [x] `constants/__init__.py` ✅
+- [x] `constants/project.py` ✅
+  - [x] Centralização de metadados do projeto ✅
+  - [x] Leitura do pyproject.toml como single source ✅
+  - [x] Funções get_version(), get_author(), etc. ✅
 - [x] `constants/timetrack.py` ✅
   - [x] FILE_TYPE_MULTIPLIERS ✅
   - [x] COMMIT_TYPE_MULTIPLIERS ✅
@@ -72,7 +76,11 @@
   - [x] REPORT_TEMPLATES ✅
 
 ### 2.2 Core Modules
-- [ ] `core/__init__.py`
+- [x] `core/__init__.py` ✅
+  - [x] Module availability tracking ✅
+  - [x] Import management com try/except ✅
+  - [x] Helper functions (get_available_modules, require_module) ✅
+  - [x] Status constants (GIT_AVAILABLE, AI_AVAILABLE, etc.) ✅
 - [ ] `core/git/`
   - [ ] `__init__.py`
   - [ ] `log_analyzer.py` (port de bin/git_log_*.sh)
@@ -80,7 +88,7 @@
   - [ ] `tree_generator.py` (port de bin/tree_*.sh)
   - [ ] `commit_parser.py`
   - [ ] `changes_tracker.py`
-- [ ] `core/time/`
+- [ ] `core/timetracker/`
   - [ ] `__init__.py`
   - [ ] `calculator.py` (port do JS timetracker)
   - [ ] `complexity_analyzer.py` (port do JS)
@@ -127,6 +135,14 @@
 - [ ] `commands/base.py` (se necessário)
 
 ### 3.2 Individual Commands
+- [x] `commands/config.py` ✅
+  - [x] Global configuration management ✅
+  - [x] API key storage (~/.codex/.env) ✅
+  - [x] Model selection (claude_4_sonnet, claude_3_7_sonnet, claude_3_5_sonnet) ✅
+  - [x] Output format settings (json, yaml, markdown, html, text) ✅
+  - [x] Timeout configurations (git, ai) ✅
+  - [x] --list and --reset options ✅
+  - [x] Input validation ✅
 - [ ] `commands/changelog.py`
   - [ ] Argument parsing
   - [ ] Git log analysis
@@ -287,5 +303,20 @@
 
 ---
 
+## 📝 **TODOs para Revisão Futura**
+
+### ✅ **Implementados:**
+- [x] 📦 **~/.config/codex-ai/ directory**: Migrado para localização XDG-compliant ✅
+- [x] 🔧 **Config command**: Usando ~/.config/codex-ai/config.env ✅
+- [x] 📍 **Path management**: get_global_config_path() atualizado ✅
+- [x] 📋 **Documentation**: Docstrings atualizados ✅
+
+### 🧹 Limpeza de Código:
+- [ ] 📦 **get_base_path deprecation**: Verificar se ainda é necessário após publicação PyPI
+- [ ] 🗑️ **old/ directory**: Remover quando aprovado
+- [ ] 🔍 **Code review**: Revisar TODOs espalhados pelo código
+
+---
+
 *Updated: 2025-01-23*  
-*Progress: Fase 1 completa - 15/100+ tasks completed (15%)*
+*Progress: Fase 1 (100%) + Fase 2 (20%) + Fase 3 (10%) = ~25/100+ tasks completed (25%)*

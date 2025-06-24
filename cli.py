@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from config import CodexConfig, set_config
+from constants.project import get_version
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -25,8 +26,8 @@ Examples:
   codex-ai changelog --output changelog.md --dry-run
   codex-ai timetrack --report           # Time analysis with report
   codex-ai timetrack --author "John" --since "2024-01-01"
-  codex-ai docs --type react           # Generate React docs
-  codex-ai docs --type sass --output-dir ./documentation
+  codex-ai uidocs                       # Generate documentation (auto-detects types)
+  codex-ai uidocs --output-dir ./documentation
   codex-ai analyze --git               # Git analysis
   codex-ai analyze --project --output analysis.json
 
@@ -37,8 +38,8 @@ Environment Variables:
   CODEX_VERBOSE                         # Enable verbose output
 
 Configuration:
-  Create .env file or codex.config.yaml for persistent settings.
-  Use 'codex-ai init' to create default configuration files.
+  Use 'codex-ai config --api-key YOUR_KEY' to save settings globally.
+  Or set ANTHROPIC_API_KEY environment variable.
         """
     )
     
@@ -66,7 +67,7 @@ Configuration:
     parser.add_argument(
         '--version',
         action='version',
-        version='%(prog)s 1.0.0'
+        version=f'%(prog)s {get_version()}'
     )
     
     # Subcommands
@@ -76,15 +77,68 @@ Configuration:
         metavar='<command>'
     )
     
-    # Init command
-    init_parser = subparsers.add_parser(
-        'init',
-        help='Initialize configuration files'
+    # Config command
+    config_parser = subparsers.add_parser(
+        'config',
+        help='Manage global configuration settings'
     )
-    init_parser.add_argument(
-        '--force',
+    config_parser.add_argument(
+        '--api-key',
+        type=str,
+        help='Set Anthropic API key'
+    )
+    config_parser.add_argument(
+        '--model',
+        type=str,
+        choices=['claude_4_sonnet', 'claude_3_7_sonnet', 'claude_3_5_sonnet'],
+        help='Set default AI model'
+    )
+    config_parser.add_argument(
+        '--output-format',
+        type=str,
+        choices=['json', 'yaml', 'markdown', 'html', 'text'],
+        help='Set default output format'
+    )
+    config_parser.add_argument(
+        '--output-dir',
+        type=str,
+        help='Set default output directory'
+    )
+    config_parser.add_argument(
+        '--verbose',
+        type=str,
+        choices=['true', 'false'],
+        help='Set verbose mode (true/false)'
+    )
+    config_parser.add_argument(
+        '--fallback-models',
+        type=str,
+        help='Set fallback models (comma-separated)'
+    )
+    config_parser.add_argument(
+        '--git-timeout',
+        type=int,
+        help='Set Git command timeout in seconds'
+    )
+    config_parser.add_argument(
+        '--ai-timeout',
+        type=int,
+        help='Set AI command timeout in seconds'
+    )
+    config_parser.add_argument(
+        '--ai-retry-attempts',
+        type=int,
+        help='Set AI retry attempts'
+    )
+    config_parser.add_argument(
+        '--list',
         action='store_true',
-        help='Overwrite existing configuration files'
+        help='Show current configuration settings'
+    )
+    config_parser.add_argument(
+        '--reset',
+        action='store_true',
+        help='Reset configuration to defaults'
     )
     
     # Changelog command
@@ -105,7 +159,7 @@ Configuration:
     changelog_parser.add_argument(
         '--since',
         type=str,
-        help='Generate changelog since date (YYYY-MM-DD) or tag'
+        help='Generate changelog since date (YYYY-MM-DD), tag, or commit hash'
     )
     changelog_parser.add_argument(
         '--model',
@@ -218,38 +272,18 @@ Configuration:
     return parser
 
 
-def run_init_command(args, config: CodexConfig) -> int:
-    """Initialize configuration files."""
+def run_config_command(args, config: CodexConfig) -> int:
+    """Run configuration management command."""
     try:
-        # Create .env file if it doesn't exist
-        env_file = Path('.env')
-        if not env_file.exists() or args.force:
-            env_example = Path('.env.example')
-            if env_example.exists():
-                import shutil
-                shutil.copy(env_example, env_file)
-                print(f"✅ Created .env file from template")
-                print("🔑 Please edit .env and add your ANTHROPIC_API_KEY")
-            else:
-                print("⚠️ .env.example not found, creating basic .env")
-                with open('.env', 'w') as f:
-                    f.write("# Codex-AI Configuration\n")
-                    f.write("ANTHROPIC_API_KEY=your-key-here\n")
-                    f.write("CODEX_DEFAULT_MODEL=claude_4_sonnet\n")
-                    f.write("CODEX_OUTPUT_FORMAT=markdown\n")
-        else:
-            print("ℹ️ .env file already exists (use --force to overwrite)")
-        
-        # Create config file
-        config_file = 'codex.config.yaml'
-        if not Path(config_file).exists() or args.force:
-            config.create_default_config(config_file)
-        else:
-            print(f"ℹ️ {config_file} already exists (use --force to overwrite)")
-        
-        return 0
+        # Import here to avoid circular imports
+        from commands.config import run_config
+        return run_config(args, config)
+    except ImportError as e:
+        print(f"❌ Config command not yet implemented: {e}")
+        print("🚧 This feature is under development")
+        return 1
     except Exception as e:
-        print(f"❌ Error initializing configuration: {e}")
+        print(f"❌ Error running config command: {e}")
         return 1
 
 
@@ -337,13 +371,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         api_key = config.get_api_key(cli_value=args.api_key)
         if not api_key:
             print("❌ Error: ANTHROPIC_API_KEY is required for AI features")
-            print("💡 Set it in .env file or use --api-key argument")
-            print("🚀 Run 'codex-ai init' to create configuration files")
+            print("💡 Set it with: codex-ai config --api-key YOUR_KEY")
+            print("🔧 Or use --api-key argument or set ANTHROPIC_API_KEY env var")
             return 1
     
     # Route to appropriate command handler
     command_handlers = {
-        'init': run_init_command,
+        'config': run_config_command,
         'changelog': run_changelog_command,
         'timetrack': run_timetrack_command,
         'uidocs': run_uidocs_command,

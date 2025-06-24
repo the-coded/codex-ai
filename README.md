@@ -12,8 +12,8 @@
 # Install from PyPI
 pip install codex-ai
 
-# Initialize configuration
-codex-ai init
+# Set API key
+codex-ai config --api-key sk-ant-your-key-here
 
 # Generate AI-powered changelog
 codex-ai changelog
@@ -55,23 +55,38 @@ pip install -r requirements-dev.txt
 
 ## ⚙️ Configuration
 
-### 1. Initialize Configuration Files
+### 1. Set API Key (Required)
 ```bash
-codex-ai init
+codex-ai config --api-key sk-ant-your-key-here
 ```
 
-This creates:
-- `.env` - Environment variables
-- `codex.config.yaml` - Configuration file
+This saves your API key to `~/.config/codex-ai/config.env`
 
-### 2. Set API Key
-Edit `.env` file:
+### 2. Configure Settings (Optional)
 ```bash
-ANTHROPIC_API_KEY=sk-ant-your-key-here
+# Set default model
+codex-ai config --model claude_3_7_sonnet
+
+# Set output format
+codex-ai config --output-format json
+
+# Set output directory
+codex-ai config --output-dir ./output
+
+# View current settings
+codex-ai config --list
 ```
 
-### 3. Customize Settings (Optional)
-Edit `codex.config.yaml`:
+### 3. Environment Variables (Alternative)
+You can also use environment variables:
+```bash
+export ANTHROPIC_API_KEY=sk-ant-your-key-here
+export CODEX_DEFAULT_MODEL=claude_4_sonnet
+export CODEX_OUTPUT_FORMAT=markdown
+```
+
+### 4. Custom Config File (Advanced)
+Create `codex.config.yaml` for complex configurations:
 ```yaml
 ai:
   default_model: claude_4_sonnet
@@ -190,7 +205,7 @@ codex-ai/
 ├── commands/           # CLI command implementations
 ├── core/              # Core business logic
 │   ├── git/          # Git operations and analysis
-│   ├── time/         # Time tracking algorithms
+│   ├── timetracker/  # Time tracking algorithms
 │   ├── ai/           # AI model integration
 │   └── uidocs/        # uidocs documentation (React, Sass, Storybook)
 ├── constants/         # Configuration constants
@@ -199,7 +214,7 @@ codex-ai/
 ├── templates/        # Markdown templates and prompts
 ├── cli.py           # Main CLI interface
 ├── config.py        # Configuration management
-└── setup.py         # Package configuration
+└── pyproject.toml   # Package configuration
 ```
 
 ## 🔄 Migration from Legacy Version
@@ -207,12 +222,11 @@ codex-ai/
 If you're migrating from the old shell script version:
 
 1. **Install Codex-AI**: `pip install codex-ai`
-2. **Initialize**: `codex-ai init`
-3. **Set API Key**: Edit `.env` file
-4. **Replace Commands**:
+2. **Set API Key**: `codex-ai config --api-key sk-ant-your-key-here`
+3. **Replace Commands**:
    - `./bin/changelog.sh` → `codex-ai changelog`
    - `./pkg/timetracker/` → `codex-ai timetrack`
-   - `./pkg/uidocs/` → `codex-ai docs`
+   - `./pkg/uidocs/` → `codex-ai uidocs`
 
 ## 🧪 Development
 
@@ -250,8 +264,7 @@ flake8 .
 ```bash
 # 1. Setup
 pip install codex-ai
-codex-ai init
-# Edit .env with your ANTHROPIC_API_KEY
+codex-ai config --api-key sk-ant-your-key-here
 
 # 2. Generate changelog for release
 codex-ai changelog --since "v1.0.0" --output CHANGELOG.md
@@ -260,7 +273,7 @@ codex-ai changelog --since "v1.0.0" --output CHANGELOG.md
 codex-ai timetrack --since "2024-01-01" --report --format html
 
 # 4. Generate documentation
-codex-ai docs --type react --output-dir ./docs
+codex-ai uidocs --output-dir ./docs
 
 # 5. Project analysis for review
 codex-ai analyze --git --complexity --output analysis.json
@@ -282,7 +295,7 @@ jobs:
       - run: codex-ai changelog --output CHANGELOG.md
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      - run: codex-ai docs --type react
+      - run: codex-ai uidocs
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 ```

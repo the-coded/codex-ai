@@ -9,10 +9,10 @@ description = "AI-powered development toolkit for changelog generation, time tra
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "the-coded", email = "gabriel@laplanta.com.br"}
+    {name = "Codex-AI Team", email = "gabriel@laplanta.com.br"}
 ]
 maintainers = [
-    {name = "the-coded", email = "gabriel@laplanta.com.br"}
+    {name = "Codex-AI Team", email = "gabriel@laplanta.com.br"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -37,14 +37,31 @@ keywords = [
 ]
 requires-python = ">=3.8"
 dependencies = [
-    "python-dotenv>=1.0.0",
-    "PyYAML>=6.0.1",
-    "GitPython>=3.1.43",
+    "PyYAML>=6.0.2",
+    "GitPython>=3.1.44",
+    "anthropic>=0.55.0",
     "aider-chat>=0.84.0",
-    "tiktoken>=0.7.0",
-    "jinja2>=3.1.4",
+    "tiktoken>=0.9.0",
+    "jinja2>=3.1.6",
     "python-dateutil>=2.9.0",
-    "typing-extensions>=4.12.0",
+    "typing-extensions>=4.13.0",
+    "tomli>=2.2.0; python_version<'3.11'"
+]
+
+[project.optional-dependencies]
+performance = [
+    "ujson>=5.10.0",
+    "orjson>=3.10.0",
+]
+rich = [
+    "rich>=13.7.0",
+    "colorama>=0.4.6",
+]
+all = [
+    "ujson>=5.10.0",
+    "orjson>=3.10.0",
+    "rich>=13.7.0",
+    "colorama>=0.4.6",
 ]
 
 [project.urls]
@@ -58,7 +75,7 @@ codex-ai = "cli:main"
 
 [tool.setuptools]
 packages = [
-    "commands", "core", "core.git", "core.time", "core.ai", "core.uidocs",
+    "commands", "core", "core.git", "core.timetracker", "core.ai", "core.uidocs",
     "constants", "utils", "formatters"
 ]
 py-modules = ["cli", "config", "__main__"]

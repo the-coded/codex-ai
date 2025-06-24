@@ -3,27 +3,17 @@ Configuration management for Codex-AI.
 
 Supports hierarchical configuration loading:
 1. CLI arguments (highest priority)
-2. Environment variables
-3. .env files
-4. Config files (YAML/JSON)
+2. Environment variables (CODEX_*, ANTHROPIC_API_KEY)
+3. Global config file (~/.config/codex-ai/config.env)
+4. Config files (--config YAML/JSON)
 5. Built-in defaults (lowest priority)
 """
 
 import os
-import sys
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 import yaml
 import json
-
-# Try to import python-dotenv, install if not available
-try:
-    from dotenv import load_dotenv
-except ImportError:
-    print("Installing python-dotenv for .env file support...")
-    import subprocess
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "python-dotenv"])
-    from dotenv import load_dotenv
 
 
 class CodexConfig:
@@ -31,21 +21,23 @@ class CodexConfig:
     
     def __init__(self, config_path: Optional[str] = None):
         self._config_data = {}
-        self._load_env_files()
+        self._global_config = {}
+        self._load_global_config()
         if config_path:
             self._load_config_file(config_path)
     
-    def _load_env_files(self):
-        """Load .env files in order of priority."""
-        env_files = [
-            Path.cwd() / '.env',                    # Project .env
-            Path.cwd() / '.env.local',             # Local overrides
-            Path.home() / '.codex' / '.env',       # Global config
-        ]
+    def _load_global_config(self):
+        """Load global configuration manually (no dotenv)."""
+        config_path = Path.home() / '.config' / 'codex-ai' / 'config.env'
+        self._global_config = {}
         
-        for env_file in env_files:
-            if env_file.exists():
-                load_dotenv(env_file, override=False)  # Don't override existing vars
+        if config_path.exists():
+            with open(config_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        key, value = line.split('=', 1)
+                        self._global_config[key.strip()] = value.strip()
     
     def _load_config_file(self, config_path: str):
         """Load configuration from YAML or JSON file."""
@@ -66,7 +58,7 @@ class CodexConfig:
     
     def get(self, key: str, default: Any = None, cli_value: Any = None) -> Any:
         """
-        Get configuration value with hierarchical priority.
+        Get configuration value with clear hierarchical priority.
         
         Args:
             key: Configuration key
@@ -80,17 +72,20 @@ class CodexConfig:
         if cli_value is not None:
             return cli_value
         
-        # 2. Environment variable
-        env_key = f"CODEX_{key.upper()}"
-        env_value = os.getenv(env_key)
+        # 2. Environment variable CODEX_*
+        env_value = os.getenv(f"CODEX_{key.upper()}")
         if env_value is not None:
             return self._parse_env_value(env_value)
         
-        # 3. Config file
+        # 3. Global config file (~/.config/codex-ai/config.env)
+        if key in self._global_config:
+            return self._parse_env_value(self._global_config[key])
+        
+        # 4. YAML/JSON config file (--config)
         if key in self._config_data:
             return self._config_data[key]
         
-        # 4. Default value
+        # 5. Default value
         return default
     
     def _parse_env_value(self, value: str) -> Any:
@@ -119,8 +114,21 @@ class CodexConfig:
     # Convenience methods for common configuration values
     
     def get_api_key(self, cli_value: Optional[str] = None) -> Optional[str]:
-        """Get Anthropic API key."""
-        return self.get('api_key', cli_value=cli_value) or os.getenv('ANTHROPIC_API_KEY')
+        """Get Anthropic API key with clear priority."""
+        # 1. CLI argument
+        if cli_value:
+            return cli_value
+        
+        # 2. ANTHROPIC_API_KEY environment variable (pipeline standard)
+        api_key = os.getenv('ANTHROPIC_API_KEY')
+        if api_key:
+            return api_key
+        
+        # 3. Global config file
+        if 'ANTHROPIC_API_KEY' in self._global_config:
+            return self._global_config['ANTHROPIC_API_KEY']
+        
+        return None
     
     def get_default_model(self, cli_value: Optional[str] = None) -> str:
         """Get default AI model."""
@@ -217,7 +225,7 @@ class CodexConfig:
         
         print(f"✅ Default configuration created: {path}")
         print("💡 Edit this file to customize your settings")
-        print("🔑 Don't forget to set ANTHROPIC_API_KEY in .env file")
+        print("🔑 Set API key with: codex-ai config --api-key YOUR_KEY")
 
 
 # Global config instance

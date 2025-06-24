@@ -32,9 +32,11 @@ from .git import (
     build_exclude_pathspec
 )
 
-# Version info
-__version__ = "1.0.0"
-__author__ = "the-coded Team"
+# Version info from centralized project metadata
+from .project import get_version, get_author
+
+__version__ = get_version()
+__author__ = get_author()
 
 # Export commonly used constants
 __all__ = [

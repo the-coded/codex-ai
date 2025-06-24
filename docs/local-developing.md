@@ -18,6 +18,9 @@ cd codex-ai
 # Install in editable mode
 pip install -e .
 
+# Set API key
+codex-ai config --api-key sk-ant-your-key-here
+
 # Verify installation
 codex-ai --help
 ```
@@ -69,8 +72,8 @@ pip install -r requirements-dev.txt
 # Install project in editable mode
 pip install -e .
 
-# Initialize configuration
-codex-ai init
+# Set API key for testing
+codex-ai config --api-key sk-ant-your-key-here
 ```
 
 ### 2. Development Cycle
@@ -80,7 +83,7 @@ vim cli.py  # or any file
 
 # 2. Test immediately (no reinstall needed!)
 codex-ai --help
-codex-ai init
+codex-ai config --list
 codex-ai uidocs --help
 
 # 3. Run tests (when available)
@@ -99,8 +102,8 @@ codex-ai --help
 codex-ai --version
 
 # Test configuration
-codex-ai init
-codex-ai init --force
+codex-ai config --list
+codex-ai config --model claude_3_7_sonnet
 
 # Test commands (when implemented)
 codex-ai changelog --dry-run
@@ -126,8 +129,9 @@ codex-ai --version
 
 ### Configuration Testing
 ```bash
-# Initialize config files
-codex-ai init
+# Test configuration commands
+codex-ai config --list
+codex-ai config --model claude_3_7_sonnet
 
 # Test with different config files
 codex-ai --config custom.yaml --help
@@ -181,8 +185,8 @@ pip install -e .
 #### 3. Configuration Issues
 ```bash
 # Problem: Config file not found
-# Solution: Initialize configuration
-codex-ai init
+# Solution: Set configuration
+codex-ai config --api-key sk-ant-your-key-here
 
 # Or specify config path
 codex-ai --config /path/to/config.yaml
@@ -234,7 +238,7 @@ pip install --upgrade -r requirements-dev.txt
 ```bash
 # Run basic tests
 codex-ai --help
-codex-ai init
+codex-ai config --list
 
 # Check code quality
 black --check .

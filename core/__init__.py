@@ -1,16 +1,252 @@
 """
-Core module for Codex-AI.
+Core functionality for Codex-AI.
 
-Contains the main business logic modules:
-- git: Git operations and analysis
-- time: Time tracking calculations
-- ai: AI model integration and management
-- uidocs: uidocs documentation generation (React, Sass, Storybook)
+This module provides the main business logic and processing capabilities
+for all Codex-AI operations including git analysis, AI integration,
+time tracking, and documentation generation.
 """
 
+# ===== GIT OPERATIONS =====
+#
+# 📊 EXPLANATION:
+# Git-related functionality for analyzing repositories, commits, and changes.
+# Ports shell scripts from old/bin/ to Python classes.
+
+try:
+    from .git import (
+        GitLogAnalyzer,
+        GitReleaseAnalyzer,
+        GitTreeGenerator,
+        CommitParser,
+        ChangesTracker
+    )
+    GIT_AVAILABLE = True
+except ImportError:
+    # Git modules not yet implemented
+    GIT_AVAILABLE = False
+    GitLogAnalyzer = None
+    GitReleaseAnalyzer = None
+    GitTreeGenerator = None
+    CommitParser = None
+    ChangesTracker = None
+
+# ===== AI OPERATIONS =====
+#
+# 📊 EXPLANATION:
+# AI model integration, token management, and Aider interface.
+# Handles model selection, prompt processing, and AI command generation.
+
+try:
+    from .ai import (
+        ModelSelector,
+        AiderInterface,
+        TokenManager,
+        PromptProcessor
+    )
+    AI_AVAILABLE = True
+except ImportError:
+    # AI modules not yet implemented
+    AI_AVAILABLE = False
+    ModelSelector = None
+    AiderInterface = None
+    TokenManager = None
+    PromptProcessor = None
+
+# ===== TIME TRACKING =====
+#
+# 📊 EXPLANATION:
+# Time tracking and complexity analysis functionality.
+# Ports JavaScript timetracker algorithms to Python.
+
+try:
+    from .timetracker import (
+        TimeCalculator,
+        ComplexityAnalyzer,
+        TimeReportGenerator,
+        TimeAlgorithms
+    )
+    TIMETRACKER_AVAILABLE = True
+except ImportError:
+    # Timetracker modules not yet implemented
+    TIMETRACKER_AVAILABLE = False
+    TimeCalculator = None
+    ComplexityAnalyzer = None
+    TimeReportGenerator = None
+    TimeAlgorithms = None
+
+# ===== uidocs DOCUMENTATION =====
+#
+# 📊 EXPLANATION:
+# Documentation generation for React, Sass, and Storybook files.
+# Ports old/pkg/uidocs/ functionality to modern Python architecture.
+
+try:
+    from .uidocs import (
+        uidocsProcessor,
+        ReactProcessor,
+        SassProcessor,
+        StorybookProcessor,
+        DocumentationGenerator,
+        SourceManager
+    )
+    uidocs_AVAILABLE = True
+except ImportError:
+    # uidocs modules not yet implemented
+    uidocs_AVAILABLE = False
+    uidocsProcessor = None
+    ReactProcessor = None
+    SassProcessor = None
+    StorybookProcessor = None
+    DocumentationGenerator = None
+    SourceManager = None
+
+# ===== AVAILABILITY STATUS =====
+#
+# 📊 EXPLANATION:
+# Track which core modules are available for runtime checks.
+
+CORE_STATUS = {
+    "git": GIT_AVAILABLE,
+    "ai": AI_AVAILABLE,
+    "timetracker": TIMETRACKER_AVAILABLE,
+    "uidocs": uidocs_AVAILABLE
+}
+
+# ===== HELPER FUNCTIONS =====
+
+def get_available_modules() -> list:
+    """
+    Get list of available core modules.
+    
+    Returns:
+        list: Names of available modules
+        
+    Examples:
+        >>> modules = get_available_modules()
+        >>> print(modules)
+        ['git', 'ai']
+    """
+    return [name for name, available in CORE_STATUS.items() if available]
+
+
+def is_module_available(module_name: str) -> bool:
+    """
+    Check if a core module is available.
+    
+    Args:
+        module_name: Name of the module to check
+        
+    Returns:
+        bool: True if module is available
+        
+    Examples:
+        >>> if is_module_available('timetracker'):
+        ...     calculator = TimeCalculator()
+    """
+    return CORE_STATUS.get(module_name, False)
+
+
+def get_core_status() -> dict:
+    """
+    Get complete status of all core modules.
+    
+    Returns:
+        dict: Status of each core module
+        
+    Examples:
+        >>> status = get_core_status()
+        >>> print(status)
+        {'git': True, 'ai': False, 'timetracker': False, 'uidocs': False}
+    """
+    return CORE_STATUS.copy()
+
+
+def require_module(module_name: str) -> None:
+    """
+    Require a module to be available, raise error if not.
+    
+    Args:
+        module_name: Name of the required module
+        
+    Raises:
+        ImportError: If module is not available
+        
+    Examples:
+        >>> require_module('git')  # Raises if git not available
+    """
+    if not is_module_available(module_name):
+        raise ImportError(
+            f"Core module '{module_name}' is not available. "
+            f"Available modules: {get_available_modules()}"
+        )
+
+# ===== EXPORT CONSTANTS =====
+
 __all__ = [
-    "git",
-    "time",
-    "ai", 
-    "uidocs"
+    # Git operations
+    "GitLogAnalyzer",
+    "GitReleaseAnalyzer", 
+    "GitTreeGenerator",
+    "CommitParser",
+    "ChangesTracker",
+    
+    # AI operations
+    "ModelSelector",
+    "AiderInterface",
+    "TokenManager", 
+    "PromptProcessor",
+    
+    # Time tracking
+    "TimeCalculator",
+    "ComplexityAnalyzer",
+    "TimeReportGenerator",
+    "TimeAlgorithms",
+    
+    # uidocs documentation
+    "uidocsProcessor",
+    "ReactProcessor",
+    "SassProcessor",
+    "StorybookProcessor",
+    "DocumentationGenerator",
+    "SourceManager",
+    
+    # Status and utilities
+    "CORE_STATUS",
+    "get_available_modules",
+    "is_module_available", 
+    "get_core_status",
+    "require_module",
+    
+    # Availability flags
+    "GIT_AVAILABLE",
+    "AI_AVAILABLE",
+    "TIMETRACKER_AVAILABLE",
+    "uidocs_AVAILABLE"
 ]
+
+# ===== VERSION INFO =====
+
+from constants.project import get_version, get_author
+
+__version__ = get_version()
+__author__ = get_author()
+__description__ = "Core functionality for Codex-AI toolkit"
+
+# ===== INITIALIZATION =====
+
+def _initialize_core():
+    """Initialize core modules and perform startup checks."""
+    available = get_available_modules()
+    
+    if not available:
+        import warnings
+        warnings.warn(
+            "No core modules are available. "
+            "This may indicate incomplete installation.",
+            RuntimeWarning
+        )
+    
+    return available
+
+# Initialize on import
+_AVAILABLE_MODULES = _initialize_core()
