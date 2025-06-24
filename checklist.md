@@ -2,11 +2,11 @@
 
 ## 📊 Progress Overview
 - [x] **Fase 1**: Setup e Migração (100%) ✅
-- [ ] **Fase 2**: Core Implementation (20%) 🔄
-- [ ] **Fase 3**: Commands Implementation (10%) 🔄
+- [ ] **Fase 2**: Core Implementation (30%) 🔄
+- [ ] **Fase 3**: Commands Implementation (25%) 🔄
 - [ ] **Fase 4**: Templates e AI Integration (0%)
 - [ ] **Fase 5**: Testing e Validation (0%)
-- [ ] **Fase 6**: Documentation e Cleanup (0%)
+- [x] **Fase 6**: Documentation e Cleanup (80%) ✅
 
 ---
 
@@ -81,13 +81,13 @@
   - [x] Import management com try/except ✅
   - [x] Helper functions (get_available_modules, require_module) ✅
   - [x] Status constants (GIT_AVAILABLE, AI_AVAILABLE, etc.) ✅
-- [ ] `core/git/`
-  - [ ] `__init__.py`
-  - [ ] `log_analyzer.py` (port de bin/git_log_*.sh)
-  - [ ] `release_analyzer.py` (port de bin/git_release_*.sh)
-  - [ ] `tree_generator.py` (port de bin/tree_*.sh)
-  - [ ] `commit_parser.py`
-  - [ ] `changes_tracker.py`
+- [x] `core/git/` ✅
+  - [x] `__init__.py` ✅
+  - [x] `log_analyzer.py` (port de bin/git_log_*.sh) ✅
+  - [x] `release_analyzer.py` (port de bin/git_release_*.sh) ✅
+  - [x] `tree_generator.py` (port de bin/tree_*.sh) ✅
+  - [x] `commit_parser.py` ✅
+  - [x] `changes_tracker.py` ✅
 - [ ] `core/timetracker/`
   - [ ] `__init__.py`
   - [ ] `calculator.py` (port do JS timetracker)
@@ -233,11 +233,12 @@
 ## 📖 **FASE 6: Documentation e Cleanup**
 
 ### 6.1 Documentation
-- [ ] Update main README.md
-- [ ] CLI usage examples
-- [ ] Configuration guide (.env + config files)
-- [ ] Migration guide (old → new)
-- [ ] Troubleshooting guide
+- [x] Update main README.md ✅ (REVISÃO FINAL PENDENTE)
+- [x] CLI usage examples ✅ (REVISÃO FINAL PENDENTE)
+- [x] Configuration guide (config command + ENV vars) ✅ (REVISÃO FINAL PENDENTE)
+- [x] Migration guide (old → new) ✅ (REVISÃO FINAL PENDENTE)
+- [x] Troubleshooting guide (docs/local-developing.md) ✅ (REVISÃO FINAL PENDENTE)
+- [ ] **REVISÃO FINAL COMPLETA**: Revisar toda documentação após implementação
 
 ### 6.2 Package Distribution
 - [ ] Finalize setup.py
@@ -310,6 +311,11 @@
 - [x] 🔧 **Config command**: Usando ~/.config/codex-ai/config.env ✅
 - [x] 📍 **Path management**: get_global_config_path() atualizado ✅
 - [x] 📋 **Documentation**: Docstrings atualizados ✅
+- [x] 🗑️ **python-dotenv removido**: Dependência desnecessária removida ✅
+- [x] 🔄 **CLI version dinâmica**: Usa get_version() do pyproject.toml ✅
+- [x] 📖 **README.md atualizado**: Comandos e configuração corrigidos ✅
+- [x] 📝 **docs/ atualizados**: local-developing.md corrigido ✅
+- [x] 🎯 **Hierarquia config simplificada**: Sem dotenv, apenas ENV + global ✅
 
 ### 🧹 Limpeza de Código:
 - [ ] 📦 **get_base_path deprecation**: Verificar se ainda é necessário após publicação PyPI
