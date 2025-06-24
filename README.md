@@ -185,18 +185,36 @@ codex-ai analyze --git --project --complexity --output analysis.json
 | `CODEX_OUTPUT_DIR` | Default output directory | `.tmp` |
 | `CODEX_VERBOSE` | Enable verbose output | `false` |
 
-## 🤖 AI Models
+## 🤖 AI Models & Token Management
 
-Codex-AI uses a smart fallback strategy:
+### Intelligent Token Allocation
+```python
+# Using constants from constants/ai.py
+effective_limit = (
+    AI_MODELS["CLAUDE_4_SONNET"]["max_tokens"] -           # 200K context
+    AI_MODELS["CLAUDE_4_SONNET"]["max_output_tokens"] -    # 64K response  
+    TOKEN_STRATEGY["PROMPT_OVERHEAD"]                      # 15K prompt
+) * TOKEN_STRATEGY["SAFETY_MARGIN"]                       # 95% safety
+# Result: 114,950 tokens available for git log
+```
 
-1. **🥇 Claude-4 Sonnet** (1M tokens) - Primary choice for complex tasks
-2. **🥈 Claude-3.7 Sonnet** (500K tokens) - Fallback for medium tasks  
-3. **🥉 Claude-3.5 Sonnet** (200K tokens) - Fallback for simple tasks
+### Token Distribution
+- **Context Window**: `AI_MODELS.max_tokens` (200K)
+- **AI Response**: `AI_MODELS.max_output_tokens` (64K) 
+- **Prompt + Metadata**: `TOKEN_STRATEGY.PROMPT_OVERHEAD` (15K)
+- **Safety Margin**: `TOKEN_STRATEGY.SAFETY_MARGIN` (95%)
+- **Available for Git Log**: 114,950 tokens
 
-The system automatically selects the appropriate model based on:
-- Token count of the input
-- Model availability
-- Configuration preferences
+### 3-Level Git Log Strategy
+- **≤7 commits**: Detailed mode (full patches)
+- **8-20 commits**: Medium mode (diff summary with `GIT_LOG_LIMITS`)
+- **21+ commits**: Simple mode (file list only)
+
+### Smart Fallback Chain
+The system automatically cascades through modes:
+1. **🥇 Detailed Mode** - Full patch analysis, maximum context
+2. **🥈 Medium Mode** - Diff summaries (`MEDIUM_MAX_LINES_PER_FILE`: 50, `MEDIUM_MAX_LINE_LENGTH`: 200)
+3. **🥉 Simple Mode** - File lists, always works
 
 ## 📁 Project Structure
 

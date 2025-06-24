@@ -476,6 +476,18 @@ VALID_COMMIT_TYPES = list(CONVENTIONAL_COMMIT_TYPES.keys())
 VALID_STATUS_COMMANDS = list(GIT_STATUS_COMMANDS.keys())
 VALID_DIFF_COMMANDS = list(GIT_DIFF_COMMANDS.keys())
 
+# ===== GIT LOG MEDIUM MODE LIMITS =====
+#
+# 📊 EXPLANATION:
+# Configuration for medium mode git log generation.
+# Controls content limits to balance quality vs token usage.
+
+GIT_LOG_LIMITS = {
+    "MEDIUM_MAX_LINES_PER_FILE": 50,    # Maximum diff lines per file in medium mode
+    "MEDIUM_MAX_LINE_LENGTH": 200,      # Maximum characters per line in medium mode
+    "MEDIUM_TRUNCATION_MARKER": "... [truncated]"  # Marker for truncated content
+}
+
 # ===== EXPORT ALL CONSTANTS =====
 
 __all__ = [
@@ -488,6 +500,7 @@ __all__ = [
     "GIT_LOG_FORMATS",
     "MERGE_COMMIT_DETECTION",
     "REPOSITORY_VALIDATION",
+    "GIT_LOG_LIMITS",
     
     # Helper functions
     "build_exclude_pathspec",

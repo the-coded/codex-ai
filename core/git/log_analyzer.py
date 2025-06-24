@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Dict, Any
 from datetime import datetime
 
-from constants.git import EXCLUDE_PATTERNS, GIT_COMMANDS
+from constants.git import EXCLUDE_PATTERNS, GIT_COMMANDS, GIT_LOG_LIMITS
 
 
 @dataclass
@@ -467,11 +467,13 @@ class GitLogAnalyzer:
                 "git", "show", "--patch", "--unified=2", commit_hash, "--", ".", self.exclude_pathspec
             ])
             
-            # Process diff to limit size
+            # Process diff to limit size using constants
             summary_lines = []
             current_file = None
             lines_in_file = 0
-            max_lines_per_file = 50
+            max_lines_per_file = GIT_LOG_LIMITS["MEDIUM_MAX_LINES_PER_FILE"]
+            max_line_length = GIT_LOG_LIMITS["MEDIUM_MAX_LINE_LENGTH"]
+            truncation_marker = GIT_LOG_LIMITS["MEDIUM_TRUNCATION_MARKER"]
             
             for line in diff_output.split('\n'):
                 # Track file headers
@@ -488,8 +490,8 @@ class GitLogAnalyzer:
                 elif line.startswith(('+', '-', ' ')) and current_file:
                     if lines_in_file < max_lines_per_file:
                         # Limit line length to avoid very long lines
-                        if len(line) > 200:
-                            line = line[:200] + "... [truncated]"
+                        if len(line) > max_line_length:
+                            line = line[:max_line_length] + truncation_marker
                         summary_lines.append(line)
                         lines_in_file += 1
                     elif lines_in_file == max_lines_per_file:

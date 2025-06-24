@@ -36,6 +36,7 @@ AI_MODELS = {
 
 TOKEN_STRATEGY = {
     "SAFETY_MARGIN": 0.95,        # Use 95% of model's max_tokens as limit
+    "PROMPT_OVERHEAD": 15000,      # Estimated tokens for prompt + metadata
     "AUTO_MODEL_SELECTION": True,  # Automatically select model by token count
     "SIMPLE_LOG_FALLBACK": True    # Fall back to simple logs if detailed too large
 }
@@ -177,7 +178,7 @@ def get_effective_token_limit(model_key: str) -> int:
     max_output = model_config["max_output_tokens"]
     
     # Reserve tokens for different components
-    prompt_overhead = 15000  # Estimated tokens for prompt + metadata
+    prompt_overhead = TOKEN_STRATEGY["PROMPT_OVERHEAD"]
     
     # Available tokens for git log = total - output - prompt - safety margin
     available_for_input = context_window - max_output - prompt_overhead
