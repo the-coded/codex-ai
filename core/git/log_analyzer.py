@@ -176,6 +176,32 @@ class GitLogAnalyzer:
         except Exception:
             return False
     
+    def generate_medium_log(self, output_file: str, since_commit: Optional[str] = None, branch: Optional[str] = None) -> bool:
+        """
+        Generate medium git log to file (balanced between simple and detailed).
+        
+        Args:
+            output_file: Output file path
+            since_commit: Start commit/tag/date (exclusive)
+            branch: Branch to analyze (default: current)
+            
+        Returns:
+            True if successful
+        """
+        try:
+            commits = self.analyze_commit_range(since_commit, branch, 'medium')
+            
+            output_lines = []
+            for commit in commits:
+                output_lines.append(self.format_commit_output(commit, 'medium'))
+            
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write('\n'.join(output_lines))
+            
+            return True
+        except Exception:
+            return False
+    
     def is_merge_commit(self, commit_hash: str) -> bool:
         """
         Check if a commit is a merge commit.
@@ -333,7 +359,10 @@ class GitLogAnalyzer:
         # Get files changed and patch if needed
         if mode == 'detailed':
             commit_info.patch = self._get_commit_patch(commit_hash)
-        else:
+        elif mode == 'medium':
+            commit_info.files_changed = self._get_commit_files(commit_hash)
+            commit_info.patch = self._get_commit_patch_summary(commit_hash)
+        else:  # simple
             commit_info.files_changed = self._get_commit_files(commit_hash)
         
         return commit_info
@@ -425,6 +454,66 @@ class GitLogAnalyzer:
         except RuntimeError:
             return []
     
+    def _get_commit_patch_summary(self, commit_hash: str) -> str:
+        """Get summarized patch for a commit (for medium mode)."""
+        try:
+            # Get diff stats first
+            stats_output = self._run_git_command([
+                "git", "show", "--stat", "--format=", commit_hash, "--", ".", self.exclude_pathspec
+            ])
+            
+            # Get limited diff content (first 50 lines per file)
+            diff_output = self._run_git_command([
+                "git", "show", "--patch", "--unified=2", commit_hash, "--", ".", self.exclude_pathspec
+            ])
+            
+            # Process diff to limit size
+            summary_lines = []
+            current_file = None
+            lines_in_file = 0
+            max_lines_per_file = 50
+            
+            for line in diff_output.split('\n'):
+                # Track file headers
+                if line.startswith('diff --git'):
+                    current_file = line
+                    lines_in_file = 0
+                    summary_lines.append(line)
+                elif line.startswith('index ') or line.startswith('+++') or line.startswith('---'):
+                    summary_lines.append(line)
+                elif line.startswith('@@'):
+                    if lines_in_file < max_lines_per_file:
+                        summary_lines.append(line)
+                        lines_in_file += 1
+                elif line.startswith(('+', '-', ' ')) and current_file:
+                    if lines_in_file < max_lines_per_file:
+                        # Limit line length to avoid very long lines
+                        if len(line) > 200:
+                            line = line[:200] + "... [truncated]"
+                        summary_lines.append(line)
+                        lines_in_file += 1
+                    elif lines_in_file == max_lines_per_file:
+                        summary_lines.append(f"... [diff truncated after {max_lines_per_file} lines]")
+                        lines_in_file += 1
+                else:
+                    summary_lines.append(line)
+            
+            # Combine stats and limited diff
+            result = []
+            if stats_output.strip():
+                result.append("File Statistics:")
+                result.append(stats_output)
+                result.append("")
+            
+            if summary_lines:
+                result.append("Diff Summary:")
+                result.extend(summary_lines)
+            
+            return '\n'.join(result)
+            
+        except RuntimeError:
+            return "Error retrieving patch summary"
+    
     def format_commit_output(self, commit_info: CommitInfo, mode: str = 'detailed') -> str:
         """
         Format commit information for output.
@@ -452,6 +541,15 @@ class GitLogAnalyzer:
         
         if mode == 'detailed' and commit_info.patch:
             output.append(commit_info.patch)
+        elif mode == 'medium':
+            # Show files and patch summary
+            if commit_info.files_changed:
+                output.append("  Files:")
+                for file_change in commit_info.files_changed:
+                    output.append(f"    {file_change}")
+            if commit_info.patch:
+                output.append("")
+                output.append(commit_info.patch)
         elif mode == 'simple' and commit_info.files_changed:
             # Show all files with status (A/M/D/R)
             output.append("  Files:")

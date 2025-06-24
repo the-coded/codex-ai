@@ -17,11 +17,13 @@ AI_MODELS = {
     "CLAUDE_4_SONNET": {
         "name": "anthropic/claude-4-sonnet-20250514",
         "max_tokens": 200000,   # 200K context window (confirmed by Anthropic docs)
+        "max_output_tokens": 64000,  # Aider default max_tokens for response
         "priority": 1           # Default choice
     },
     "CLAUDE_3_7_SONNET": {
         "name": "anthropic/claude-3-7-sonnet-latest", 
         "max_tokens": 200000,   # 200K context window (confirmed by Anthropic docs)
+        "max_output_tokens": 64000,  # Aider default max_tokens for response
         "priority": 2           # Fallback only
     }
 }
@@ -60,7 +62,7 @@ AIDER_BASE_FLAGS = [
 
 AIDER_COMMAND_TEMPLATES = {
     "CHANGELOG": {
-        "additional_flags": ["--no-git", "--sonnet"],  # Changelog uses --no-git and --sonnet (like old system)
+        "additional_flags": ["--no-git"],  # Changelog uses --no-git
         "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} {output_file}"
     },
     "uidocs_REACT": {
@@ -149,26 +151,39 @@ def select_model_by_tokens(token_count: int) -> Dict[str, Any]:
 
 def get_effective_token_limit(model_key: str) -> int:
     """
-    Get the effective token limit for a model (with safety margin).
+    Get the effective token limit for git log content only.
+    
+    This calculates the maximum tokens available for git log content by subtracting:
+    - max_output_tokens (reserved for AI response)
+    - prompt overhead (~15K tokens for prompt + metadata)
+    - safety margin
     
     Args:
         model_key: Model key (e.g., "CLAUDE_4_SONNET")
         
     Returns:
-        int: Effective token limit
+        int: Effective token limit for git log content
         
     Examples:
         >>> limit = get_effective_token_limit("CLAUDE_4_SONNET")
         >>> print(limit)
-        900000
+        114950  # (200K - 64K - 15K) * 0.95 = 114.95K
     """
     if model_key not in AI_MODELS:
         raise ValueError(f"Unknown model: {model_key}")
     
-    max_tokens = AI_MODELS[model_key]["max_tokens"]
+    model_config = AI_MODELS[model_key]
+    context_window = model_config["max_tokens"]
+    max_output = model_config["max_output_tokens"]
+    
+    # Reserve tokens for different components
+    prompt_overhead = 15000  # Estimated tokens for prompt + metadata
+    
+    # Available tokens for git log = total - output - prompt - safety margin
+    available_for_input = context_window - max_output - prompt_overhead
     safety_margin = TOKEN_STRATEGY["SAFETY_MARGIN"]
     
-    return int(max_tokens * safety_margin)
+    return int(available_for_input * safety_margin)
 
 
 def build_aider_command(command_type: str, model_key: str, **kwargs) -> str:

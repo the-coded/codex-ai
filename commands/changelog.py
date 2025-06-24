@@ -73,11 +73,19 @@ def run_changelog(
         os.makedirs(".tmp", exist_ok=True)
         log_file = ".tmp/git_log.txt"
         
-        # Clean any existing output file to avoid conflicts
+        # Clean any existing output file and Aider history to avoid conflicts
         if os.path.exists(output_file):
             os.remove(output_file)
             if verbose:
                 print(f"🗑️ Cleaned existing output file: {output_file}")
+        
+        # Clean Aider history files that can inflate token count
+        aider_files = [".aider.chat.history.md", ".aider.input.history"]
+        for aider_file in aider_files:
+            if os.path.exists(aider_file):
+                os.remove(aider_file)
+                if verbose:
+                    print(f"🗑️ Cleaned Aider history: {aider_file}")
         
         # Try detailed first
         if verbose:
@@ -99,12 +107,12 @@ def run_changelog(
         # Check if detailed log fits in model
         if tokens > token_limit:
             if verbose:
-                print(f"⚠️ Detailed log too large ({tokens:,} tokens), trying simple...")
+                print(f"⚠️ Detailed log too large ({tokens:,} tokens), trying medium...")
             
-            # Try simple log
-            success = git_analyzer.generate_simple_log(log_file, since_commit, branch)
+            # Try medium log
+            success = git_analyzer.generate_medium_log(log_file, since_commit, branch)
             if not success:
-                print("❌ Failed to generate simple git log")
+                print("❌ Failed to generate medium git log")
                 return False
             
             with open(log_file, 'r') as f:
@@ -112,11 +120,29 @@ def run_changelog(
             tokens = count_tokens(log_content)
             
             if verbose:
-                print(f"📊 Simple log tokens: {tokens:,}")
+                print(f"📊 Medium log tokens: {tokens:,}")
             
+            # If medium is still too large, try simple
             if tokens > token_limit:
-                print(f"❌ Even simple log too large ({tokens:,} tokens)")
-                return False
+                if verbose:
+                    print(f"⚠️ Medium log too large ({tokens:,} tokens), trying simple...")
+                
+                # Try simple log
+                success = git_analyzer.generate_simple_log(log_file, since_commit, branch)
+                if not success:
+                    print("❌ Failed to generate simple git log")
+                    return False
+                
+                with open(log_file, 'r') as f:
+                    log_content = f.read()
+                tokens = count_tokens(log_content)
+                
+                if verbose:
+                    print(f"📊 Simple log tokens: {tokens:,}")
+                
+                if tokens > token_limit:
+                    print(f"❌ Even simple log too large ({tokens:,} tokens)")
+                    return False
         
         # Create prompt file in .tmp/ too (like old system)
         prompt_file = ".tmp/prompt.md"
