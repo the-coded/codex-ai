@@ -1,18 +1,61 @@
 """
-Constants module for Codex-AI.
+Constants package for Codex-AI.
 
-Contains all configuration constants organized by domain:
-- timetrack: Time tracking multipliers and thresholds
-- git: Git patterns and commands
-- files: File type classifications
-- ai: AI model configurations
-- output: Output formatting constants
+This package contains all constants used throughout the Codex-AI system,
+organized by functionality and purpose.
+
+Available modules:
+- timetrack: Time tracking constants and multipliers
+- git: Git operations and conventional commit types
+- files: File categories and language mappings
+- ai: AI models and token strategies
+- output: Output formats and styling
 """
 
+# Import main constants for easy access
+from .timetrack import (
+    FILE_TYPE_MULTIPLIERS,
+    COMMIT_TYPE_MULTIPLIERS,
+    COMPLEXITY_THRESHOLDS,
+    STRUCTURAL_PATTERNS,
+    ALGORITHMIC_PATTERNS,
+    PLANNING_BASE,
+    DELETION_TIME_FACTOR
+)
+
+from .git import (
+    CONVENTIONAL_COMMIT_TYPES,
+    EXCLUDE_PATTERNS,
+    GIT_COMMANDS,
+    GIT_STATUS_COMMANDS,
+    GIT_DIFF_COMMANDS,
+    build_exclude_pathspec
+)
+
+# Version info
+__version__ = "1.0.0"
+__author__ = "the-coded Team"
+
+# Export commonly used constants
 __all__ = [
-    "timetrack",
-    "git",
-    "files",
-    "ai",
-    "output"
+    # Timetrack constants
+    "FILE_TYPE_MULTIPLIERS",
+    "COMMIT_TYPE_MULTIPLIERS", 
+    "COMPLEXITY_THRESHOLDS",
+    "STRUCTURAL_PATTERNS",
+    "ALGORITHMIC_PATTERNS",
+    "PLANNING_BASE",
+    "DELETION_TIME_FACTOR",
+    
+    # Git constants
+    "CONVENTIONAL_COMMIT_TYPES",
+    "EXCLUDE_PATTERNS",
+    "GIT_COMMANDS", 
+    "GIT_STATUS_COMMANDS",
+    "GIT_DIFF_COMMANDS",
+    "build_exclude_pathspec",
+    
+    # Package info
+    "__version__",
+    "__author__"
 ]

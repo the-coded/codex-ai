@@ -2,6 +2,8 @@
 python-dotenv>=1.0.0
 PyYAML>=6.0.1
 GitPython>=3.1.43
+# AI and token counting dependencies
+anthropic>=0.40.0
 aider-chat>=0.84.0
 tiktoken>=0.7.0
 jinja2>=3.1.4

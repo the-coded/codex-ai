@@ -44,32 +44,32 @@
 ## ⚙️ **FASE 2: Core Implementation**
 
 ### 2.1 Constants
-- [ ] `constants/__init__.py`
-- [ ] `constants/timetrack.py`
-  - [ ] FILE_TYPE_MULTIPLIERS
-  - [ ] COMMIT_TYPE_MULTIPLIERS
-  - [ ] COMPLEXITY_THRESHOLDS
-  - [ ] STRUCTURAL_PATTERNS
-  - [ ] ALGORITHMIC_PATTERNS
-- [ ] `constants/git.py`
-  - [ ] CONVENTIONAL_COMMIT_TYPES
-  - [ ] EXCLUDE_PATTERNS
-  - [ ] GIT_COMMANDS
-  - [ ] GIT_STATUS_COMMANDS (staged, modified, untracked)
-  - [ ] GIT_DIFF_COMMANDS (since_commit, branch_range)
-- [ ] `constants/files.py`
-  - [ ] FILE_CATEGORIES
-  - [ ] SPECIAL_EXTENSIONS
-  - [ ] LANGUAGE_MAP
-- [ ] `constants/ai.py`
-  - [ ] AI_MODELS (Sonnet-4, Sonnet-3.7, Sonnet-3.5)
-  - [ ] TOKEN_STRATEGY
-  - [ ] AIDER_DEFAULTS
-- [ ] `constants/output.py`
-  - [ ] OUTPUT_FORMATS
-  - [ ] EMOJIS
-  - [ ] COLORS
-  - [ ] REPORT_TEMPLATES
+- [x] `constants/__init__.py` ✅
+- [x] `constants/timetrack.py` ✅
+  - [x] FILE_TYPE_MULTIPLIERS ✅
+  - [x] COMMIT_TYPE_MULTIPLIERS ✅
+  - [x] COMPLEXITY_THRESHOLDS ✅
+  - [x] STRUCTURAL_PATTERNS ✅
+  - [x] ALGORITHMIC_PATTERNS ✅
+- [x] `constants/git.py` ✅
+  - [x] CONVENTIONAL_COMMIT_TYPES ✅
+  - [x] EXCLUDE_PATTERNS ✅
+  - [x] GIT_COMMANDS ✅
+  - [x] GIT_STATUS_COMMANDS (staged, modified, untracked) ✅
+  - [x] GIT_DIFF_COMMANDS (since_commit, branch_range) ✅
+- [x] `constants/files.py` ✅
+  - [x] FILE_CATEGORIES ✅
+  - [x] SPECIAL_EXTENSIONS ✅
+  - [x] LANGUAGE_MAP ✅
+- [x] `constants/ai.py` ✅
+  - [x] AI_MODELS (Sonnet-4, Sonnet-3.7, Sonnet-3.5) ✅
+  - [x] TOKEN_STRATEGY ✅
+  - [x] AIDER_DEFAULTS ✅
+- [x] `constants/output.py` ✅
+  - [x] OUTPUT_FORMATS ✅
+  - [x] EMOJIS ✅
+  - [x] COLORS ✅
+  - [x] REPORT_TEMPLATES ✅
 
 ### 2.2 Core Modules
 - [ ] `core/__init__.py`
@@ -105,10 +105,10 @@
 ### 2.3 Utils (Migração + Novos)
 - [ ] Migrar utils atuais:
   - [ ] `utils/__init__.py`
-  - [ ] `utils/get_base_path.py`
-  - [ ] `utils/load_json.py`
-  - [ ] `utils/load_template.py`
-  - [ ] `utils/get_token_count.py`
+  - [x] `utils/get_base_path.py` ✅
+  - [x] `utils/load_json.py` ✅
+  - [ ] `utils/load_template.py` (❓ questionável - talvez não seja necessário)
+  - [x] `utils/get_token_count.py` ✅
 - [ ] Novos utils:
   - [ ] `utils/logger.py`
   - [ ] `utils/file_utils.py`
@@ -234,6 +234,7 @@
 - [ ] Remove debug code
 - [ ] Optimize imports
 - [ ] Final testing
+- [ ] **Implement proper JSON Schema**: Replace validate_json_schema with real jsonschema library
 - [ ] **Remove old/ directory** (quando aprovado)
 
 ---
@@ -259,6 +260,7 @@
 - [ ] ✅ PyPI package `codex-ai` funcionando
 - [ ] ✅ CLI `codex-ai` funcionando
 - [ ] ✅ Pipeline integration testada
+- [ ] 📦 **get_base_path deprecation**: Verificar se get_base_path ainda é necessário após publicação PyPI
 - [ ] 🗑️ **old/ directory removido**
 
 ---
