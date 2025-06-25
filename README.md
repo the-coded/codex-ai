@@ -1,10 +1,49 @@
+<div align="center">
+
 # 🤖 Codex-AI
 
-> AI-powered development toolkit for intelligent changelog generation, time tracking, and code analysis.
+<img src="assets/codex.png" alt="Codex-AI Logo" width="50%">  
 
 [![PyPI version](https://badge.fury.io/py/codex-ai.svg)](https://pypi.org/project/codex-ai/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+</div>
+
+## 🔭 Overview
+
+**Codex-AI** is a centralized AI-powered development toolkit that serves as the core hub of intelligent automation across development workflows. Inspired by ancient codices—volumes of knowledge meticulously compiled and preserved—Codex-AI is designed to be the modern evolution of development intelligence, bringing together AI-driven changelog generation, time tracking analysis, and documentation automation in one organized platform.
+
+Just as ancient codices preserved humanity's knowledge through generations, our Codex-AI aims to preserve and evolve development insights through intelligent automation and AI-powered analysis.
+
+## 📋 Table of Contents
+- [🔭 Overview](#-overview)
+- [🌟 Introduction](#-introduction)
+- [🚀 Quick Start](#-quick-start)
+- [✨ Features](#-features)
+- [📦 Installation](#-installation)
+- [⚙️ Configuration](#️-configuration)
+- [🎯 Usage](#-usage)
+- [🔧 Environment Variables](#-environment-variables)
+- [🤖 AI Models & Token Management](#-ai-models--token-management)
+- [📁 Project Structure](#-project-structure)
+- [🔄 Migration from Legacy Version](#-migration-from-legacy-version)
+- [🧪 Development](#-development)
+- [📋 Examples](#-examples)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🆘 Support](#-support)
+- [🏷️ Version History](#️-version-history)
+
+## 🌟 Introduction
+
+Codex-AI is more than just a development toolkit; it is a **strategic intelligence repository** that transforms development workflows through AI-powered automation. With Codex-AI, you can harness the power of Claude models to generate intelligent changelogs, analyze development patterns, create comprehensive documentation, and gain deep insights into your codebase—all within a centralized framework that adapts to complex project environments.
+
+### ✨ Key Highlights:
+- **🏛️ Centralized Intelligence**: Generate, analyze, and organize development insights through AI-powered automation in one unified platform.
+- **🤖 Advanced AI Integration**: Leverages Claude-4, Claude-3.7, and Claude-3.5 models with intelligent fallback chains for robust automation.
+- **🔄 Universal Compatibility**: Works seamlessly across languages, frameworks, and development workflows, making it a universal tool for modern development teams.
+- **📊 Deep Analytics**: Transforms raw Git data into actionable insights through intelligent time tracking and complexity analysis.
 
 ## 🚀 Quick Start
 
