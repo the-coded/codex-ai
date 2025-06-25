@@ -12,6 +12,7 @@ from typing import List, Optional
 
 from core.config import CodexConfig, set_config
 from constants.project import get_version
+from constants.ai import get_cli_model_choices
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -85,7 +86,7 @@ Configuration:
     config_parser.add_argument(
         '--model',
         type=str,
-        choices=['claude_4_sonnet', 'claude_3_7_sonnet', 'claude_3_5_sonnet'],
+        choices=get_cli_model_choices(),
         help='Set default AI model'
     )
     config_parser.add_argument(
@@ -159,7 +160,7 @@ Configuration:
     changelog_parser.add_argument(
         '--model',
         type=str,
-        choices=['claude_4_sonnet', 'claude_3_7_sonnet', 'claude_3_5_sonnet'],
+        choices=get_cli_model_choices(),
         help='AI model to use (overrides config)'
     )
     changelog_parser.add_argument(

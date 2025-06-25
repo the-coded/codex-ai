@@ -26,8 +26,8 @@ except ImportError:
 
 # Default model for token counting (imported from constants)
 try:
-    from constants.ai import DEFAULT_MODEL
-    DEFAULT_MODEL = DEFAULT_MODEL["name"] if isinstance(DEFAULT_MODEL, dict) else DEFAULT_MODEL
+    from constants.ai import DEFAULT_MODEL, get_default_model_name
+    DEFAULT_MODEL = get_default_model_name()
 except ImportError:
     # Fallback if constants not available
     DEFAULT_MODEL = "anthropic/claude-4-sonnet-20250514"

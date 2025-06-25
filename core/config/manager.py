@@ -12,6 +12,8 @@ import os
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 
+from constants.ai import get_model_token_limits, get_default_model_name
+
 
 class CodexConfig:
     """Configuration manager with hierarchical loading."""
@@ -130,14 +132,7 @@ class CodexConfig:
     
     def get_model_max_tokens(self, model: str) -> int:
         """Get maximum tokens for specific AI model."""
-        model_tokens = {
-            'claude_4_sonnet': 1000000,      # 1M tokens
-            'claude-4-sonnet-20250514': 1000000,
-            'claude_3_7_sonnet': 500000,     # 500K tokens  
-            'claude-3-7-sonnet-latest': 500000,
-            'claude_3_5_sonnet': 200000,     # 200K tokens
-            'claude-3-5-sonnet-latest': 200000,
-        }
+        model_tokens = get_model_token_limits()
         return model_tokens.get(model, 200000)  # Default to smallest if unknown
     
     def get_git_timeout(self, cli_value: Optional[int] = None) -> int:

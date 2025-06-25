@@ -24,7 +24,13 @@ AI_MODELS = {
         "name": "anthropic/claude-3-7-sonnet-latest", 
         "max_tokens": 200000,   # 200K context window (confirmed by Anthropic docs)
         "max_output_tokens": 64000,  # Aider default max_tokens for response
-        "priority": 2           # Fallback only
+        "priority": 2           # Second choice
+    },
+    "CLAUDE_3_5_SONNET": {
+        "name": "anthropic/claude-3-5-sonnet-latest",
+        "max_tokens": 200000,   # 200K context window (confirmed by Anthropic docs)
+        "max_output_tokens": 64000,  # Aider default max_tokens for response
+        "priority": 3           # Third choice / fallback
     }
 }
 
@@ -266,6 +272,98 @@ def get_model_by_name(model_name: str) -> Optional[Dict[str, Any]]:
     return None
 
 
+def get_cli_model_choices() -> List[str]:
+    """
+    Get CLI model choices sorted by priority.
+    
+    Returns:
+        List[str]: List of model keys sorted by priority
+        
+    Examples:
+        >>> choices = get_cli_model_choices()
+        >>> print(choices)
+        ['CLAUDE_4_SONNET', 'CLAUDE_3_7_SONNET', 'CLAUDE_3_5_SONNET']
+    """
+    # Sort models by priority and return keys directly
+    sorted_models = sorted(
+        AI_MODELS.items(),
+        key=lambda x: x[1]['priority']
+    )
+    
+    return [model_key for model_key, _ in sorted_models]
+
+
+def get_model_token_limits() -> Dict[str, int]:
+    """
+    Get token limits for all models in various naming formats.
+    
+    Returns:
+        Dict[str, int]: Mapping of model names to max tokens
+        
+    Examples:
+        >>> limits = get_model_token_limits()
+        >>> print(limits['claude_4_sonnet'])
+        200000
+    """
+    token_limits = {}
+    
+    for model_key, model_config in AI_MODELS.items():
+        max_tokens = model_config["max_tokens"]
+        model_name = model_config["name"]
+        
+        # Add various naming formats
+        cli_name = model_key.lower()  # CLAUDE_4_SONNET -> claude_4_sonnet
+        token_limits[cli_name] = max_tokens
+        token_limits[model_name] = max_tokens  # Full anthropic name
+        
+        # Add additional common variations
+        if "claude-4-sonnet" in model_name:
+            token_limits["claude-4-sonnet-20250514"] = max_tokens
+        elif "claude-3-7-sonnet" in model_name:
+            token_limits["claude-3-7-sonnet-latest"] = max_tokens
+        elif "claude-3-5-sonnet" in model_name:
+            token_limits["claude-3-5-sonnet-latest"] = max_tokens
+    
+    return token_limits
+
+
+def get_model_name_mapping() -> Dict[str, str]:
+    """
+    Get mapping from full model names to AI_MODELS keys.
+    
+    Returns:
+        Dict[str, str]: Mapping of model names to keys
+        
+    Examples:
+        >>> mapping = get_model_name_mapping()
+        >>> print(mapping['anthropic/claude-4-sonnet-20250514'])
+        'CLAUDE_4_SONNET'
+    """
+    mapping = {}
+    
+    for model_key, model_config in AI_MODELS.items():
+        model_name = model_config["name"]
+        mapping[model_name] = model_key
+    
+    return mapping
+
+
+def get_default_model_name() -> str:
+    """
+    Get the default model name (priority 1).
+    
+    Returns:
+        str: Full model name
+        
+    Examples:
+        >>> model_name = get_default_model_name()
+        >>> print(model_name)
+        'anthropic/claude-4-sonnet-20250514'
+    """
+    default_model = get_model_by_priority(1)
+    return default_model["name"] if default_model else "anthropic/claude-4-sonnet-20250514"
+
+
 # ===== VALIDATION CONSTANTS =====
 
 VALID_COMMAND_TYPES = list(AIDER_COMMAND_TEMPLATES.keys())
@@ -288,6 +386,10 @@ __all__ = [
     "build_aider_command",
     "get_all_model_names",
     "get_model_by_name",
+    "get_cli_model_choices",
+    "get_model_token_limits",
+    "get_model_name_mapping",
+    "get_default_model_name",
     
     # Validation constants
     "VALID_COMMAND_TYPES",

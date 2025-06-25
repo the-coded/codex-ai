@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 
 from core.config import CodexConfig
+from constants.ai import get_cli_model_choices
 
 
 def get_global_config_path() -> Path:
@@ -103,7 +104,7 @@ def show_current_config(config: CodexConfig) -> None:
 
 def validate_model(model: str) -> bool:
     """Validate AI model name."""
-    valid_models = ['claude_4_sonnet', 'claude_3_7_sonnet', 'claude_3_5_sonnet']
+    valid_models = get_cli_model_choices()
     return model in valid_models
 
 
@@ -154,7 +155,8 @@ def run_config(args, config: CodexConfig) -> int:
         if args.model:
             if not validate_model(args.model):
                 print(f"❌ Error: Invalid model '{args.model}'")
-                print("Valid models: claude_4_sonnet, claude_3_7_sonnet, claude_3_5_sonnet")
+                valid_models = get_cli_model_choices()
+                print(f"Valid models: {', '.join(valid_models)}")
                 return 1
             updates['CODEX_DEFAULT_MODEL'] = args.model
             print(f"✅ Default model set to: {args.model}")

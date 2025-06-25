@@ -9,7 +9,7 @@ import subprocess
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass
 
-from constants.ai import build_aider_command, AIDER_BASE_FLAGS
+from constants.ai import build_aider_command, AIDER_BASE_FLAGS, get_model_name_mapping
 from .model_selector import ModelInfo
 
 
@@ -169,13 +169,7 @@ class AiderInterface:
     
     def _get_model_key(self) -> str:
         """Get model key for command templates."""
-        # Map model names to keys
-        model_map = {
-            "anthropic/claude-4-sonnet-20250514": "CLAUDE_4_SONNET",
-            "anthropic/claude-3-7-sonnet-latest": "CLAUDE_3_7_SONNET", 
-            "anthropic/claude-3-5-sonnet-latest": "CLAUDE_3_5_SONNET"
-        }
-        
+        model_map = get_model_name_mapping()
         return model_map.get(self.model.name, "CLAUDE_4_SONNET")
     
     def _execute_command(self, command: str) -> AiderResult:
