@@ -137,23 +137,33 @@ This ensures predictable behavior and easy debugging of configuration issues.
 ## 🎯 Usage
 
 ### 📝 Changelog Generation
+
+**🎯 Smart Tag Detection**: By default, `codex-ai changelog` automatically detects the latest Git tag and generates changelog since that tag. This provides optimal token usage and focuses on changes since the last release.
+
 ```bash
-# Basic changelog
+# Basic changelog (auto-detects latest tag)
 codex-ai changelog
+# 📍 Auto-using since last tag: v1.0.0
 
 # Custom output file
 codex-ai changelog --output CHANGELOG.md
 
-# Since specific date or tag
+# Override auto-detection with specific date or tag
 codex-ai changelog --since "2024-01-01"
 codex-ai changelog --since "v1.0.0"
+codex-ai changelog --since "HEAD~10"
 
-# Dry run (preview only)
+# Dry run (preview only, no AI costs)
 codex-ai changelog --dry-run
 
 # Custom AI model
 codex-ai changelog --model claude_3_7_sonnet
 ```
+
+**💡 Tag Detection Behavior**:
+- **With tags**: Automatically uses latest tag as starting point (optimal token usage)
+- **Without tags**: Analyzes entire Git history (first release scenario)
+- **Manual override**: Use `--since` to specify custom starting point
 
 ### ⏱️ Time Tracking
 ```bash

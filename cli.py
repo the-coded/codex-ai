@@ -23,24 +23,29 @@ def create_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  codex-ai changelog                     # Generate changelog
-  codex-ai changelog --output changelog.md --dry-run
-  codex-ai timetrack --report           # Time analysis with report
-  codex-ai timetrack --author "John" --since "2024-01-01"
-  codex-ai map-tree --all              # Map project structure and changes
-  codex-ai map-tree --project --output structure.json
-  codex-ai uidocs                       # Generate documentation (auto-detects types)
-  codex-ai uidocs --output-dir ./documentation
+  codex-ai changelog                     # Generate AI-powered changelog
+  codex-ai timetrack --report           # Analyze development time
+  codex-ai map-tree --all               # Map project structure  
+  codex-ai uidocs                        # Generate documentation
+  codex-ai config --api-key YOUR_KEY    # Configure settings
+
+For detailed options and examples:
+  codex-ai <command> --help
+
+Configuration:
+  codex-ai config --api-key YOUR_KEY        # Set API key (required for AI features)
+  codex-ai config --list                    # Show current settings  
+  codex-ai config --reset                   # Reset to defaults
+  codex-ai config --help                    # See all configuration options
+  
+  Priority: CLI args > ENV vars > config file > defaults
+  Config file: ~/.config/codex-ai/config.env
 
 Environment Variables:
   ANTHROPIC_API_KEY                     # Required for AI features
   CODEX_DEFAULT_MODEL                   # Default AI model
   CODEX_OUTPUT_FORMAT                   # Default output format
   CODEX_VERBOSE                         # Enable verbose output
-
-Configuration:
-  Use 'codex-ai config --api-key YOUR_KEY' to save settings globally.
-  Or set ANTHROPIC_API_KEY environment variable.
         """
     )
     
@@ -155,7 +160,7 @@ Configuration:
     changelog_parser.add_argument(
         '--since',
         type=str,
-        help='Generate changelog since date (YYYY-MM-DD), tag, or commit hash'
+        help='Generate changelog since date (YYYY-MM-DD), tag, or commit hash (default: auto-detect latest tag)'
     )
     changelog_parser.add_argument(
         '--model',

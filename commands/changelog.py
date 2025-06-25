@@ -46,6 +46,15 @@ def run_changelog(
         # Initialize git analyzer
         git_analyzer = GitLogAnalyzer()
         
+        # Auto-detect latest tag if no since_commit specified
+        if since_commit is None:
+            latest_tag = git_analyzer.get_latest_tag()
+            if latest_tag:
+                since_commit = latest_tag
+                print(f"📍 Auto-using since last tag: {latest_tag}")
+            else:
+                print("📍 No tags found - analyzing all history")
+        
         # Get commit count for info
         if verbose:
             print("📊 Analyzing git history...")

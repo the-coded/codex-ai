@@ -94,6 +94,18 @@ class GitLogAnalyzer:
         """Get hash of the last commit (HEAD)."""
         return self._run_git_command(["git", "rev-parse", "HEAD"])
     
+    def get_latest_tag(self) -> Optional[str]:
+        """
+        Get the most recent tag in the repository.
+        
+        Returns:
+            Latest tag name or None if no tags exist
+        """
+        try:
+            return self._run_git_command(["git", "describe", "--tags", "--abbrev=0"])
+        except RuntimeError:
+            return None
+    
     def get_commit_count(self, since_commit: Optional[str] = None, branch: Optional[str] = None) -> int:
         """
         Get count of commits in range.
