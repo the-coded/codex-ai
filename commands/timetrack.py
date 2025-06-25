@@ -6,8 +6,10 @@ Integrates with core.timetracker module to generate comprehensive reports.
 """
 
 import sys
+import re
+import subprocess
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 
 from core.timetracker import (
     TimeCalculator, ReportGenerator, create_full_time_report,
@@ -72,6 +74,138 @@ def run_timetrack(args, config: CodexConfig) -> int:
         return 1
 
 
+def _parse_since_parameter(since_value: str) -> Dict[str, str]:
+    """
+    Parse --since parameter to detect type: date, commit hash, or tag.
+    
+    Args:
+        since_value: Value from --since parameter
+        
+    Returns:
+        Dictionary with 'type' and 'value' keys
+    """
+    # Check if it looks like a commit hash (6-40 hex characters)
+    if re.match(r'^[a-f0-9]{6,40}$', since_value, re.IGNORECASE):
+        return {'type': 'commit', 'value': since_value}
+    
+    # Check if it looks like a version tag (v1.0.0, 1.0.0, etc.)
+    if re.match(r'^v?\d+\.\d+(\.\d+)?', since_value):
+        return {'type': 'tag', 'value': since_value}
+    
+    # Check if it looks like a date (YYYY-MM-DD)
+    if re.match(r'^\d{4}-\d{2}-\d{2}', since_value):
+        return {'type': 'date', 'value': since_value}
+    
+    # Default to date for backward compatibility
+    return {'type': 'date', 'value': since_value}
+
+
+def _filter_commits_since_hash(commits: List, target_hash: str) -> List:
+    """
+    Filter commits starting from a specific commit hash.
+    
+    Args:
+        commits: List of commits (newest first)
+        target_hash: Target commit hash to start from
+        
+    Returns:
+        List of commits since the target hash (including target)
+    """
+    # Find the target commit index
+    target_index = None
+    for i, commit in enumerate(commits):
+        if commit.hash.startswith(target_hash) or target_hash.startswith(commit.hash):
+            target_index = i
+            break
+    
+    if target_index is None:
+        print(f"⚠️  Commit hash '{target_hash}' not found")
+        return []
+    
+    # Return commits from target onwards (commits are newest first)
+    return commits[:target_index + 1]
+
+
+def _filter_commits_since_tag(commits: List, tag: str) -> List:
+    """
+    Filter commits since a Git tag.
+    
+    Args:
+        commits: List of commits
+        tag: Git tag name
+        
+    Returns:
+        List of commits since the tag
+    """
+    try:
+        # Get commit hash for the tag
+        result = subprocess.run([
+            'git', 'rev-list', '-n', '1', tag
+        ], capture_output=True, text=True, check=True)
+        
+        tag_hash = result.stdout.strip()
+        if tag_hash:
+            return _filter_commits_since_hash(commits, tag_hash)
+        
+    except subprocess.CalledProcessError:
+        print(f"⚠️  Tag '{tag}' not found")
+    
+    return []
+
+
+def _filter_commits_until_hash(commits: List, target_hash: str) -> List:
+    """
+    Filter commits up to a specific commit hash.
+    
+    Args:
+        commits: List of commits (newest first)
+        target_hash: Target commit hash to stop at
+        
+    Returns:
+        List of commits until the target hash (excluding target)
+    """
+    # Find the target commit index
+    target_index = None
+    for i, commit in enumerate(commits):
+        if commit.hash.startswith(target_hash) or target_hash.startswith(commit.hash):
+            target_index = i
+            break
+    
+    if target_index is None:
+        print(f"⚠️  Commit hash '{target_hash}' not found")
+        return commits  # Return all if not found
+    
+    # Return commits before target (commits are newest first)
+    return commits[target_index + 1:]
+
+
+def _filter_commits_until_tag(commits: List, tag: str) -> List:
+    """
+    Filter commits until a Git tag.
+    
+    Args:
+        commits: List of commits
+        tag: Git tag name
+        
+    Returns:
+        List of commits until the tag
+    """
+    try:
+        # Get commit hash for the tag
+        result = subprocess.run([
+            'git', 'rev-list', '-n', '1', tag
+        ], capture_output=True, text=True, check=True)
+        
+        tag_hash = result.stdout.strip()
+        if tag_hash:
+            return _filter_commits_until_hash(commits, tag_hash)
+        
+    except subprocess.CalledProcessError:
+        print(f"⚠️  Tag '{tag}' not found")
+    
+    return commits  # Return all if tag not found
+
+
 def _get_filtered_commits(calculator: TimeCalculator, args) -> List:
     """
     Get commits filtered by command line arguments.
@@ -97,18 +231,43 @@ def _get_filtered_commits(calculator: TimeCalculator, args) -> List:
             if author_lower in c.author.lower()
         ]
     
-    # Filter by date range
+    # Filter by since parameter (supports dates, hashes, and tags)
     if args.since:
-        filtered_commits = [
-            c for c in filtered_commits 
-            if c.date >= args.since
-        ]
+        since_info = _parse_since_parameter(args.since)
+        
+        if since_info['type'] == 'commit':
+            print(f"📍 Filtering commits since hash: {since_info['value']}")
+            filtered_commits = _filter_commits_since_hash(filtered_commits, since_info['value'])
+        
+        elif since_info['type'] == 'tag':
+            print(f"🏷️  Filtering commits since tag: {since_info['value']}")
+            filtered_commits = _filter_commits_since_tag(filtered_commits, since_info['value'])
+        
+        else:  # date
+            print(f"📅 Filtering commits since date: {since_info['value']}")
+            filtered_commits = [
+                c for c in filtered_commits 
+                if c.date >= since_info['value']
+            ]
     
+    # Filter by until parameter (supports dates, hashes, and tags)
     if args.until:
-        filtered_commits = [
-            c for c in filtered_commits 
-            if c.date <= args.until
-        ]
+        until_info = _parse_since_parameter(args.until)
+        
+        if until_info['type'] == 'commit':
+            print(f"📍 Filtering commits until hash: {until_info['value']}")
+            filtered_commits = _filter_commits_until_hash(filtered_commits, until_info['value'])
+        
+        elif until_info['type'] == 'tag':
+            print(f"🏷️  Filtering commits until tag: {until_info['value']}")
+            filtered_commits = _filter_commits_until_tag(filtered_commits, until_info['value'])
+        
+        else:  # date
+            print(f"📅 Filtering commits until date: {until_info['value']}")
+            filtered_commits = [
+                c for c in filtered_commits 
+                if c.date <= until_info['value']
+            ]
     
     return filtered_commits
 
@@ -344,13 +503,13 @@ def add_timetrack_arguments(parser):
     parser.add_argument(
         '--since',
         type=str,
-        help='Filter commits since date (YYYY-MM-DD format)'
+        help='Filter commits since date (YYYY-MM-DD), tag (v1.0.0), or commit hash (abc123)'
     )
     
     parser.add_argument(
         '--until',
         type=str,
-        help='Filter commits until date (YYYY-MM-DD format)'
+        help='Filter commits until date (YYYY-MM-DD), tag (v1.0.0), or commit hash (abc123)'
     )
     
     parser.add_argument(
@@ -377,6 +536,11 @@ Examples:
   codex-ai timetrack --report                 # Detailed report
   codex-ai timetrack --author "John"          # Filter by author
   codex-ai timetrack --since "2024-01-01"     # Filter by date
+  codex-ai timetrack --since "abc123"         # Filter since commit hash
+  codex-ai timetrack --since "v1.0.0"         # Filter since tag
+  codex-ai timetrack --until "def456"         # Filter until commit hash
+  codex-ai timetrack --until "v2.0.0"         # Filter until tag
+  codex-ai timetrack --since "v1.0.0" --until "v2.0.0"  # Between versions
   codex-ai timetrack --format json            # JSON output
   codex-ai timetrack --output report.html     # Save to file
   codex-ai timetrack --report --format csv -o stats.csv  # CSV report to file
@@ -384,4 +548,9 @@ Examples:
 The timetrack command analyzes Git commits to estimate development time
 based on file types, complexity, and commit patterns. It provides insights
 into developer productivity, project timelines, and work distribution.
+
+Both --since and --until parameters accept:
+  • Dates: "2024-01-01" (YYYY-MM-DD format)
+  • Commit hashes: "abc123" or "abc123def456" (7-40 hex characters)
+  • Tags: "v1.0.0" or "1.2.3" (version tags)
 """
