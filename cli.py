@@ -308,7 +308,8 @@ def run_changelog_command(args, config: CodexConfig) -> int:
             output_file=output_file,
             since_commit=args.since,
             model_name=args.model,  # None if not specified
-            verbose=verbose
+            verbose=verbose,
+            dry_run=args.dry_run
         )
         
         return 0 if success else 1

@@ -22,7 +22,8 @@ def run_changelog(
     since_commit: Optional[str] = None,
     branch: Optional[str] = None,
     model_name: Optional[str] = None,
-    verbose: bool = False
+    verbose: bool = False,
+    dry_run: bool = False
 ) -> bool:
     """
     Generate changelog from git commits.
@@ -33,6 +34,7 @@ def run_changelog(
         branch: Branch to analyze (default: current)
         model_name: AI model to use (default: anthropic/claude-4-sonnet-20250514)
         verbose: Enable verbose output
+        dry_run: Preview mode - analyze but don't generate files
         
     Returns:
         bool: True if successful, False otherwise
@@ -151,6 +153,33 @@ def run_changelog(
         with open(prompt_file, 'w') as f:
             f.write(prompt_content)
         
+        # Dry run mode - show preview and stop before AI generation
+        if dry_run:
+            print("🔍 DRY RUN MODE - Preview only, NO AI calls (no costs)")
+            print(f"📄 Would generate: {output_file}")
+            print(f"📊 Git log tokens: {tokens:,}")
+            print(f"📊 Token limit: {token_limit:,}")
+            print(f"🤖 Would use model: {model.name}")
+            print(f"💰 AI costs: $0.00 (dry run - no API calls made)")
+            print(f"📁 Working directory: {os.getcwd()}")
+            print(f"📄 Git log file: {log_file} (exists: {os.path.exists(log_file)})")
+            print(f"📄 Prompt file: {prompt_file} (exists: {os.path.exists(prompt_file)})")
+            
+            # Show git log preview
+            if verbose and os.path.exists(log_file):
+                with open(log_file, 'r') as f:
+                    log_preview = f.read()
+                if log_preview:
+                    print("\n📋 Git Log Preview (first 500 chars):")
+                    print("─" * 50)
+                    print(log_preview[:500] + ("..." if len(log_preview) > 500 else ""))
+                    print("─" * 50)
+                else:
+                    print("\n⚠️  Git log is empty - no commits to analyze")
+            
+            print("✅ Dry run completed - no files generated, no AI costs incurred")
+            return True
+        
         if verbose:
             print("🤖 Running AI generation...")
             print(f"📁 Working directory: {os.getcwd()}")
@@ -193,5 +222,6 @@ def changelog_command(args):
         since_commit=args.since,
         branch=args.branch,
         model_name=args.model,
-        verbose=args.verbose
+        verbose=args.verbose,
+        dry_run=args.dry_run
     )
