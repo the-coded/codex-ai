@@ -2,9 +2,9 @@
 
 ## 📊 Progress Overview
 - [x] **Fase 1**: Setup e Migração (100%) ✅
-- [ ] **Fase 2**: Core Implementation (85%) 🔄
+- [ ] **Fase 2**: Core Implementation (95%) 🔄
 - [ ] **Fase 3**: Commands Implementation (75%) 🔄
-- [ ] **Fase 4**: Templates e AI Integration (80%) 🔄
+- [ ] **Fase 4**: Templates e AI Integration (100%) ✅
 - [ ] **Fase 5**: Testing e Validation (0%)
 - [x] **Fase 6**: Documentation e Cleanup (95%) ✅
 
@@ -111,19 +111,12 @@
 
 ### 2.3 Utils (Migração + Novos)
 - [ ] Migrar utils atuais:
-  - [ ] `utils/__init__.py`
-  - [x] `utils/get_base_path.py` ✅
-  - [x] `utils/load_json.py` ✅
-  - [ ] `utils/load_template.py` (❓ questionável - talvez não seja necessário)
-  - [x] `utils/get_token_count.py` ✅
+  - [ ] `utils/__init__.py` (module exports - for all commands and core modules)
+  - [x] `utils/get_base_path.py` ✅ (project root detection - for all commands and config)
+  - [x] `utils/load_json.py` ✅ (JSON loading - for config files and data processing)
+  - [x] `utils/get_token_count.py` ✅ (token counting - for changelog and AI integration)
 - [ ] Novos utils:
-  - [ ] `utils/logger.py`
-  - [ ] `utils/file_utils.py`
-  - [ ] `utils/env_loader.py` (.env support)
-  - [ ] `utils/subprocess_utils.py`
-  - [ ] `utils/path_utils.py`
-  - [ ] `utils/validation.py`
-  - [ ] `utils/git_utils.py` (git operations for uidocs modes)
+  - [ ] `utils/git_utils.py` (git operations - for uidocs local/pipeline modes)
 
 ---
 
@@ -184,12 +177,6 @@
   - [x] `uidocs_react_prompt.md` ✅
   - [x] `uidocs_sass_prompt.md` ✅
   - [x] `uidocs_storybook_prompt.md` ✅
-  - [ ] `analysis_prompt.md`
-- [ ] `templates/outputs/`
-  - [ ] `changelog_template.md`
-  - [ ] `timetrack_report_template.md`
-  - [ ] `uidocs_template.md`
-- [ ] `templates/README.md`
 
 ### 4.2 AI Integration
 - [x] Token counting e management ✅
@@ -210,13 +197,6 @@
   - [x] Automatic fallback on token overflow ✅
   - [x] Verbose logging for debugging ✅
 
-### 4.3 Output Formatters
-- [ ] `formatters/__init__.py`
-- [ ] `formatters/time.py`
-- [ ] `formatters/git.py`
-- [ ] `formatters/uidocs.py`
-- [ ] `formatters/base.py`
-- [ ] Support para JSON, YAML, Markdown, HTML
 
 ---
 
@@ -366,3 +346,12 @@
 - ✅ Documentação e examples atualizados
 - ✅ Comando `map-tree` funcionando perfeitamente
 - ✅ Package metadata regenerado com correções
+
+**🗑️ LIMPEZA YAGNI (2025-06-24):**
+- ✅ Removidos 7 utils desnecessários (logger, file_utils, env_loader, subprocess_utils, path_utils, validation, load_template)
+- ✅ Removida seção templates/outputs/ completa (YAGNI - comandos já têm formatters próprios)
+- ✅ Removido analysis_prompt.md (comando analysis não existe mais)
+- ✅ Removida seção formatters/ completa (YAGNI - cada comando tem seu próprio formatter)
+- ✅ Fase 4 atualizada para 100% ✅ (só precisamos dos prompts existentes)
+- ✅ Fase 2 atualizada para 95% (só falta core/uidocs + git_utils)
+- ✅ Checklist otimizado: de ~100+ tarefas para ~15 tarefas reais restantes

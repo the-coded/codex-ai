@@ -256,19 +256,20 @@ The system automatically cascades through modes:
 
 ```
 codex-ai/
-├── commands/           # CLI command implementations
-├── core/              # Core business logic
-│   ├── git/          # Git operations and analysis
-│   ├── timetracker/  # Time tracking algorithms
+├── commands/         # CLI command implementations
+├── constants/        # Configuration constants
+├── core/             # Core business logic
 │   ├── ai/           # AI model integration
-│   └── uidocs/        # uidocs documentation (React, Sass, Storybook)
-├── constants/         # Configuration constants
+│   ├── uidocs/        # Documentation generation (in development)
+│   ├── config/       # Configuration management
+│   ├── git/          # Git operations and analysis
+│   └── timetracker/  # Time tracking algorithms
+├── docs/             # Documentation
+├── templates/        # AI prompts and templates
+│   └── prompts/      # AI prompt templates
+├── tests/            # Test suite
 ├── utils/            # Utility functions
-├── formatters/       # Output formatting
-├── templates/        # Markdown templates and prompts
-├── cli.py           # Main CLI interface
-├── config.py        # Configuration management
-└── pyproject.toml   # Package configuration
+└── old/              # Legacy code (for reference)
 ```
 
 ## 🔄 Migration from Legacy Version

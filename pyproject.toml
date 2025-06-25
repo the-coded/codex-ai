@@ -76,7 +76,7 @@ codex-ai = "cli:main"
 [tool.setuptools]
 packages = [
     "commands", "core", "core.git", "core.timetracker", "core.ai", "core.uidocs",
-    "constants", "utils", "formatters"
+    "constants", "utils", "formatters", "templates", "templates.prompts"
 ]
 py-modules = ["cli", "config", "__main__"]
 
