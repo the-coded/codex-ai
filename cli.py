@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
-from config import CodexConfig, set_config
+from core.config import CodexConfig, set_config
 from constants.project import get_version
 
 
@@ -44,11 +44,6 @@ Configuration:
     )
     
     # Global arguments
-    parser.add_argument(
-        '--config', '-c',
-        type=str,
-        help='Path to configuration file (YAML or JSON)'
-    )
     parser.add_argument(
         '--verbose', '-v',
         action='store_true',
@@ -378,7 +373,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     
     # Initialize configuration
     try:
-        config = CodexConfig(config_path=args.config)
+        config = CodexConfig()
         set_config(config)
     except Exception as e:
         print(f"❌ Error loading configuration: {e}")

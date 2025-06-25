@@ -5,26 +5,20 @@ Supports hierarchical configuration loading:
 1. CLI arguments (highest priority)
 2. Environment variables (CODEX_*, ANTHROPIC_API_KEY)
 3. Global config file (~/.config/codex-ai/config.env)
-4. Config files (--config YAML/JSON)
-5. Built-in defaults (lowest priority)
+4. Built-in defaults (lowest priority)
 """
 
 import os
 from pathlib import Path
 from typing import Dict, Any, Optional, List
-import yaml
-import json
 
 
 class CodexConfig:
     """Configuration manager with hierarchical loading."""
     
-    def __init__(self, config_path: Optional[str] = None):
-        self._config_data = {}
+    def __init__(self):
         self._global_config = {}
         self._load_global_config()
-        if config_path:
-            self._load_config_file(config_path)
     
     def _load_global_config(self):
         """Load global configuration manually (no dotenv)."""
@@ -38,23 +32,6 @@ class CodexConfig:
                     if line and not line.startswith('#') and '=' in line:
                         key, value = line.split('=', 1)
                         self._global_config[key.strip()] = value.strip()
-    
-    def _load_config_file(self, config_path: str):
-        """Load configuration from YAML or JSON file."""
-        config_file = Path(config_path)
-        if not config_file.exists():
-            return
-        
-        try:
-            with open(config_file, 'r', encoding='utf-8') as f:
-                if config_file.suffix.lower() in ['.yml', '.yaml']:
-                    self._config_data = yaml.safe_load(f) or {}
-                elif config_file.suffix.lower() == '.json':
-                    self._config_data = json.load(f)
-                else:
-                    print(f"Warning: Unsupported config file format: {config_file}")
-        except Exception as e:
-            print(f"Warning: Could not load config file {config_file}: {e}")
     
     def get(self, key: str, default: Any = None, cli_value: Any = None) -> Any:
         """
@@ -81,11 +58,7 @@ class CodexConfig:
         if key in self._global_config:
             return self._parse_env_value(self._global_config[key])
         
-        # 4. YAML/JSON config file (--config)
-        if key in self._config_data:
-            return self._config_data[key]
-        
-        # 5. Default value
+        # 4. Default value
         return default
     
     def _parse_env_value(self, value: str) -> Any:
@@ -196,36 +169,6 @@ class CodexConfig:
             return [pattern.strip() for pattern in patterns.split(',')]
         return patterns
     
-    def create_default_config(self, path: str = 'codex.config.yaml'):
-        """Create a default configuration file."""
-        default_config = {
-            'ai': {
-                'default_model': 'claude_4_sonnet',
-                'fallback_models': ['claude_3_7_sonnet', 'claude_3_5_sonnet'],
-                'retry_attempts': 3,
-                'timeout': 120
-            },
-            'output': {
-                'default_format': 'markdown',
-                'directory': '.tmp',
-                'verbose': False
-            },
-            'git': {
-                'exclude_patterns': ['*.lock', 'dist/**', 'node_modules/**'],
-                'timeout': 30
-            },
-            'performance': {
-                'cache_enabled': True,
-                'parallel_processing': True
-            }
-        }
-        
-        with open(path, 'w', encoding='utf-8') as f:
-            yaml.dump(default_config, f, default_flow_style=False, allow_unicode=True)
-        
-        print(f"✅ Default configuration created: {path}")
-        print("💡 Edit this file to customize your settings")
-        print("🔑 Set API key with: codex-ai config --api-key YOUR_KEY")
 
 
 # Global config instance

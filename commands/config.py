@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from config import CodexConfig
+from core.config import CodexConfig
 
 
 def get_global_config_path() -> Path:

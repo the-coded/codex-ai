@@ -13,7 +13,7 @@ from core.timetracker import (
     TimeCalculator, ReportGenerator, create_full_time_report,
     TIMETRACKER_AVAILABLE
 )
-from config import CodexConfig
+from core.config import CodexConfig
 
 
 def run_timetrack(args, config: CodexConfig) -> int:

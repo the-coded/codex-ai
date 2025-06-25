@@ -85,21 +85,15 @@ export CODEX_DEFAULT_MODEL=claude_4_sonnet
 export CODEX_OUTPUT_FORMAT=markdown
 ```
 
-### 4. Custom Config File (Advanced)
-Create `codex.config.yaml` for complex configurations:
-```yaml
-ai:
-  default_model: claude_4_sonnet
-  fallback_models:
-    - claude_3_7_sonnet
-    - claude_3_5_sonnet
-  max_tokens: 180000
+### 4. Configuration Hierarchy
+The system uses a clear hierarchy for configuration values:
 
-output:
-  default_format: markdown
-  directory: .tmp
-  verbose: false
-```
+1. **CLI arguments** (highest priority)
+2. **Environment variables** (CODEX_*)
+3. **Global config file** (~/.config/codex-ai/config.env)
+4. **Built-in defaults** (lowest priority)
+
+This ensures predictable behavior and easy debugging of configuration issues.
 
 ## 🎯 Usage
 
@@ -162,17 +156,20 @@ codex-ai uidocs --model claude_3_7_sonnet
 
 ### 📊 Project Analysis
 ```bash
-# Git analysis
-codex-ai analyze --git
+# Project structure mapping
+codex-ai map-tree --project
 
-# Project structure analysis
-codex-ai analyze --project
+# Git changes analysis
+codex-ai map-tree --git
 
-# Code complexity analysis
-codex-ai analyze --complexity
+# Release changes analysis  
+codex-ai map-tree --release
+
+# Sibling files analysis
+codex-ai map-tree --siblings
 
 # Combined analysis with custom output
-codex-ai analyze --git --project --complexity --output analysis.json
+codex-ai map-tree --project --git --output analysis.json
 ```
 
 ## 🔧 Environment Variables
@@ -294,7 +291,7 @@ codex-ai timetrack --since "2024-01-01" --report --format html
 codex-ai uidocs --output-dir ./docs
 
 # 5. Project analysis for review
-codex-ai analyze --git --complexity --output analysis.json
+codex-ai map-tree --project --git --output analysis.json
 ```
 
 ### Pipeline Integration (GitHub Actions)

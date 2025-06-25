@@ -22,7 +22,7 @@ def main():
     
     try:
         from commands.map_tree import run_map_tree, add_map_tree_arguments
-        from config import CodexConfig
+        from core.config import CodexConfig
         import argparse
         
         print("✅ Map-tree command imported successfully")

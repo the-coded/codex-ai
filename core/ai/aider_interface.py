@@ -33,7 +33,7 @@ class AiderInterface:
     def _get_api_key_from_config(self) -> Optional[str]:
         """Get API key from global config."""
         try:
-            from config import get_config
+            from core.config import get_config
             config = get_config()
             if config:
                 return config.get_api_key()

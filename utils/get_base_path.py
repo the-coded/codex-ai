@@ -212,9 +212,6 @@ def find_file_in_hierarchy(filename: str, start_path: Optional[str] = None) -> O
     Examples:
         >>> # Find .env file
         >>> env_file = find_file_in_hierarchy(".env")
-        
-        >>> # Find config file
-        >>> config_file = find_file_in_hierarchy("codex.config.yaml")
     """
     if start_path:
         current = Path(start_path).resolve()

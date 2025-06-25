@@ -14,7 +14,7 @@ from core.git import (
     GitTreeGenerator, ChangesTracker, GitLogAnalyzer, GitReleaseAnalyzer
 )
 from core import GIT_AVAILABLE
-from config import CodexConfig
+from core.config import CodexConfig
 
 
 def run_map_tree(args, config: CodexConfig) -> int:

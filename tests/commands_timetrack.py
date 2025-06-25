@@ -21,7 +21,7 @@ def main():
     
     try:
         from commands.timetrack import run_timetrack, add_timetrack_arguments
-        from config import CodexConfig
+        from core.config import CodexConfig
         import argparse
         
         print("✅ TimeTrack command imported successfully")
