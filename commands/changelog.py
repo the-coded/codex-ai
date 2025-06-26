@@ -82,21 +82,20 @@ def run_changelog(
         
         # Generate git log using .tmp/ directly (like old system that worked)
         os.makedirs(".tmp", exist_ok=True)
+        
+        # Clean .tmp directory before starting to avoid conflicts
+        import shutil
+        if os.path.exists(".tmp"):
+            shutil.rmtree(".tmp")
+        os.makedirs(".tmp", exist_ok=True)
         log_file = ".tmp/git_log.txt"
         
-        # Clean any existing output file and Aider history to avoid conflicts
+        # Clean any existing output file
         if os.path.exists(output_file):
             os.remove(output_file)
             if verbose:
                 print(f"🗑️ Cleaned existing output file: {output_file}")
         
-        # Clean Aider history files that can inflate token count
-        aider_files = [".aider.chat.history.md", ".aider.input.history"]
-        for aider_file in aider_files:
-            if os.path.exists(aider_file):
-                os.remove(aider_file)
-                if verbose:
-                    print(f"🗑️ Cleaned Aider history: {aider_file}")
         
         # Try detailed first
         if verbose:
@@ -162,6 +161,19 @@ def run_changelog(
         with open(prompt_file, 'w') as f:
             f.write(prompt_content)
         
+        # Calculate precise token usage for better optimization
+        prompt_tokens = count_tokens(prompt_content)
+        git_log_tokens = tokens  # Already calculated above
+        total_input_tokens = prompt_tokens + git_log_tokens
+        
+        if verbose:
+            print(f"📊 Precise token breakdown:")
+            print(f"   • Prompt tokens: {prompt_tokens:,}")
+            print(f"   • Git log tokens: {git_log_tokens:,}")
+            print(f"   • Total input: {total_input_tokens:,}")
+            print(f"   • Available limit: {token_limit:,}")
+            print(f"   • Efficiency: {(total_input_tokens/token_limit)*100:.1f}% of limit used")
+        
         # Dry run mode - show preview and stop before AI generation
         if dry_run:
             print("🔍 DRY RUN MODE - Preview only, NO AI calls (no costs)")
@@ -205,6 +217,15 @@ def run_changelog(
             prompt_file=prompt_file,
             output_file=output_file
         )
+        
+        # Move Aider history files to .tmp for pipeline artifacts (after Aider runs)
+        aider_files = [".aider.chat.history.md", ".aider.input.history"]
+        for aider_file in aider_files:
+            if os.path.exists(aider_file):
+                dest_file = f".tmp/{aider_file}"
+                shutil.move(aider_file, dest_file)
+                if verbose:
+                    print(f"📦 Moved Aider history to artifacts: {aider_file} → {dest_file}")
         
         if result.success:
             if verbose:

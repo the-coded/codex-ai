@@ -42,7 +42,7 @@ AI_MODELS = {
 
 TOKEN_STRATEGY = {
     "SAFETY_MARGIN": 0.95,        # Use 95% of model's max_tokens as limit
-    "PROMPT_OVERHEAD": 15000,      # Estimated tokens for prompt + metadata
+    "PROMPT_OVERHEAD": 5000,       # Real Aider overhead only (was 15k estimated)
     "AUTO_MODEL_SELECTION": True,  # Automatically select model by token count
     "SIMPLE_LOG_FALLBACK": True    # Fall back to simple logs if detailed too large
 }
@@ -69,7 +69,10 @@ AIDER_BASE_FLAGS = [
 
 AIDER_COMMAND_TEMPLATES = {
     "CHANGELOG": {
-        "additional_flags": ["--no-git"],  # Changelog uses --no-git
+        "additional_flags": [
+            ["--no-git"], 
+            ["--thinking-tokens", "8k"]
+        ],
         "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} {output_file}"
     },
     "uidocs_REACT": {
@@ -162,7 +165,7 @@ def get_effective_token_limit(model_key: str) -> int:
     
     This calculates the maximum tokens available for git log content by subtracting:
     - max_output_tokens (reserved for AI response)
-    - prompt overhead (~15K tokens for prompt + metadata)
+    - prompt overhead (5K tokens for Aider internal overhead only)
     - safety margin
     
     Args:
@@ -174,7 +177,7 @@ def get_effective_token_limit(model_key: str) -> int:
     Examples:
         >>> limit = get_effective_token_limit("CLAUDE_4_SONNET")
         >>> print(limit)
-        114950  # (200K - 64K - 15K) * 0.95 = 114.95K
+        124450  # (200K - 64K - 5K) * 0.95 = 124.45K
     """
     if model_key not in AI_MODELS:
         raise ValueError(f"Unknown model: {model_key}")
@@ -225,7 +228,19 @@ def build_aider_command(command_type: str, model_key: str, **kwargs) -> str:
     
     # Build base flags
     base_flags = AIDER_BASE_FLAGS.copy()
-    base_flags.extend(template["additional_flags"])
+    
+    # Process additional_flags - support both old format (strings) and new format (arrays)
+    for flag_item in template["additional_flags"]:
+        if isinstance(flag_item, list):
+            # New format: ["--flag", "value"] or ["--flag"]
+            if len(flag_item) == 1:
+                base_flags.append(flag_item[0])  # Flag without value
+            elif len(flag_item) == 2:
+                base_flags.append(f"{flag_item[0]} {flag_item[1]}")  # Flag with value
+        else:
+            # Old format: "--flag value" (backward compatibility)
+            base_flags.append(flag_item)
+    
     base_flags_str = " ".join(base_flags)
     
     # Format command
