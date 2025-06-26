@@ -2,11 +2,11 @@
 
 ## 📊 Progress Overview
 - [x] **Fase 1**: Setup e Migração (100%) ✅
-- [ ] **Fase 2**: Core Implementation (95%) 🔄
-- [ ] **Fase 3**: Commands Implementation (75%) 🔄
+- [ ] **Fase 2**: Core Implementation (98%) 🔄
+- [ ] **Fase 3**: Commands Implementation (90%) 🔄
 - [ ] **Fase 4**: Templates e AI Integration (100%) ✅
 - [ ] **Fase 5**: Testing e Validation (0%)
-- [x] **Fase 6**: Documentation e Cleanup (95%) ✅
+- [x] **Fase 6**: Documentation e Cleanup (98%) ✅
 
 ---
 
@@ -110,8 +110,8 @@
   - [ ] `generator.py` (documentation generation orchestrator)
 
 ### 2.3 Utils (Migração + Novos)
-- [ ] Migrar utils atuais:
-  - [ ] `utils/__init__.py` (module exports - for all commands and core modules)
+- [x] Migrar utils atuais:
+  - [x] `utils/__init__.py` ✅ (module exports - for all commands and core modules)
   - [x] `utils/get_base_path.py` ✅ (project root detection - for all commands and config)
   - [x] `utils/load_json.py` ✅ (JSON loading - for config files and data processing)
   - [x] `utils/get_token_count.py` ✅ (token counting - for changelog and AI integration)
@@ -123,7 +123,7 @@
 ## 🎯 **FASE 3: Commands Implementation**
 
 ### 3.1 Commands Structure
-- [ ] `commands/__init__.py`
+- [x] `commands/__init__.py` ✅
 - [ ] `commands/base.py` (se necessário)
 
 ### 3.2 Individual Commands
@@ -143,6 +143,9 @@
   - [x] Output generation (with verbose logging) ✅
   - [x] Token management (114,950 tokens available for git log) ✅
   - [x] Smart fallback chain (detailed → medium → simple) ✅
+  - [x] Auto-detecção de tags implementada ✅
+  - [x] --dry-run functionality implementada ✅
+  - [x] Path dos prompts corrigido ✅
 - [x] `commands/timetrack.py` ✅
   - [x] Commit analysis (port do JS) ✅
   - [x] Time calculation ✅
@@ -240,6 +243,9 @@
 - [x] Configuration guide (config command + ENV vars) ✅
 - [x] Migration guide (old → new) ✅
 - [x] Troubleshooting guide (docs/local-developing.md) ✅
+- [x] CLI help reorganizado e otimizado ✅
+- [x] Auto-detecção de tags documentada ✅
+- [x] --dry-run functionality documentada ✅
 - [x] Technical documentation (docs/token-management.md) ✅
   - [x] Complete token allocation formula ✅
   - [x] Performance benchmarks ✅
