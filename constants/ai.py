@@ -56,10 +56,9 @@ TOKEN_STRATEGY = {
 AIDER_BASE_FLAGS = [
     "--subtree-only",     # Only consider files in current git subtree
     "--yes",              # Always say yes to confirmations (non-interactive)
-    "--cache-prompts",    # Enable prompt caching for performance
     "--no-stream",        # Disable streaming for clean log output
-    "--no-check-update"   # Don't check for aider updates (no interruptions)
-    # Removed --no-auto-commit (was in new system but not in working old system)
+    "--no-check-update",   # Don't check for aider updates (no interruptions)
+    "--map-tokens 0",     # Disable token mapping for performance
 ]
 
 # ===== AIDER COMMAND TEMPLATES =====
@@ -71,7 +70,7 @@ AIDER_COMMAND_TEMPLATES = {
     "CHANGELOG": {
         "additional_flags": [
             ["--no-git"], 
-            ["--thinking-tokens", "8k"]
+            ["--thinking-tokens", "4k"]
         ],
         "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} {output_file}"
     },
