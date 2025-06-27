@@ -87,9 +87,15 @@ cd codex-ai
 pip install -e .
 ```
 
-### Development Dependencies
+### Development Dependencies (Optional)
 ```bash
-pip install -r requirements-dev.txt
+# Basic installation (required dependencies only)
+pip install -e .
+
+# Enhanced installation with optional dependencies
+pip install -e ".[all]"          # All optional dependencies
+pip install -e ".[performance]"  # ujson, orjson for better performance
+pip install -e ".[rich]"         # rich, colorama for enhanced CLI output
 ```
 
 ## ⚙️ Configuration
@@ -239,17 +245,17 @@ codex-ai map-tree --project --git --output analysis.json
 effective_limit = (
     AI_MODELS["CLAUDE_4_SONNET"]["max_tokens"] -           # 200K context
     AI_MODELS["CLAUDE_4_SONNET"]["max_output_tokens"] -    # 64K response  
-    TOKEN_STRATEGY["PROMPT_OVERHEAD"]                      # 15K prompt
+    TOKEN_STRATEGY["PROMPT_OVERHEAD"]                      # 5K prompt
 ) * TOKEN_STRATEGY["SAFETY_MARGIN"]                       # 95% safety
-# Result: 114,950 tokens available for git log
+# Result: 124,450 tokens available for git log
 ```
 
 ### Token Distribution
 - **Context Window**: `AI_MODELS.max_tokens` (200K)
 - **AI Response**: `AI_MODELS.max_output_tokens` (64K) 
-- **Prompt + Metadata**: `TOKEN_STRATEGY.PROMPT_OVERHEAD` (15K)
+- **Prompt + Metadata**: `TOKEN_STRATEGY.PROMPT_OVERHEAD` (5K)
 - **Safety Margin**: `TOKEN_STRATEGY.SAFETY_MARGIN` (95%)
-- **Available for Git Log**: 114,950 tokens
+- **Available for Git Log**: 124,450 tokens
 
 ### 3-Level Git Log Strategy
 - **≤7 commits**: Detailed mode (full patches)
@@ -299,8 +305,7 @@ If you're migrating from the old shell script version:
 ```bash
 git clone https://github.com/the-coded/codex-ai.git
 cd codex-ai
-pip install -r requirements-dev.txt
-pip install -e .
+pip install -e ".[all]"  # Install with all optional dependencies for development
 ```
 
 ### Local Development & Testing
