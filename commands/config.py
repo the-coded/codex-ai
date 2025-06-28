@@ -104,9 +104,11 @@ def show_current_config(config: CodexConfig) -> None:
 
 
 def validate_model(model: str) -> bool:
-    """Validate AI model name."""
+    """Validate AI model name (case-insensitive)."""
     valid_models = get_cli_model_choices()
-    return model in valid_models
+    # Support both uppercase keys and lowercase user input
+    valid_models_lower = [m.lower() for m in valid_models]
+    return model.upper() in valid_models or model.lower() in valid_models_lower
 
 
 def validate_output_format(format_name: str) -> bool:

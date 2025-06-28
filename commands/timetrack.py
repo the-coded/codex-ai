@@ -63,7 +63,8 @@ def run_timetrack(args, config: CodexConfig) -> int:
         
         # Save to file if output specified
         if args.output:
-            _save_report_to_file(generator, report, args, config)
+            if not _save_report_to_file(generator, report, args, config):
+                return 1
         
         return 0
         
@@ -323,7 +324,7 @@ def _generate_detailed_report(generator: ReportGenerator, report, args, config: 
         print(output)
 
 
-def _save_report_to_file(generator: ReportGenerator, report, args, config: CodexConfig):
+def _save_report_to_file(generator: ReportGenerator, report, args, config: CodexConfig) -> bool:
     """
     Save report to specified output file.
     
@@ -332,6 +333,9 @@ def _save_report_to_file(generator: ReportGenerator, report, args, config: Codex
         report: TimeTrackingReport object
         args: Command line arguments
         config: Codex configuration
+        
+    Returns:
+        bool: True if successful, False if failed
     """
     output_path = Path(args.output)
     
@@ -368,9 +372,11 @@ def _save_report_to_file(generator: ReportGenerator, report, args, config: Codex
             f.write(content)
         
         print(f"✅ Report saved to: {output_path}")
+        return True
         
     except Exception as e:
         print(f"❌ Error saving report to {output_path}: {e}")
+        return False
 
 
 def _generate_csv_report(report) -> str:

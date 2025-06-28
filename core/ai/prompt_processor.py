@@ -62,14 +62,14 @@ def get_uidocs_prompt(doc_type: str) -> str:
 
 def get_react_prompt() -> str:
     """Get React documentation prompt."""
-    return load_prompt("uidocs_react_prompt")
+    return load_prompt("ui-lib_react_prompt")
 
 
 def get_sass_prompt() -> str:
     """Get Sass documentation prompt."""
-    return load_prompt("uidocs_sass_prompt")
+    return load_prompt("ui-lib_sass_prompt")
 
 
 def get_storybook_prompt() -> str:
     """Get Storybook documentation prompt."""
-    return load_prompt("uidocs_storybook_prompt")
+    return load_prompt("ui-lib_storybook_prompt")

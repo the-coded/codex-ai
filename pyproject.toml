@@ -14,54 +14,35 @@ authors = [
 maintainers = [
     {name = "Codex-AI Team", email = "gabriel@laplanta.com.br"}
 ]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "Topic :: Software Development :: Documentation",
-    "Topic :: Software Development :: Version Control :: Git",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Operating System :: OS Independent",
-    "Environment :: Console",
-]
-keywords = [
-    "ai", "artificial-intelligence", "git", "changelog", "documentation", 
-    "time-tracking", "development-tools", "claude", "automation", 
-    "code-analysis", "project-management", "developer-experience"
-]
 requires-python = ">=3.8"
-dependencies = [
-    "PyYAML>=6.0.2",
-    "GitPython>=3.1.44",
-    "anthropic>=0.55.0",
-    "aider-chat>=0.84.0",
-    "tiktoken>=0.9.0",
-    "jinja2>=3.1.6",
-    "python-dateutil>=2.9.0",
-    "typing-extensions>=4.13.0",
-    "tomli>=2.2.0; python_version<'3.11'"
-]
 
-[project.optional-dependencies]
-performance = [
-    "ujson>=5.10.0",
-    "orjson>=3.10.0",
-]
-rich = [
-    "rich>=13.7.0",
-    "colorama>=0.4.6",
-]
-all = [
-    "ujson>=5.10.0",
-    "orjson>=3.10.0",
-    "rich>=13.7.0",
-    "colorama>=0.4.6",
+# TODO: Adicionar classifiers quando necessário
+classifiers = []
+
+# Keywords essenciais
+keywords = ["ai", "git", "changelog", "time-tracking", "documentation"]
+
+dependencies = [
+    # ═══ PROCESSAMENTO DE DADOS ═══
+    "PyYAML>=6.0.2",           # Leitura/escrita YAML - configs, CI/CD, metadados
+    
+    # ═══ CONTROLE DE VERSÃO ═══  
+    "GitPython>=3.1.44",       # Interface Python para Git - commits, branches, tags, diffs
+    
+    # ═══ INTELIGÊNCIA ARTIFICIAL ═══
+    "anthropic>=0.55.0",       # API oficial Claude (Anthropic) - competitor do ChatGPT
+    "aider-chat>=0.84.0",      # AI coding assistant - escreve código automaticamente
+    "tiktoken>=0.9.0",         # Contador de tokens para APIs de IA (OpenAI/Anthropic)
+    
+    # ═══ TEMPLATES E FORMATAÇÃO ═══
+    "jinja2>=3.1.6",           # Engine de templates - como Handlebars/Mustache no Node.js
+    
+    # ═══ UTILIDADES DE DATA/TEMPO ═══
+    "python-dateutil>=2.9.0",  # Manipulação avançada de datas - como moment.js/date-fns
+    
+    # ═══ TIPAGEM E COMPATIBILIDADE ═══
+    "typing-extensions>=4.13.0", # Recursos de tipagem para Python < 3.11
+    "tomli>=2.2.0; python_version<'3.11'" # Parser TOML (built-in no Python 3.11+)
 ]
 
 [project.urls]
@@ -75,104 +56,15 @@ codex-ai = "cli:main"
 
 [tool.setuptools]
 packages = [
-    "commands", "core", "core.git", "core.timetracker", "core.ai", "core.uidocs",
-    "constants", "utils", "formatters", "templates", "templates.prompts"
+    "commands", "core", "core.git", "core.timetracker", "core.ai", "core.config",
+    "constants", "utils", "templates", "templates.prompts"
 ]
-py-modules = ["cli", "config", "__main__"]
+py-modules = ["cli", "__main__"]
 
 [tool.setuptools.package-data]
-"*" = ["*.md", "*.txt", "*.yaml", "*.yml", "*.json"]
 "templates" = ["**/*.md"]
 
-# Black configuration
-[tool.black]
-line-length = 88
-target-version = ['py38']
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-  # directories
-  \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  | old
-)/
-'''
-
-# isort configuration
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 88
-known_first_party = ["commands", "core", "constants", "utils", "formatters"]
-
-# mypy configuration
-[tool.mypy]
-python_version = "3.8"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
-strict_equality = true
-
-[[tool.mypy.overrides]]
-module = [
-    "aider.*",
-    "tiktoken.*",
-    "git.*",
-]
-ignore_missing_imports = true
-
-# pytest configuration
-[tool.pytest.ini_options]
-minversion = "8.0"
-addopts = "-ra -q --strict-markers --strict-config"
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks tests as integration tests",
-    "unit: marks tests as unit tests",
-]
-
-# Coverage configuration
-[tool.coverage.run]
-source = [".", "commands", "core", "constants", "utils", "formatters"]
-omit = [
-    "*/tests/*",
-    "*/test_*",
-    "setup.py",
-    "*/old/*",
-    "*/.venv/*",
-    "*/venv/*",
-]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "if self.debug:",
-    "if settings.DEBUG",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if 0:",
-    "if __name__ == .__main__.:",
-    "class .*\\bProtocol\\):",
-    "@(abc\\.)?abstractmethod",
-]
+# TODO: Implementar ferramentas de qualidade de código
+# Configurações prontas para quando implementarmos ruff e mypy
+# [tool.ruff] - Adicionar quando implementar
+# [tool.mypy] - Adicionar quando implementar

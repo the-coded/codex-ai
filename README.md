@@ -330,16 +330,54 @@ pip install -e ".[all]"  # Install with all optional dependencies for developmen
 
 ### Run Tests
 ```bash
+# Run all tests with our custom test runner
+python tests/run_all.py
+
+# Run specific category
+python tests/run_all.py --category commands
+
+# Run with verbose output
+python tests/run_all.py --verbose
+
+# Run ui-lib integration tests
+python tests/run_all.py --ui-lib-integration
+
+# Alternative: Use pytest (if available)
 pytest
 ```
 
-### Code Quality
+### Code Quality (TODO: Implementar)
 ```bash
-black .
-isort .
+# TODO: Adicionar ferramentas de qualidade de código modernas
+# Instalar: pip install ruff mypy
+
+# 🚀 RUFF - Ferramenta all-in-one (substitui black + isort + flake8)
+ruff format .    # Auto-formatação (substitui black)
+ruff check .     # Linting (substitui flake8)
+ruff check --fix .  # Auto-fix imports e problemas (substitui isort)
+
+# 🔍 MYPY - Verificador de tipos (padrão da indústria)
 mypy .
-flake8 .
+
+# ⚡ Comando completo (rápido e moderno)
+ruff format . && ruff check --fix . && mypy .
+
+# 👀 Modo watch (com watchdog):
+# pip install watchdog
+# watchmedo shell-command --patterns="*.py" --recursive --command="ruff format . && ruff check --fix . && mypy ." .
+
+# 📊 Estatísticas e performance
+ruff check --statistics .
 ```
+
+**Ferramentas de Qualidade Modernas:**
+- **🚀 ruff**: Ferramenta all-in-one escrita em Rust (100x mais rápida que flake8)
+  - **ruff format**: Substitui black (formatação de código)
+  - **ruff check**: Substitui flake8 (linting e detecção de problemas)
+  - **ruff check --fix**: Substitui isort (organização de imports + auto-fixes)
+- **🔍 mypy**: Verificação de tipos estáticos (padrão da indústria)
+- **👀 watchdog**: Execução automática quando arquivos mudam
+- **📈 Vantagens do ruff**: Usado por Pydantic, FastAPI, Pandas - ferramenta emergente de 2024
 
 ## 📋 Examples
 

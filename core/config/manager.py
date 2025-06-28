@@ -65,17 +65,19 @@ class CodexConfig:
     
     def _parse_env_value(self, value: str) -> Any:
         """Parse environment variable value to appropriate type."""
-        # Boolean values
-        if value.lower() in ('true', 'yes', '1', 'on'):
+        # Boolean values first (including numeric booleans)
+        if value.lower() in ('true', 'yes', 'on', '1'):
             return True
-        if value.lower() in ('false', 'no', '0', 'off'):
+        if value.lower() in ('false', 'no', 'off', '0'):
             return False
         
-        # Numeric values
+        # Numeric values (excluding '0' and '1' which are handled as booleans)
         try:
             if '.' in value:
                 return float(value)
-            return int(value)
+            # Only parse as int if it's not '0' or '1' (already handled as booleans)
+            if value not in ('0', '1'):
+                return int(value)
         except ValueError:
             pass
         

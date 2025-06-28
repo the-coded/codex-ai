@@ -59,6 +59,7 @@ AIDER_BASE_FLAGS = [
     "--no-stream",        # Disable streaming for clean log output
     "--no-check-update",   # Don't check for aider updates (no interruptions)
     "--map-tokens 0",     # Disable token mapping for performance
+    "--auto-lint",        # Enable auto-linting for code files
 ]
 
 # ===== AIDER COMMAND TEMPLATES =====

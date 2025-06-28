@@ -82,7 +82,7 @@ class AiderInterface:
         model_key = self._get_model_key()
         
         command = build_aider_command(
-            "uidocs_REACT",
+            "ui-lib_REACT",
             model_key,
             context_path=context_path,
             prompt_file=prompt_file,
@@ -106,7 +106,7 @@ class AiderInterface:
         model_key = self._get_model_key()
         
         command = build_aider_command(
-            "uidocs_SASS",
+            "ui-lib_SASS",
             model_key,
             context_path=context_path,
             prompt_file=prompt_file,
@@ -130,7 +130,7 @@ class AiderInterface:
         model_key = self._get_model_key()
         
         command = build_aider_command(
-            "uidocs_STORYBOOK",
+            "ui-lib_STORYBOOK",
             model_key,
             context_path=context_path,
             prompt_file=prompt_file,
@@ -172,9 +172,13 @@ class AiderInterface:
         model_map = get_model_name_mapping()
         return model_map.get(self.model.name, "CLAUDE_4_SONNET")
     
-    def _execute_command(self, command: str) -> AiderResult:
+    def _execute_command(self, command: str, verbose: bool = False) -> AiderResult:
         """Execute aider command."""
         try:
+            if verbose:
+                print(f"🔧 Executing Aider command:")
+                print(f"   {command}")
+            
             result = subprocess.run(
                 command,
                 shell=True,
@@ -184,20 +188,56 @@ class AiderInterface:
                 env=self._get_env()
             )
             
-            return AiderResult(
+            aider_result = AiderResult(
                 success=result.returncode == 0,
                 output=result.stdout,
                 error=result.stderr,
                 command=command
             )
             
+            # Log Aider response in verbose mode
+            if verbose:
+                print(f"📤 Aider Response:")
+                print("   " + "─" * 60)
+                if aider_result.success:
+                    if aider_result.output:
+                        # Show first 1000 chars of output
+                        output_preview = aider_result.output[:1000]
+                        formatted_output = output_preview.replace('\n', '\n   ')
+                        print(f"   ✅ SUCCESS - Output ({len(aider_result.output)} chars):")
+                        print(f"   {formatted_output}")
+                        if len(aider_result.output) > 1000:
+                            print(f"   ... (truncated, total: {len(aider_result.output)} chars)")
+                    else:
+                        print("   ✅ SUCCESS - No output")
+                else:
+                    print(f"   ❌ FAILED - Return code: {result.returncode}")
+                    if aider_result.error:
+                        error_preview = aider_result.error[:500]
+                        formatted_error = error_preview.replace('\n', '\n   ')
+                        print(f"   Error ({len(aider_result.error)} chars):")
+                        print(f"   {formatted_error}")
+                        if len(aider_result.error) > 500:
+                            print(f"   ... (truncated, total: {len(aider_result.error)} chars)")
+                print("   " + "─" * 60)
+            
+            return aider_result
+            
         except Exception as e:
-            return AiderResult(
+            error_result = AiderResult(
                 success=False,
                 output="",
                 error=str(e),
                 command=command
             )
+            
+            if verbose:
+                print(f"📤 Aider Response:")
+                print("   " + "─" * 60)
+                print(f"   ❌ EXCEPTION: {str(e)}")
+                print("   " + "─" * 60)
+            
+            return error_result
     
     def _get_env(self) -> Dict[str, str]:
         """Get environment with API key."""
@@ -232,7 +272,7 @@ def run_storybook_documentation(model: ModelInfo, context_path: str, prompt_file
     return interface.run_uidocs_storybook(context_path, prompt_file, storybook_files)
 
 
-def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], prompt_file: str, output_dir: List[str]) -> AiderResult:
+def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], prompt_file: str, output_dir: List[str], verbose: bool = False) -> AiderResult:
     """
     Generate documentation using Aider for specific file type.
     
@@ -242,6 +282,7 @@ def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], pr
         files: List of context files to read for input
         prompt_file: Prompt file path
         output_dir: List of output files to write/modify
+        verbose: Enable verbose output for Aider response logging
         
     Returns:
         AiderResult with execution details
@@ -252,25 +293,37 @@ def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], pr
     context_files_str = " ".join(files)  # Files to read for context
     output_files_str = " ".join(output_dir)  # Files to write/modify
     
-    # Route to appropriate documentation generator
+    # Route to appropriate documentation generator with verbose logging
     if file_type == "react":
-        return interface.run_uidocs_react(
-            context_path=context_files_str,  # Files to read
+        model_key = interface._get_model_key()
+        command = build_aider_command(
+            "ui-lib_REACT",
+            model_key,
+            context_path=context_files_str,
             prompt_file=prompt_file,
-            react_files=output_files_str  # Files to write
+            react_files=output_files_str
         )
+        return interface._execute_command(command, verbose=verbose)
     elif file_type == "sass":
-        return interface.run_uidocs_sass(
-            context_path=context_files_str,  # Files to read
+        model_key = interface._get_model_key()
+        command = build_aider_command(
+            "ui-lib_SASS",
+            model_key,
+            context_path=context_files_str,
             prompt_file=prompt_file,
-            sass_files=output_files_str  # Files to write
+            sass_files=output_files_str
         )
+        return interface._execute_command(command, verbose=verbose)
     elif file_type == "storybook":
-        return interface.run_uidocs_storybook(
-            context_path=context_files_str,  # Files to read
+        model_key = interface._get_model_key()
+        command = build_aider_command(
+            "ui-lib_STORYBOOK",
+            model_key,
+            context_path=context_files_str,
             prompt_file=prompt_file,
-            storybook_files=output_files_str  # Files to write
+            storybook_files=output_files_str
         )
+        return interface._execute_command(command, verbose=verbose)
     else:
         return AiderResult(
             success=False,

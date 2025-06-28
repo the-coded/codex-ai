@@ -181,6 +181,15 @@ def get_token_count_from_text(
         >>> print(count)  # Uses fallback estimation
         150
     """
+    # Handle None or non-string inputs gracefully
+    if text is None:
+        return 0
+    
+    # Convert non-string inputs to string
+    if not isinstance(text, str):
+        text = str(text)
+    
+    # Check for empty text after conversion
     if not text or not text.strip():
         return 0
     

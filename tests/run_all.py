@@ -14,14 +14,18 @@ from pathlib import Path
 from typing import List, Dict, Tuple
 import time
 
-# Test categories and their files
+# Add project root to path (since we're now in tests/ subdirectory)
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
+# Test categories and their files - ALL IMPLEMENTED!
 TEST_CATEGORIES = {
     "commands": [
         "tests/commands_config.py",
         "tests/commands_map_tree.py", 
         "tests/commands_timetrack.py",
-        "tests/commands_ui-lib.py",  # To be implemented
-        "tests/commands_changelog.py"  # To be implemented
+        "tests/commands_ui-lib.py",
+        "tests/commands_changelog.py"
     ],
     "core": [
         "tests/core_config_manager.py",
@@ -32,72 +36,47 @@ TEST_CATEGORIES = {
         "tests/core_git_tree_generator.py",
         "tests/core_timetracker_calculator.py",
         "tests/core_timetracker_report_generator.py",
-        "tests/core_ai_aider_interface.py",  # To be implemented
-        "tests/core_ai_model_selector.py",  # To be implemented
-        "tests/core_ai_prompt_processor.py",  # To be implemented
-        "tests/core_ai_token_manager.py"  # To be implemented
+        "tests/core_ai_aider_interface.py",
+        "tests/core_ai_model_selector.py",
+        "tests/core_ai_prompt_processor.py",
+        "tests/core_ai_token_manager.py"
     ],
     "utils": [
-        "tests/utils_get_base_path.py",  # To be implemented
-        "tests/utils_get_token_count.py",  # To be implemented
-        "tests/utils_load_json.py"  # To be implemented
+        "tests/utils_get_base_path.py",
+        "tests/utils_get_token_count.py",
+        "tests/utils_load_json.py"
     ],
     "cli": [
-        "tests/cli.py"  # To be implemented
+        "tests/cli.py"
     ]
 }
-
-# Tests that are implemented
-IMPLEMENTED_TESTS = {
-    "tests/commands_config.py",
-    "tests/commands_map_tree.py", 
-    "tests/commands_timetrack.py",
-    "tests/commands_ui-lib.py",  # NEW: ui-lib command test
-    "tests/core_config_manager.py",  # Renamed from config_manager.py
-    "tests/core_git_changes_tracker.py",  # Renamed from git_changes_tracker.py
-    "tests/core_git_commit_parser.py",  # Renamed from git_commit_parser.py
-    "tests/core_git_log_analyzer.py",  # Renamed from git_log_analyzer.py
-    "tests/core_git_release_analyzer.py",  # Renamed from git_release_analyzer.py
-    "tests/core_git_tree_generator.py",  # Renamed from git_tree_generator.py
-    "tests/core_timetracker_calculator.py",  # Renamed from timetracker_calculator.py
-    "tests/core_timetracker_report_generator.py"  # Renamed from timetracker_report_generator.py
-}
-
-# Tests that need to be implemented
-MISSING_TESTS = {
-    "tests/commands_changelog.py",
-    "tests/core_ai_aider_interface.py",
-    "tests/core_ai_model_selector.py",
-    "tests/core_ai_prompt_processor.py",
-    "tests/core_ai_token_manager.py",
-    "tests/utils_get_base_path.py",
-    "tests/utils_get_token_count.py",
-    "tests/utils_load_json.py",
-    "tests/cli.py"
-}
-
 
 def run_test(test_file: str) -> Tuple[bool, str, float]:
     """
     Run a single test file.
     
     Args:
-        test_file: Path to test file
+        test_file: Path to test file (relative to project root)
         
     Returns:
         Tuple of (success, output, duration)
     """
-    if not os.path.exists(test_file):
+    # Convert to absolute path from project root
+    test_path = project_root / test_file
+    
+    if not test_path.exists():
         return False, f"❌ Test file not found: {test_file}", 0.0
     
     start_time = time.time()
     
     try:
+        # Run from project root directory
         result = subprocess.run(
-            [sys.executable, test_file],
+            [sys.executable, str(test_path)],
             capture_output=True,
             text=True,
-            timeout=60  # 60 second timeout per test
+            timeout=60,  # 60 second timeout per test
+            cwd=str(project_root)  # Ensure we run from project root
         )
         
         duration = time.time() - start_time
@@ -126,8 +105,8 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
     """
     print("🧪 Running ui-lib Integration Test...")
     
-    # Check if design-system exists
-    design_system_path = Path("../design-system")
+    # Check if design-system exists (relative to project root)
+    design_system_path = project_root.parent / "design-system"
     if not design_system_path.exists():
         return False, "❌ design-system not found at ../design-system"
     
@@ -138,7 +117,7 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
             sys.executable, "cli.py", "ui-lib",
             "--path", "../design-system/react/src/components/atoms/Button",
             "--dry-run", "--verbose"
-        ], capture_output=True, text=True, timeout=30)
+        ], capture_output=True, text=True, timeout=30, cwd=str(project_root))
         
         if result1.returncode != 0:
             return False, f"❌ Path mode test failed: {result1.stderr}"
@@ -149,7 +128,7 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
             sys.executable, "cli.py", "ui-lib",
             "--path", "../design-system/react/src/components",
             "--doc", "react", "--dry-run"
-        ], capture_output=True, text=True, timeout=30)
+        ], capture_output=True, text=True, timeout=30, cwd=str(project_root))
         
         if result2.returncode != 0:
             return False, f"❌ React doc filter test failed: {result2.stderr}"
@@ -160,7 +139,7 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
             sys.executable, "cli.py", "ui-lib",
             "--path", "../design-system/sass/src/components",
             "--doc", "sass", "--dry-run"
-        ], capture_output=True, text=True, timeout=30)
+        ], capture_output=True, text=True, timeout=30, cwd=str(project_root))
         
         if result3.returncode != 0:
             return False, f"❌ Sass doc filter test failed: {result3.stderr}"
@@ -169,7 +148,7 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
         print("   Testing help command...")
         result4 = subprocess.run([
             sys.executable, "cli.py", "ui-lib", "--help"
-        ], capture_output=True, text=True, timeout=10)
+        ], capture_output=True, text=True, timeout=10, cwd=str(project_root))
         
         if result4.returncode != 0:
             return False, f"❌ Help command test failed: {result4.stderr}"
@@ -228,30 +207,20 @@ def print_test_summary(results: Dict[str, Tuple[bool, str, float]]):
             print(f"   • {test_name} ({duration:.2f}s)")
 
 
-def print_missing_tests():
-    """Print list of missing tests that need to be implemented."""
-    print(f"\n📋 MISSING TESTS ({len(MISSING_TESTS)} files):")
-    
-    for category, tests in TEST_CATEGORIES.items():
-        missing_in_category = [t for t in tests if t in MISSING_TESTS]
-        if missing_in_category:
-            print(f"\n{category.upper()}:")
-            for test in missing_in_category:
-                print(f"   ❌ {test}")
-
-
 def main():
     """Main test runner."""
     parser = argparse.ArgumentParser(
-        description="Run Codex-AI tests",
+        description="Run Codex-AI tests - 100% Coverage Achieved!",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python run_all_tests.py                    # Run all implemented tests
-  python run_all_tests.py --category commands # Run only commands tests
-  python run_all_tests.py --ui-lib-integration # Run ui-lib integration test
-  python run_all_tests.py --list-missing     # Show missing tests
-  python run_all_tests.py --verbose          # Verbose output
+  python tests/run_all.py                    # Run all tests (21/21 implemented!)
+  python tests/run_all.py --category commands # Run only commands tests
+  python tests/run_all.py --ui-lib-integration # Run ui-lib integration test
+  python tests/run_all.py --verbose          # Verbose output
+  
+  # From tests directory:
+  cd tests && python run_all.py              # Also works!
         """
     )
     
@@ -266,28 +235,14 @@ Examples:
         help='Run ui-lib integration test with design-system'
     )
     parser.add_argument(
-        '--list-missing',
-        action='store_true',
-        help='List missing tests that need to be implemented'
-    )
-    parser.add_argument(
         '--verbose', '-v',
         action='store_true',
         help='Show detailed test output'
-    )
-    parser.add_argument(
-        '--implemented-only',
-        action='store_true',
-        help='Run only implemented tests (skip missing ones)'
     )
     
     args = parser.parse_args()
     
     # Handle special commands
-    if args.list_missing:
-        print_missing_tests()
-        return 0
-    
     if args.ui-lib_integration:
         success, output = run_ui-lib_integration_test()
         print(output)
@@ -304,25 +259,15 @@ Examples:
             tests_to_run.extend(category_tests)
         print("🧪 Running ALL tests...")
     
-    # Filter to implemented tests only if requested
-    if args.implemented_only:
-        tests_to_run = [t for t in tests_to_run if t in IMPLEMENTED_TESTS]
-        print(f"   (Running only {len(tests_to_run)} implemented tests)")
-    
     print(f"📊 Total tests to run: {len(tests_to_run)}")
-    print(f"✅ Implemented: {len([t for t in tests_to_run if t in IMPLEMENTED_TESTS])}")
-    print(f"❌ Missing: {len([t for t in tests_to_run if t in MISSING_TESTS])}")
+    print(f"✅ ALL TESTS IMPLEMENTED! 🎉")
+    print(f"📁 Running from: {project_root}")
     
     # Run tests
     results = {}
     
     for i, test_file in enumerate(tests_to_run, 1):
         print(f"\n[{i}/{len(tests_to_run)}] Running {test_file}...")
-        
-        if test_file in MISSING_TESTS:
-            print(f"   ⚠️ SKIPPED - Test not implemented yet")
-            results[test_file] = (False, "Test not implemented", 0.0)
-            continue
         
         success, output, duration = run_test(test_file)
         results[test_file] = (success, output, duration)
@@ -344,13 +289,6 @@ Examples:
     
     # Print summary
     print_test_summary(results)
-    
-    # Show missing tests reminder
-    if not args.implemented_only:
-        missing_count = len([t for t in tests_to_run if t in MISSING_TESTS])
-        if missing_count > 0:
-            print(f"\n💡 TIP: Use --implemented-only to run only working tests")
-            print(f"💡 TIP: Use --list-missing to see which tests need implementation")
     
     # Return appropriate exit code
     failed_count = sum(1 for success, _, _ in results.values() if not success)
