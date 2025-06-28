@@ -15,6 +15,7 @@ from core.git import (
 )
 from core import GIT_AVAILABLE
 from core.config import CodexConfig
+from constants.output import VALID_OUTPUT_FORMATS, get_output_extension
 
 
 def run_map_tree(args, config: CodexConfig) -> int:
@@ -543,7 +544,7 @@ def add_map_tree_arguments(parser):
     
     parser.add_argument(
         '--format',
-        choices=['json', 'yaml', 'markdown'],
+        choices=[fmt.lower() for fmt in VALID_OUTPUT_FORMATS if fmt.lower() in ['json', 'yaml', 'markdown']],
         default='json',
         help='Output format for custom files (default: json)'
     )

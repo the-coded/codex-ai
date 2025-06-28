@@ -26,7 +26,7 @@ Examples:
   codex-ai changelog                     # Generate AI-powered changelog
   codex-ai timetrack --report           # Analyze development time
   codex-ai map-tree --all               # Map project structure  
-  codex-ai uidocs                        # Generate documentation
+  codex-ai ui-lib                      # Generate documentation
   codex-ai config --api-key YOUR_KEY    # Configure settings
 
 For detailed options and examples:
@@ -251,41 +251,41 @@ Environment Variables:
             help='Save to custom file'
         )
     
-    # uidocs command (intelligent documentation generation)
-    uidocs_parser = subparsers.add_parser(
-        'uidocs',
+    # ui-lib command (intelligent documentation generation)
+    ui-lib_parser = subparsers.add_parser(
+        'ui-lib',
         help='Generate AI-powered documentation for React, Sass, and Storybook files'
     )
     
-    # Import and add uidocs arguments
+    # Import and add ui-lib arguments
     try:
-        from commands.uidocs import add_uidocs_arguments
-        add_uidocs_arguments(uidocs_parser)
+        from commands.ui-lib import add_ui-lib_arguments
+        add_ui-lib_arguments(ui-lib_parser)
     except ImportError:
         # Fallback to basic arguments if import fails
-        uidocs_parser.add_argument(
+        ui-lib_parser.add_argument(
             '--mode',
             choices=['local', 'pipeline'],
             help='File detection mode (default: auto-detect)'
         )
-        uidocs_parser.add_argument(
+        ui-lib_parser.add_argument(
             '--doc',
             choices=['react', 'sass', 'storybook', 'all'],
             default='all',
             help='Documentation type to generate (default: all)'
         )
-        uidocs_parser.add_argument(
+        ui-lib_parser.add_argument(
             '--output-dir',
             type=str,
             default='docs',
             help='Output directory for documentation (default: docs)'
         )
-        uidocs_parser.add_argument(
+        ui-lib_parser.add_argument(
             '--model',
             type=str,
             help='AI model to use (overrides config)'
         )
-        uidocs_parser.add_argument(
+        ui-lib_parser.add_argument(
             '--dry-run',
             action='store_true',
             help='Preview mode - analyze files but don\'t generate documentation'
@@ -355,36 +355,28 @@ def run_timetrack_command(args, config: CodexConfig) -> int:
         return 1
 
 
-def run_uidocs_command(args, config: CodexConfig) -> int:
-    """Run uidocs documentation generation command."""
+def run_ui-lib_command(args, config: CodexConfig) -> int:
+    """Run ui-lib documentation generation command."""
 
     try:
         # Import here to avoid circular imports
-        from commands.uidocs import run_uidocs
+        from commands.ui-lib import ui-lib_command
         
         # Set defaults from config
         verbose = config.get_verbose(cli_value=args.verbose)
+        args.verbose = verbose
         
-        # Call uidocs with proper parameters
-        success = run_uidocs(
-            mode=args.mode,
-            doc=args.doc,
-            since_commit=args.since,
-            model_name=args.model,
-            output_dir=args.output_dir,
-            path=args.path,
-            verbose=verbose,
-            dry_run=args.dry_run
-        )
+        # Call ui-lib command handler
+        success = ui-lib_command(args)
         
         return 0 if success else 1
         
     except ImportError as e:
-        print(f"❌ uidocs command not yet implemented: {e}")
+        print(f"❌ ui-lib command not yet implemented: {e}")
         print("🚧 This feature is under development")
         return 1
     except Exception as e:
-        print(f"❌ Error running uidocs command: {e}")
+        print(f"❌ Error running ui-lib command: {e}")
         return 1
 
 
@@ -422,7 +414,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 0
     
     # Validate API key for AI commands
-    ai_commands = ['changelog', 'uidocs']
+    ai_commands = ['changelog', 'ui-lib']
     if args.command in ai_commands:
         api_key = config.get_api_key(cli_value=args.api_key)
         if not api_key:
@@ -437,7 +429,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         'changelog': run_changelog_command,
         'timetrack': run_timetrack_command,
         'map-tree': run_map_tree_command,
-        'uidocs': run_uidocs_command,
+        'ui-lib': run_ui-lib_command,
     }
     
     handler = command_handlers.get(args.command)

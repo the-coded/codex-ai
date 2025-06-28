@@ -403,9 +403,6 @@ def strip_colors(text: str) -> str:
 # ===== VALIDATION CONSTANTS =====
 
 VALID_OUTPUT_FORMATS = list(OUTPUT_FORMATS.keys())
-VALID_EMOJI_NAMES = list(EMOJIS.keys())
-VALID_COLOR_NAMES = list(COLORS.keys()) + list(SEMANTIC_COLORS.keys())
-VALID_TEMPLATE_NAMES = list(REPORT_TEMPLATES.keys())
 
 # ===== EXPORT CONSTANTS =====
 
@@ -427,8 +424,5 @@ __all__ = [
     "strip_colors",
     
     # Validation constants
-    "VALID_OUTPUT_FORMATS",
-    "VALID_EMOJI_NAMES",
-    "VALID_COLOR_NAMES",
-    "VALID_TEMPLATE_NAMES"
+    "VALID_OUTPUT_FORMATS"
 ]

@@ -469,13 +469,6 @@ def get_conventional_commit_type(message: str) -> str:
     return 'unknown'
 
 
-# ===== VALIDATION CONSTANTS =====
-
-VALID_LOG_FORMATS = list(GIT_LOG_FORMATS.keys())
-VALID_COMMIT_TYPES = list(CONVENTIONAL_COMMIT_TYPES.keys())
-VALID_STATUS_COMMANDS = list(GIT_STATUS_COMMANDS.keys())
-VALID_DIFF_COMMANDS = list(GIT_DIFF_COMMANDS.keys())
-
 # ===== GIT LOG MEDIUM MODE LIMITS =====
 #
 # 📊 EXPLANATION:
@@ -507,11 +500,5 @@ __all__ = [
     "format_git_command",
     "get_log_format",
     "is_merge_commit_message",
-    "get_conventional_commit_type",
-    
-    # Validation constants
-    "VALID_LOG_FORMATS",
-    "VALID_COMMIT_TYPES",
-    "VALID_STATUS_COMMANDS", 
-    "VALID_DIFF_COMMANDS"
+    "get_conventional_commit_type"
 ]

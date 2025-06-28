@@ -16,6 +16,7 @@ from core.timetracker import (
     TIMETRACKER_AVAILABLE
 )
 from core.config import CodexConfig
+from constants.output import VALID_OUTPUT_FORMATS, get_output_extension
 
 
 def run_timetrack(args, config: CodexConfig) -> int:
@@ -218,7 +219,7 @@ def _get_filtered_commits(calculator: TimeCalculator, args) -> List:
         List of filtered commits
     """
     # Get all commits
-    all_commits = calculator.analyze_repository()
+    all_commits = calculator.get_detailed_git_log()
     
     # Apply filters
     filtered_commits = all_commits
@@ -489,7 +490,7 @@ def add_timetrack_arguments(parser):
     
     parser.add_argument(
         '--format',
-        choices=['json', 'markdown', 'csv', 'html'],
+        choices=[fmt.lower() for fmt in VALID_OUTPUT_FORMATS if fmt.lower() in ['json', 'markdown', 'csv', 'html']],
         default='markdown',
         help='Output format for reports (default: markdown)'
     )

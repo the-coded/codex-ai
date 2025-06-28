@@ -11,6 +11,7 @@ from typing import Dict, Any, Optional
 
 from core.config import CodexConfig
 from constants.ai import get_cli_model_choices
+from constants.output import VALID_OUTPUT_FORMATS
 
 
 def get_global_config_path() -> Path:
@@ -110,8 +111,8 @@ def validate_model(model: str) -> bool:
 
 def validate_output_format(format_name: str) -> bool:
     """Validate output format."""
-    valid_formats = ['json', 'yaml', 'markdown', 'html', 'text']
-    return format_name in valid_formats
+    valid_formats = [fmt.lower() for fmt in VALID_OUTPUT_FORMATS]
+    return format_name.lower() in valid_formats
 
 
 def validate_boolean(value: str) -> bool:
@@ -175,7 +176,8 @@ def run_config(args, config: CodexConfig) -> int:
         if args.output_format:
             if not validate_output_format(args.output_format):
                 print(f"❌ Error: Invalid output format '{args.output_format}'")
-                print("Valid formats: json, yaml, markdown, html, text")
+                valid_formats = [fmt.lower() for fmt in VALID_OUTPUT_FORMATS]
+                print(f"Valid formats: {', '.join(valid_formats)}")
                 return 1
             updates['CODEX_OUTPUT_FORMAT'] = args.output_format
             print(f"✅ Output format set to: {args.output_format}")

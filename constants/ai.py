@@ -74,19 +74,19 @@ AIDER_COMMAND_TEMPLATES = {
         ],
         "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} {output_file}"
     },
-    "uidocs_REACT": {
+    "ui-lib_REACT": {
         "additional_flags": [
             ["--no-git"],
         ],
         "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} --file {react_files}"
     },
-    "uidocs_SASS": {
+    "ui-lib_SASS": {
         "additional_flags": [
             ["--no-git"], 
         ],
         "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} --file {sass_files}"
     },
-    "uidocs_STORYBOOK": {
+    "ui-lib_STORYBOOK": {
         "additional_flags": [
             ["--no-git"], 
         ],
@@ -206,7 +206,7 @@ def build_aider_command(command_type: str, model_key: str, **kwargs) -> str:
     Build an aider command based on template and parameters.
     
     Args:
-        command_type: Type of command ("CHANGELOG", "uidocs_REACT", "uidocs_SASS", "uidocs_STORYBOOK")
+        command_type: Type of command ("CHANGELOG", "ui-lib_REACT", "ui-lib_SASS", "ui-lib_STORYBOOK")
         model_key: Model to use
         **kwargs: Additional parameters for command template
         
@@ -386,8 +386,6 @@ def get_default_model_name() -> str:
 
 # ===== VALIDATION CONSTANTS =====
 
-VALID_COMMAND_TYPES = list(AIDER_COMMAND_TEMPLATES.keys())
-VALID_MODEL_KEYS = list(AI_MODELS.keys())
 DEFAULT_MODEL = get_model_by_priority(1)
 
 # ===== EXPORT CONSTANTS =====
@@ -412,7 +410,5 @@ __all__ = [
     "get_default_model_name",
     
     # Validation constants
-    "VALID_COMMAND_TYPES",
-    "VALID_MODEL_KEYS",
     "DEFAULT_MODEL"
 ]

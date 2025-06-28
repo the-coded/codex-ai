@@ -36,6 +36,31 @@ Based on cognitive load theory:
 
 from typing import Dict, List, Any
 
+# ===== ESSENTIAL FILE CATEGORIES =====
+#
+# 📊 EXPLANATION:
+# Only the 4 categories actually used by the timetracker system.
+# Based on: old/pkg/timetracker/analyze-git-changes.js
+
+FILE_CATEGORIES = {
+    "LOGIC": {
+        "extensions": ["js", "ts", "jsx", "tsx"],
+        "description": "Programming logic files"
+    },
+    "STYLE": {
+        "extensions": ["css", "scss", "sass", "less", "stylus"],
+        "description": "Stylesheet files"
+    },
+    "CONFIG": {
+        "extensions": ["json", "yml", "yaml", "lock", "gitignore", "npmrc", "env"],
+        "description": "Configuration files"
+    },
+    "DOCS": {
+        "extensions": ["md", "mdx", "txt", "doc", "docx", "html"],
+        "description": "Documentation files"
+    }
+}
+
 # ===== FILE TYPE MULTIPLIERS =====
 # 
 # 📊 EXPLANATION OF VALUES:
@@ -411,16 +436,12 @@ def get_complexity_multiplier(complexity_type: str, complexity_level: str) -> fl
     return COMPLEXITY_THRESHOLDS[complexity_type][complexity_level]["multiplier"]
 
 
-# ===== VALIDATION CONSTANTS =====
-
-VALID_COMPLEXITY_TYPES = ["STRUCTURAL", "ALGORITHMIC"]
-VALID_COMPLEXITY_LEVELS = ["TRIVIAL", "BASIC", "MODERATE", "COMPLEX", "VERY_COMPLEX"]
-VALID_COMMIT_TYPES = list(COMMIT_TYPE_MULTIPLIERS.keys())
-VALID_FILE_CATEGORIES = list(FILE_TYPE_MULTIPLIERS.keys())
-
 # ===== EXPORT ALL CONSTANTS =====
 
 __all__ = [
+    # File categories (from files.py)
+    "FILE_CATEGORIES",
+    
     # Main constants
     "FILE_TYPE_MULTIPLIERS",
     "COMMIT_TYPE_MULTIPLIERS", 
@@ -444,11 +465,5 @@ __all__ = [
     "get_file_category",
     "get_commit_type",
     "get_complexity_level",
-    "get_complexity_multiplier",
-    
-    # Validation constants
-    "VALID_COMPLEXITY_TYPES",
-    "VALID_COMPLEXITY_LEVELS", 
-    "VALID_COMMIT_TYPES",
-    "VALID_FILE_CATEGORIES"
+    "get_complexity_multiplier"
 ]
