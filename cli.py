@@ -254,30 +254,42 @@ Environment Variables:
     # uidocs command (intelligent documentation generation)
     uidocs_parser = subparsers.add_parser(
         'uidocs',
-        help='Generate uidocs documentation (React, Sass, Storybook) - automatically detects types'
+        help='Generate AI-powered documentation for React, Sass, and Storybook files'
     )
-    uidocs_parser.add_argument(
-        '--json-path',
-        type=str,
-        default='.tmp/tree_project.json',
-        help='Path to project structure JSON file (default: .tmp/tree_project.json)'
-    )
-    uidocs_parser.add_argument(
-        '--output-dir', '-o',
-        type=str,
-        default='./docs',
-        help='Output directory (default: ./docs)'
-    )
-    uidocs_parser.add_argument(
-        '--model',
-        type=str,
-        help='AI model to use (overrides config)'
-    )
-    uidocs_parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Preview what would be generated without executing'
-    )
+    
+    # Import and add uidocs arguments
+    try:
+        from commands.uidocs import add_uidocs_arguments
+        add_uidocs_arguments(uidocs_parser)
+    except ImportError:
+        # Fallback to basic arguments if import fails
+        uidocs_parser.add_argument(
+            '--mode',
+            choices=['local', 'pipeline'],
+            help='File detection mode (default: auto-detect)'
+        )
+        uidocs_parser.add_argument(
+            '--doc',
+            choices=['react', 'sass', 'storybook', 'all'],
+            default='all',
+            help='Documentation type to generate (default: all)'
+        )
+        uidocs_parser.add_argument(
+            '--output-dir',
+            type=str,
+            default='docs',
+            help='Output directory for documentation (default: docs)'
+        )
+        uidocs_parser.add_argument(
+            '--model',
+            type=str,
+            help='AI model to use (overrides config)'
+        )
+        uidocs_parser.add_argument(
+            '--dry-run',
+            action='store_true',
+            help='Preview mode - analyze files but don\'t generate documentation'
+        )
     
     return parser
 
@@ -345,10 +357,28 @@ def run_timetrack_command(args, config: CodexConfig) -> int:
 
 def run_uidocs_command(args, config: CodexConfig) -> int:
     """Run uidocs documentation generation command."""
+
     try:
         # Import here to avoid circular imports
         from commands.uidocs import run_uidocs
-        return run_uidocs(args, config)
+        
+        # Set defaults from config
+        verbose = config.get_verbose(cli_value=args.verbose)
+        
+        # Call uidocs with proper parameters
+        success = run_uidocs(
+            mode=args.mode,
+            doc=args.doc,
+            since_commit=args.since,
+            model_name=args.model,
+            output_dir=args.output_dir,
+            path=args.path,
+            verbose=verbose,
+            dry_run=args.dry_run
+        )
+        
+        return 0 if success else 1
+        
     except ImportError as e:
         print(f"❌ uidocs command not yet implemented: {e}")
         print("🚧 This feature is under development")

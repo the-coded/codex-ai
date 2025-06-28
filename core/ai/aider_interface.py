@@ -230,3 +230,51 @@ def run_storybook_documentation(model: ModelInfo, context_path: str, prompt_file
     """Generate Storybook documentation using Aider."""
     interface = AiderInterface(model)
     return interface.run_uidocs_storybook(context_path, prompt_file, storybook_files)
+
+
+def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], prompt_file: str, output_dir: List[str]) -> AiderResult:
+    """
+    Generate documentation using Aider for specific file type.
+    
+    Args:
+        model: AI model to use
+        file_type: Type of files (react, sass, storybook)
+        files: List of context files to read for input
+        prompt_file: Prompt file path
+        output_dir: List of output files to write/modify
+        
+    Returns:
+        AiderResult with execution details
+    """
+    interface = AiderInterface(model)
+    
+    # Convert lists to space-separated strings (following changelog pattern)
+    context_files_str = " ".join(files)  # Files to read for context
+    output_files_str = " ".join(output_dir)  # Files to write/modify
+    
+    # Route to appropriate documentation generator
+    if file_type == "react":
+        return interface.run_uidocs_react(
+            context_path=context_files_str,  # Files to read
+            prompt_file=prompt_file,
+            react_files=output_files_str  # Files to write
+        )
+    elif file_type == "sass":
+        return interface.run_uidocs_sass(
+            context_path=context_files_str,  # Files to read
+            prompt_file=prompt_file,
+            sass_files=output_files_str  # Files to write
+        )
+    elif file_type == "storybook":
+        return interface.run_uidocs_storybook(
+            context_path=context_files_str,  # Files to read
+            prompt_file=prompt_file,
+            storybook_files=output_files_str  # Files to write
+        )
+    else:
+        return AiderResult(
+            success=False,
+            output="",
+            error=f"Unknown file type: {file_type}",
+            command=""
+        )

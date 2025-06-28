@@ -58,3 +58,18 @@ def get_changelog_prompt() -> str:
 def get_uidocs_prompt(doc_type: str) -> str:
     """Get uidocs documentation prompt."""
     return load_prompt(f"uidocs_{doc_type}_prompt")
+
+
+def get_react_prompt() -> str:
+    """Get React documentation prompt."""
+    return load_prompt("uidocs_react_prompt")
+
+
+def get_sass_prompt() -> str:
+    """Get Sass documentation prompt."""
+    return load_prompt("uidocs_sass_prompt")
+
+
+def get_storybook_prompt() -> str:
+    """Get Storybook documentation prompt."""
+    return load_prompt("uidocs_storybook_prompt")

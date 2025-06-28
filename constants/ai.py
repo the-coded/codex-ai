@@ -75,16 +75,22 @@ AIDER_COMMAND_TEMPLATES = {
         "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} {output_file}"
     },
     "uidocs_REACT": {
-        "additional_flags": [],
-        "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} {react_files}"
+        "additional_flags": [
+            ["--no-git"],
+        ],
+        "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} --file {react_files}"
     },
     "uidocs_SASS": {
-        "additional_flags": [],
-        "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} {sass_files}"
+        "additional_flags": [
+            ["--no-git"], 
+        ],
+        "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} --file {sass_files}"
     },
     "uidocs_STORYBOOK": {
-        "additional_flags": [],
-        "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} {storybook_files}"
+        "additional_flags": [
+            ["--no-git"], 
+        ],
+        "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} --file {storybook_files}"
     }
 }
 

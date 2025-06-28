@@ -192,22 +192,35 @@ codex-ai timetrack --report --format csv
 ```
 
 ### 📚 uidocs Documentation Generation
+
+**📖 [Complete uidocs Documentation](commands/uidocs.md)**
+
 ```bash
-# Generate documentation (automatically detects React, Sass, Storybook)
+# Auto-detect and generate all documentation types
 codex-ai uidocs
 
-# Custom project structure JSON file
-codex-ai uidocs --json-path ./custom-structure.json
+# Process specific path  
+codex-ai uidocs --path react/src/components/Button
 
-# Custom output directory
-codex-ai uidocs --output-dir ./documentation
+# Generate only React documentation
+codex-ai uidocs --doc react
 
-# Preview what would be generated
-codex-ai uidocs --dry-run
+# Pipeline mode with specific commit
+codex-ai uidocs --pipeline --since v1.2.0
 
-# Custom AI model
-codex-ai uidocs --model claude_3_7_sonnet
+# Preview without costs
+codex-ai uidocs --dry-run --verbose
+
+# Custom AI model and output directory
+codex-ai uidocs --model claude_3_7_sonnet --output-dir ./docs
 ```
+
+**Key Features:**
+- 🤖 Intelligent file detection (React, Sass, Storybook)
+- 🔄 Cross-type triggers (React + Storybook)
+- 📍 Path-based processing
+- 🧠 Sibling detection
+- ⚡ Incremental updates
 
 ### 📊 Project Analysis
 ```bash
