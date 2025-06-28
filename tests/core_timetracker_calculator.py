@@ -29,8 +29,9 @@ def main():
         calculator = TimeCalculator()
         print("✅ TimeCalculator initialized")
         
-        # Test file extension parsing
+        # Test file extension parsing (using constants function)
         print("\n📝 Testing file extension parsing...")
+        from constants.timetrack import get_file_extension
         test_files = [
             "component.tsx",
             "utils.js", 
@@ -42,11 +43,12 @@ def main():
         ]
         
         for filename in test_files:
-            ext = calculator.get_file_extension(filename)
+            ext = get_file_extension(filename)
             print(f"   {filename} → {ext}")
         
-        # Test commit type detection
+        # Test commit type detection (using constants function)
         print("\n📝 Testing commit type detection...")
+        from constants.timetrack import get_commit_type
         test_messages = [
             "feat: add new authentication system",
             "fix: resolve login bug",
@@ -57,15 +59,16 @@ def main():
         ]
         
         for message in test_messages:
-            commit_type = calculator.get_commit_type(message)
+            commit_type = get_commit_type(message)
             print(f"   '{message}' → {commit_type}")
         
-        # Test file category detection
+        # Test file category detection (using constants function)
         print("\n📝 Testing file category detection...")
+        from constants.timetrack import get_file_category
         test_extensions = ["js", "css", "json", "md", "unknown"]
         
         for ext in test_extensions:
-            category_info = calculator.get_file_category(ext)
+            category_info = get_file_category(ext)
             print(f"   {ext} → {category_info['category']} (planning: {category_info['base_time']['planning']}h)")
         
         # Test complexity analysis
@@ -102,7 +105,7 @@ def main():
         # Test repository analysis (limited to avoid long output)
         print("\n📊 Testing repository analysis...")
         try:
-            commits = calculator.analyze_repository()
+            commits = calculator.get_detailed_git_log()
             print(f"✅ Repository analysis completed:")
             print(f"   Total commits analyzed: {len(commits)}")
             
