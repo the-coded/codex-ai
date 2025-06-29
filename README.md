@@ -348,36 +348,39 @@ pytest
 
 ### Code Quality (TODO: Implementar)
 ```bash
-# TODO: Adicionar ferramentas de qualidade de código modernas
-# Instalar: pip install ruff mypy
+# TODO: Implementar ferramentas de qualidade de código modernas
+# Status: Configurações prontas no pyproject.toml, aguardando implementação
 
 # 🚀 RUFF - Ferramenta all-in-one (substitui black + isort + flake8)
-ruff format .    # Auto-formatação (substitui black)
-ruff check .     # Linting (substitui flake8)
-ruff check --fix .  # Auto-fix imports e problemas (substitui isort)
+# pip install ruff
+# ruff format .    # Auto-formatação
+# ruff check .     # Linting  
+# ruff check --fix .  # Auto-fix imports
 
-# 🔍 MYPY - Verificador de tipos (padrão da indústria)
-mypy .
+# 🔍 MYPY - Verificador de tipos (padrão da indústria)  
+# pip install mypy
+# mypy .
 
-# ⚡ Comando completo (rápido e moderno)
-ruff format . && ruff check --fix . && mypy .
+# ⚡ Comando completo (quando implementado)
+# ruff format . && ruff check --fix . && mypy .
 
-# 👀 Modo watch (com watchdog):
+# 👀 Modo watch (futuro):
 # pip install watchdog
 # watchmedo shell-command --patterns="*.py" --recursive --command="ruff format . && ruff check --fix . && mypy ." .
-
-# 📊 Estatísticas e performance
-ruff check --statistics .
 ```
 
-**Ferramentas de Qualidade Modernas:**
-- **🚀 ruff**: Ferramenta all-in-one escrita em Rust (100x mais rápida que flake8)
-  - **ruff format**: Substitui black (formatação de código)
-  - **ruff check**: Substitui flake8 (linting e detecção de problemas)
-  - **ruff check --fix**: Substitui isort (organização de imports + auto-fixes)
-- **🔍 mypy**: Verificação de tipos estáticos (padrão da indústria)
-- **👀 watchdog**: Execução automática quando arquivos mudam
+**Status das Ferramentas:**
+- **🔧 Configurações**: ✅ Prontas no pyproject.toml (placeholder)
+- **📦 Instalação**: ⏳ TODO - pip install ruff mypy  
+- **🎯 Implementação**: ⏳ TODO - Configurar e testar
+- **🤖 Automação**: ⏳ TODO - CI/CD integration
 - **📈 Vantagens do ruff**: Usado por Pydantic, FastAPI, Pandas - ferramenta emergente de 2024
+
+### Future Migration to Poetry (TODO: Avaliar)
+📖 **[Poetry Migration Guide](docs/poetry-migration.md)** - Guia completo para migração de setuptools para Poetry, incluindo comparações detalhadas, cronograma de migração e benefícios para o developer experience moderno.
+
+### Package Publishing Guide
+📦 **[Python Publishing Guide](docs/publishing-guide.md)** - Documentação completa sobre publicação de pacotes Python no PyPI, comparando com npm para desenvolvedores Node.js. Inclui workflows, CI/CD, troubleshooting e casos práticos.
 
 ## 📋 Examples
 

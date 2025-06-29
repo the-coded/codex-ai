@@ -106,6 +106,78 @@ class GitLogAnalyzer:
         except RuntimeError:
             return None
     
+    def is_current_commit_tagged(self) -> Optional[str]:
+        """
+        Check if current commit (HEAD) has a tag.
+        
+        Returns:
+            Tag name if current commit is tagged, None otherwise
+        """
+        try:
+            result = self._run_git_command(["git", "tag", "--points-at", "HEAD"])
+            if result.strip():
+                # Return first tag if multiple tags point to same commit
+                return result.strip().split('\n')[0]
+            return None
+        except RuntimeError:
+            return None
+    
+    def get_previous_tag(self, current_tag: str) -> Optional[str]:
+        """
+        Get the tag that comes before the specified tag.
+        
+        Args:
+            current_tag: The current tag to find predecessor of
+            
+        Returns:
+            Previous tag name or None if no previous tag exists
+        """
+        try:
+            # Get all tags sorted by version
+            all_tags = self._run_git_command([
+                "git", "tag", "--sort=-version:refname"
+            ]).strip().split('\n')
+            
+            # Find current tag in list and return the next one
+            if current_tag in all_tags:
+                current_index = all_tags.index(current_tag)
+                if current_index + 1 < len(all_tags):
+                    return all_tags[current_index + 1]
+            
+            return None
+        except RuntimeError:
+            return None
+    
+    def get_changelog_range(self, since_commit: Optional[str] = None) -> tuple[Optional[str], str]:
+        """
+        Get the correct range for changelog generation based on current context.
+        
+        Args:
+            since_commit: Explicit since commit (overrides automatic detection)
+            
+        Returns:
+            Tuple of (start_ref, end_ref) for git log range
+        """
+        # If explicit since_commit provided, use it
+        if since_commit:
+            return since_commit, "HEAD"
+        
+        # Check if we're currently on a tagged commit
+        current_tag = self.is_current_commit_tagged()
+        
+        if current_tag:
+            # We're on a tagged commit - generate changelog FOR this tag
+            previous_tag = self.get_previous_tag(current_tag)
+            if previous_tag:
+                return previous_tag, current_tag
+            else:
+                # First tag - get all history up to this tag
+                return None, current_tag
+        else:
+            # Normal case - from latest tag to HEAD
+            latest_tag = self.get_latest_tag()
+            return latest_tag, "HEAD"
+    
     def get_commit_count(self, since_commit: Optional[str] = None, branch: Optional[str] = None) -> int:
         """
         Get count of commits in range.

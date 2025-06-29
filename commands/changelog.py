@@ -46,12 +46,27 @@ def run_changelog(
         # Initialize git analyzer
         git_analyzer = GitLogAnalyzer()
         
-        # Auto-detect latest tag if no since_commit specified
-        if since_commit is None:
-            latest_tag = git_analyzer.get_latest_tag()
-            if latest_tag:
-                since_commit = latest_tag
-                print(f"📍 Auto-using since last tag: {latest_tag}")
+        # Use intelligent range detection
+        start_ref, end_ref = git_analyzer.get_changelog_range(since_commit)
+        
+        # Check if we're on a tagged commit
+        current_tag = git_analyzer.is_current_commit_tagged()
+        
+        if current_tag:
+            print(f"🏷️ Detected current commit is tagged: {current_tag}")
+            if start_ref:
+                print(f"📍 Generating changelog FOR tag {current_tag} (range: {start_ref}..{current_tag})")
+                since_commit = start_ref
+                branch = current_tag
+            else:
+                print(f"📍 Generating changelog FOR tag {current_tag} (first tag - all history)")
+                since_commit = None
+                branch = current_tag
+        else:
+            # Normal development case
+            if start_ref:
+                since_commit = start_ref
+                print(f"📍 Auto-using since last tag: {start_ref}")
             else:
                 print("📍 No tags found - analyzing all history")
         
@@ -95,6 +110,20 @@ def run_changelog(
             os.remove(output_file)
             if verbose:
                 print(f"🗑️ Cleaned existing output file: {output_file}")
+        
+        # Prepare version context for AI
+        version_context = ""
+        if current_tag:
+            version_context = f"""
+=== CHANGELOG GENERATION CONTEXT ===
+TARGET VERSION: {current_tag}
+RANGE: {start_ref}..{current_tag}
+HEADER MUST USE: {current_tag}
+CRITICAL: The changelog header version MUST be [{current_tag}], NOT any version found in commit messages.
+
+"""
+            if verbose:
+                print(f"📋 Version context prepared: Header must use {current_tag}")
         
         
         # Try detailed first
@@ -153,6 +182,23 @@ def run_changelog(
                 if tokens > token_limit:
                     print(f"❌ Even simple log too large ({tokens:,} tokens)")
                     return False
+        
+        # Inject version context into final git log (after all fallbacks)
+        if version_context:
+            with open(log_file, 'r+') as f:
+                content = f.read()
+                f.seek(0)
+                f.write(version_context + content)
+                f.truncate()
+            if verbose:
+                print(f"📋 Injected version context into final git log")
+            
+            # Recalculate tokens after adding context
+            with open(log_file, 'r') as f:
+                log_content = f.read()
+            tokens = count_tokens(log_content)
+            if verbose:
+                print(f"📊 Final log tokens (with context): {tokens:,}")
         
         # Create prompt file in .tmp/ too (like old system)
         prompt_file = ".tmp/prompt.md"
