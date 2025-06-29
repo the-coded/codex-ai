@@ -74,31 +74,21 @@ except ImportError:
     TimeReportGenerator = None
     TimeAlgorithms = None
 
-# ===== uidocs DOCUMENTATION =====
+# ===== DOC-UI DOCUMENTATION =====
 #
 # 📊 EXPLANATION:
 # Documentation generation for React, Sass, and Storybook files.
-# Ports old/pkg/uidocs/ functionality to modern Python architecture.
+# Implemented in commands/doc_ui.py following the same pattern as other commands.
 
-try:
-    from .uidocs import (
-        uidocsProcessor,
-        ReactProcessor,
-        SassProcessor,
-        StorybookProcessor,
-        DocumentationGenerator,
-        SourceManager
-    )
-    uidocs_AVAILABLE = True
-except ImportError:
-    # uidocs modules not yet implemented
-    uidocs_AVAILABLE = False
-    uidocsProcessor = None
-    ReactProcessor = None
-    SassProcessor = None
-    StorybookProcessor = None
-    DocumentationGenerator = None
-    SourceManager = None
+# Doc-UI functionality is implemented in commands/doc_ui.py
+# No separate core module needed - follows same pattern as other commands
+DOC_UI_AVAILABLE = True
+uidocsProcessor = None
+ReactProcessor = None
+SassProcessor = None
+StorybookProcessor = None
+DocumentationGenerator = None
+SourceManager = None
 
 # ===== AVAILABILITY STATUS =====
 #
@@ -109,7 +99,7 @@ CORE_STATUS = {
     "git": GIT_AVAILABLE,
     "ai": AI_AVAILABLE,
     "timetracker": TIMETRACKER_AVAILABLE,
-    "uidocs": uidocs_AVAILABLE
+    "doc-ui": DOC_UI_AVAILABLE
 }
 
 # ===== HELPER FUNCTIONS =====
@@ -156,7 +146,7 @@ def get_core_status() -> dict:
     Examples:
         >>> status = get_core_status()
         >>> print(status)
-        {'git': True, 'ai': False, 'timetracker': False, 'uidocs': False}
+        {'git': True, 'ai': False, 'timetracker': False, 'doc-ui': True}
     """
     return CORE_STATUS.copy()
 
@@ -221,7 +211,7 @@ __all__ = [
     "GIT_AVAILABLE",
     "AI_AVAILABLE",
     "TIMETRACKER_AVAILABLE",
-    "uidocs_AVAILABLE"
+    "DOC_UI_AVAILABLE"
 ]
 
 # ===== VERSION INFO =====

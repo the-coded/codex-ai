@@ -28,7 +28,7 @@ def main():
     
     try:
         from core.ai.prompt_processor import (
-            load_prompt, get_changelog_prompt, get_uidocs_prompt,
+            load_prompt, get_changelog_prompt, get_doc_ui_prompt,
             get_react_prompt, get_sass_prompt, get_storybook_prompt
         )
         print("✅ AI prompt processor imported successfully")
@@ -212,7 +212,7 @@ def main():
         
         for doc_type in doc_types:
             try:
-                result = get_uidocs_prompt(doc_type)
+                result = get_doc_ui_prompt(doc_type)
                 if isinstance(result, str) and len(result) > 0:
                     valid_results += 1
                 else:
@@ -227,7 +227,7 @@ def main():
                 break
         
         if valid_results == len(doc_types):
-            print(f"✅ All {len(doc_types)} uidocs doc types work")
+            print(f"✅ All {len(doc_types)} doc-ui doc types work")
             test_results['passed'] += 1
             
     except Exception as e:

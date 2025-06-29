@@ -30,7 +30,7 @@ def main():
         from cli import (
             create_parser, main as cli_main, 
             run_config_command, run_changelog_command, run_timetrack_command,
-            run_ui-lib_command, run_map_tree_command
+            run_doc_ui_command, run_map_tree_command
         )
         print("✅ CLI module imported successfully")
         test_results['passed'] += 1
@@ -83,7 +83,7 @@ def main():
             ['changelog', '--dry-run'],
             ['timetrack', '--report'],
             ['map-tree', '--all'],
-            ['ui-lib', '--dry-run', '--doc', 'react']
+            ['doc-ui', '--dry-run', '--doc', 'react']
         ]
         
         for cmd_args in test_commands:
@@ -110,7 +110,7 @@ def main():
         global_test_args = [
             ['--verbose', 'config', '--list'],
             ['--output-format', 'json', 'changelog', '--dry-run'],
-            ['--api-key', 'test-key', 'ui-lib', '--dry-run']
+            ['--api-key', 'test-key', 'doc-ui', '--dry-run']
         ]
         
         for cmd_args in global_test_args:
@@ -133,7 +133,7 @@ def main():
             ('config', run_config_command),
             ('changelog', run_changelog_command),
             ('timetrack', run_timetrack_command),
-            ('ui-lib', run_ui-lib_command),
+            ('doc-ui', run_doc_ui_command),
             ('map-tree', run_map_tree_command)
         ]
         
@@ -209,7 +209,7 @@ def main():
         print("\n🔑 Test 14: API key validation logic...")
         
         # Test the logic that validates API keys for AI commands
-        ai_commands = ['changelog', 'ui-lib']
+        ai_commands = ['changelog', 'doc-ui']
         non_ai_commands = ['config', 'timetrack', 'map-tree']
         
         print(f"✅ AI commands identified: {ai_commands}")
@@ -224,7 +224,7 @@ def main():
             ['changelog', '--dry-run', '--since', 'HEAD~5'],
             ['timetrack', '--report', '--format', 'json'],
             ['map-tree', '--all', '--output', 'test.md'],
-            ['ui-lib', '--doc', 'react', '--mode', 'local', '--dry-run']
+            ['doc-ui', '--doc', 'react', '--mode', 'local', '--dry-run']
         ]
         
         for args in valid_combinations:

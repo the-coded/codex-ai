@@ -67,7 +67,7 @@ class AiderInterface:
         
         return self._execute_command(command)
     
-    def run_uidocs_react(self, context_path: str, prompt_file: str, react_files: str) -> AiderResult:
+    def run_doc_ui_react(self, context_path: str, prompt_file: str, react_files: str) -> AiderResult:
         """
         Run Aider for React documentation.
         
@@ -82,7 +82,7 @@ class AiderInterface:
         model_key = self._get_model_key()
         
         command = build_aider_command(
-            "ui-lib_REACT",
+            "DOC_UI_REACT",
             model_key,
             context_path=context_path,
             prompt_file=prompt_file,
@@ -91,7 +91,7 @@ class AiderInterface:
         
         return self._execute_command(command)
     
-    def run_uidocs_sass(self, context_path: str, prompt_file: str, sass_files: str) -> AiderResult:
+    def run_doc_ui_sass(self, context_path: str, prompt_file: str, sass_files: str) -> AiderResult:
         """
         Run Aider for Sass documentation.
         
@@ -106,7 +106,7 @@ class AiderInterface:
         model_key = self._get_model_key()
         
         command = build_aider_command(
-            "ui-lib_SASS",
+            "DOC_UI_SASS",
             model_key,
             context_path=context_path,
             prompt_file=prompt_file,
@@ -115,7 +115,7 @@ class AiderInterface:
         
         return self._execute_command(command)
     
-    def run_uidocs_storybook(self, context_path: str, prompt_file: str, storybook_files: str) -> AiderResult:
+    def run_doc_ui_storybook(self, context_path: str, prompt_file: str, storybook_files: str) -> AiderResult:
         """
         Run Aider for Storybook documentation.
         
@@ -130,7 +130,7 @@ class AiderInterface:
         model_key = self._get_model_key()
         
         command = build_aider_command(
-            "ui-lib_STORYBOOK",
+            "DOC_UI_STORYBOOK",
             model_key,
             context_path=context_path,
             prompt_file=prompt_file,
@@ -257,22 +257,22 @@ def run_changelog_generation(model: ModelInfo, log_file: str, prompt_file: str, 
 def run_react_documentation(model: ModelInfo, context_path: str, prompt_file: str, react_files: str) -> AiderResult:
     """Generate React documentation using Aider."""
     interface = AiderInterface(model)
-    return interface.run_uidocs_react(context_path, prompt_file, react_files)
+    return interface.run_doc_ui_react(context_path, prompt_file, react_files)
 
 
 def run_sass_documentation(model: ModelInfo, context_path: str, prompt_file: str, sass_files: str) -> AiderResult:
     """Generate Sass documentation using Aider."""
     interface = AiderInterface(model)
-    return interface.run_uidocs_sass(context_path, prompt_file, sass_files)
+    return interface.run_doc_ui_sass(context_path, prompt_file, sass_files)
 
 
 def run_storybook_documentation(model: ModelInfo, context_path: str, prompt_file: str, storybook_files: str) -> AiderResult:
     """Generate Storybook documentation using Aider."""
     interface = AiderInterface(model)
-    return interface.run_uidocs_storybook(context_path, prompt_file, storybook_files)
+    return interface.run_doc_ui_storybook(context_path, prompt_file, storybook_files)
 
 
-def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], prompt_file: str, output_dir: List[str], verbose: bool = False) -> AiderResult:
+def run_doc_ui_generation(model: ModelInfo, file_type: str, files: List[str], prompt_file: str, output_dir: List[str], verbose: bool = False) -> AiderResult:
     """
     Generate documentation using Aider for specific file type.
     
@@ -297,7 +297,7 @@ def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], pr
     if file_type == "react":
         model_key = interface._get_model_key()
         command = build_aider_command(
-            "ui-lib_REACT",
+            "DOC_UI_REACT",
             model_key,
             context_path=context_files_str,
             prompt_file=prompt_file,
@@ -307,7 +307,7 @@ def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], pr
     elif file_type == "sass":
         model_key = interface._get_model_key()
         command = build_aider_command(
-            "ui-lib_SASS",
+            "DOC_UI_SASS",
             model_key,
             context_path=context_files_str,
             prompt_file=prompt_file,
@@ -317,7 +317,7 @@ def run_uidocs_generation(model: ModelInfo, file_type: str, files: List[str], pr
     elif file_type == "storybook":
         model_key = interface._get_model_key()
         command = build_aider_command(
-            "ui-lib_STORYBOOK",
+            "DOC_UI_STORYBOOK",
             model_key,
             context_path=context_files_str,
             prompt_file=prompt_file,

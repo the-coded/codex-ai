@@ -38,7 +38,7 @@
 - [x] Todos os `__init__.py` dos pacotes ✅
 - [x] Sistema de configuração hierárquica ✅
 - [x] Tokens específicos por modelo AI ✅
-- [x] CLI funcional com comando `uidocs` ✅
+- [x] CLI funcional com comando `doc-ui` ✅
 - [x] README.md atualizado ✅
 
 ---
@@ -181,9 +181,9 @@
 ### 4.1 Markdown Templates
 - [x] `templates/prompts/` ✅
   - [x] `changelog_prompt.md` ✅
-  - [x] `uidocs_react_prompt.md` ✅
-  - [x] `uidocs_sass_prompt.md` ✅
-  - [x] `uidocs_storybook_prompt.md` ✅
+  - [x] `doc_ui_react_prompt.md` ✅
+  - [x] `doc_ui_sass_prompt.md` ✅
+  - [x] `doc_ui_storybook_prompt.md` ✅
 
 ### 4.2 AI Integration
 - [x] Token counting e management ✅
@@ -218,8 +218,8 @@
 ### 5.2 Integration Tests
 - [ ] Test full workflow changelog
 - [ ] Test full workflow timetrack
-- [ ] Test full workflow uidocs (local mode)
-- [ ] Test full workflow uidocs (pipeline mode)
+- [ ] Test full workflow doc-ui (local mode)
+- [ ] Test full workflow doc-ui (pipeline mode)
 - [ ] Test full workflow analyze
 
 ### 5.3 Validation vs Old Code
@@ -348,8 +348,8 @@
 *Updated: 2025-06-27*  
 *Progress: Fase 1 (100%) + Fase 2 (100%) + Fase 3 (100%) + Fase 4 (100%) + Fase 6 (98%) = ~96/100+ tasks completed (96%)*
 
-**🎉 uidocs COMPLETAMENTE IMPLEMENTADO (2025-06-27):**
-- ✅ `commands/uidocs.py` totalmente funcional
+**🎉 DOC-UI COMPLETAMENTE IMPLEMENTADO (2025-06-28):**
+- ✅ `commands/doc_ui.py` totalmente funcional
 - ✅ AI integration completa (React, Sass, Storybook)
 - ✅ Mode detection inteligente (local vs pipeline)
 - ✅ File type detection com patterns avançados
@@ -362,7 +362,7 @@
 - ✅ Removidas todas as referências obsoletas ao comando `analyze`
 - ✅ CLI atualizado para usar `map-tree` em vez de `analyze`
 - ✅ Removidas todas as referências obsoletas ao comando `docs`
-- ✅ CLI atualizado para usar `uidocs` em vez de `docs`
+- ✅ CLI atualizado para usar `doc-ui` em vez de `docs`
 - ✅ Documentação e examples atualizados
 - ✅ Comando `map-tree` funcionando perfeitamente
 - ✅ Package metadata regenerado com correções
@@ -372,7 +372,7 @@
 - ✅ Removida seção templates/outputs/ completa (YAGNI - comandos já têm formatters próprios)
 - ✅ Removido analysis_prompt.md (comando analysis não existe mais)
 - ✅ Removida seção formatters/ completa (YAGNI - cada comando tem seu próprio formatter)
-- ✅ `core/uidocs/` marcado como YAGNI (funcionalidade em `commands/uidocs.py`)
+- ✅ `core/doc_ui/` marcado como YAGNI (funcionalidade em `commands/doc_ui.py`)
 - ✅ `utils/git_utils.py` marcado como YAGNI (usa `core/git/` existente)
 - ✅ Todas as fases principais concluídas (1-4, 6)
 - ✅ Checklist otimizado: só resta testing (Fase 5) e package distribution

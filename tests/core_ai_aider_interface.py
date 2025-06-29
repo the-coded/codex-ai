@@ -30,7 +30,7 @@ def main():
         from core.ai.aider_interface import (
             AiderInterface, AiderResult, run_changelog_generation,
             run_react_documentation, run_sass_documentation, 
-            run_storybook_documentation, run_uidocs_generation
+            run_storybook_documentation, run_doc_ui_generation
         )
         from core.ai.model_selector import ModelInfo
         print("✅ AI Aider interface imported successfully")
@@ -103,8 +103,8 @@ def main():
         interface = AiderInterface(model)
         
         required_methods = [
-            'run_changelog', 'run_uidocs_react', 'run_uidocs_sass', 
-            'run_uidocs_storybook', 'run_custom'
+            'run_changelog', 'run_doc_ui_react', 'run_doc_ui_sass', 
+            'run_doc_ui_storybook', 'run_custom'
         ]
         
         missing_methods = []
@@ -176,7 +176,7 @@ def main():
         convenience_functions = [
             run_changelog_generation, run_react_documentation,
             run_sass_documentation, run_storybook_documentation,
-            run_uidocs_generation
+            run_doc_ui_generation
         ]
         
         all_callable = True
@@ -276,7 +276,7 @@ def main():
         test_results['failed'] += 1
         test_results['errors'].append(f"Error handling test error: {e}")
     
-    # Test 9: File type routing in run_uidocs_generation
+    # Test 9: File type routing in run_doc_ui_generation
     print("\n🎯 Test 9: File type routing validation...")
     try:
         model = ModelInfo(name="test-model", aider_model="test", max_tokens=100000)
@@ -298,7 +298,7 @@ def main():
         
         for file_type in file_types:
             try:
-                result = run_uidocs_generation(
+                result = run_doc_ui_generation(
                     model=model,
                     file_type=file_type,
                     files=["test.txt"],

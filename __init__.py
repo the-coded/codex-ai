@@ -14,7 +14,7 @@ Usage:
     pip install codex-ai
     codex-ai changelog  # Generate AI-powered changelog
     codex-ai timetrack  # Analyze development time
-    codex-ai uidocs      # Generate documentation
+    codex-ai doc-ui     # Generate documentation
     codex-ai map-tree   # Project structure mapping
 """
 

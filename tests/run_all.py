@@ -24,7 +24,7 @@ TEST_CATEGORIES = {
         "tests/commands_config.py",
         "tests/commands_map_tree.py", 
         "tests/commands_timetrack.py",
-        "tests/commands_ui-lib.py",
+        "tests/commands_doc_ui.py",
         "tests/commands_changelog.py"
     ],
     "core": [
@@ -96,14 +96,14 @@ def run_test(test_file: str) -> Tuple[bool, str, float]:
         return False, f"❌ Test execution failed: {e}", duration
 
 
-def run_ui-lib_integration_test() -> Tuple[bool, str]:
+def run_doc_ui_integration_test() -> Tuple[bool, str]:
     """
-    Run special ui-lib integration test with design-system.
+    Run special doc-ui integration test with design-system.
     
     Returns:
         Tuple of (success, output)
     """
-    print("🧪 Running ui-lib Integration Test...")
+    print("🧪 Running Doc-UI Integration Test...")
     
     # Check if design-system exists (relative to project root)
     design_system_path = project_root.parent / "design-system"
@@ -114,7 +114,7 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
         # Test 1: Path mode with React component
         print("   Testing path mode with React component...")
         result1 = subprocess.run([
-            sys.executable, "cli.py", "ui-lib",
+            sys.executable, "cli.py", "doc-ui",
             "--path", "../design-system/react/src/components/atoms/Button",
             "--dry-run", "--verbose"
         ], capture_output=True, text=True, timeout=30, cwd=str(project_root))
@@ -125,7 +125,7 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
         # Test 2: Doc filter - React only
         print("   Testing doc filter - React only...")
         result2 = subprocess.run([
-            sys.executable, "cli.py", "ui-lib",
+            sys.executable, "cli.py", "doc-ui",
             "--path", "../design-system/react/src/components",
             "--doc", "react", "--dry-run"
         ], capture_output=True, text=True, timeout=30, cwd=str(project_root))
@@ -136,7 +136,7 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
         # Test 3: Doc filter - Sass only
         print("   Testing doc filter - Sass only...")
         result3 = subprocess.run([
-            sys.executable, "cli.py", "ui-lib",
+            sys.executable, "cli.py", "doc-ui",
             "--path", "../design-system/sass/src/components",
             "--doc", "sass", "--dry-run"
         ], capture_output=True, text=True, timeout=30, cwd=str(project_root))
@@ -147,13 +147,13 @@ def run_ui-lib_integration_test() -> Tuple[bool, str]:
         # Test 4: Help command
         print("   Testing help command...")
         result4 = subprocess.run([
-            sys.executable, "cli.py", "ui-lib", "--help"
+            sys.executable, "cli.py", "doc-ui", "--help"
         ], capture_output=True, text=True, timeout=10, cwd=str(project_root))
         
         if result4.returncode != 0:
             return False, f"❌ Help command test failed: {result4.stderr}"
         
-        success_output = f"""✅ ui-lib Integration Test PASSED!
+        success_output = f"""✅ Doc-UI Integration Test PASSED!
         
 Test Results:
 ✅ Path mode with React component
@@ -216,7 +216,7 @@ def main():
 Examples:
   python tests/run_all.py                    # Run all tests (21/21 implemented!)
   python tests/run_all.py --category commands # Run only commands tests
-  python tests/run_all.py --ui-lib-integration # Run ui-lib integration test
+  python tests/run_all.py --doc-ui-integration # Run doc-ui integration test
   python tests/run_all.py --verbose          # Verbose output
   
   # From tests directory:
@@ -230,9 +230,9 @@ Examples:
         help='Run tests for specific category only'
     )
     parser.add_argument(
-        '--ui-lib-integration',
+        '--doc-ui-integration',
         action='store_true',
-        help='Run ui-lib integration test with design-system'
+        help='Run doc-ui integration test with design-system'
     )
     parser.add_argument(
         '--verbose', '-v',
@@ -243,8 +243,8 @@ Examples:
     args = parser.parse_args()
     
     # Handle special commands
-    if args.ui-lib_integration:
-        success, output = run_ui-lib_integration_test()
+    if args.doc_ui_integration:
+        success, output = run_doc_ui_integration_test()
         print(output)
         return 0 if success else 1
     

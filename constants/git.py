@@ -237,7 +237,7 @@ GIT_COMMANDS = {
 #
 # 📊 EXPLANATION:
 # Specific commands for different Git status operations.
-# Used primarily by the uidocs command for local vs pipeline mode detection.
+# Used primarily by the doc-ui command for local vs pipeline mode detection.
 #
 # Each command returns different types of file lists:
 # - staged: Files added to staging area (git add)
@@ -249,22 +249,22 @@ GIT_STATUS_COMMANDS = {
     "staged": {
         "command": "git diff --cached --name-only",
         "description": "Files staged for commit",
-        "use_case": "uidocs local mode - process only staged files"
+        "use_case": "doc-ui local mode - process only staged files"
     },
     "modified": {
         "command": "git diff --name-only",
         "description": "Modified files not yet staged", 
-        "use_case": "uidocs local mode - process working directory changes"
+        "use_case": "doc-ui local mode - process working directory changes"
     },
     "untracked": {
         "command": "git ls-files --others --exclude-standard",
         "description": "New files not tracked by Git",
-        "use_case": "uidocs local mode - include new files if requested"
+        "use_case": "doc-ui local mode - include new files if requested"
     },
     "all_changes": {
         "command": "git status --porcelain",
         "description": "All changes in porcelain format",
-        "use_case": "uidocs local mode - comprehensive change detection"
+        "use_case": "doc-ui local mode - comprehensive change detection"
     }
 }
 
@@ -272,7 +272,7 @@ GIT_STATUS_COMMANDS = {
 #
 # 📊 EXPLANATION:
 # Commands for getting file differences between commits, branches, or states.
-# Used primarily by uidocs pipeline mode and changelog generation.
+# Used primarily by doc-ui pipeline mode and changelog generation.
 #
 # Templates use {placeholders} that should be replaced with actual values:
 # - {commit}: Specific commit hash
@@ -284,12 +284,12 @@ GIT_DIFF_COMMANDS = {
     "since_commit": {
         "command": "git diff --name-only {commit}",
         "description": "Files changed since specific commit",
-        "use_case": "uidocs pipeline mode - changes since last deployment"
+        "use_case": "doc-ui pipeline mode - changes since last deployment"
     },
     "branch_range": {
         "command": "git diff --name-only {base}..{head}",
         "description": "Files changed between branches",
-        "use_case": "uidocs pipeline mode - PR/MR changes"
+        "use_case": "doc-ui pipeline mode - PR/MR changes"
     },
     "last_commit": {
         "command": "git diff --name-only HEAD~1",
@@ -299,7 +299,7 @@ GIT_DIFF_COMMANDS = {
     "commit_range": {
         "command": "git diff --name-only {range}",
         "description": "Files changed in commit range",
-        "use_case": "uidocs pipeline mode - feature branch changes"
+        "use_case": "doc-ui pipeline mode - feature branch changes"
     },
     "with_stats": {
         "command": "git diff --stat {range}",

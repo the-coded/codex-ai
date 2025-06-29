@@ -74,19 +74,19 @@ AIDER_COMMAND_TEMPLATES = {
         ],
         "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} {output_file}"
     },
-    "ui-lib_REACT": {
+    "DOC_UI_REACT": {
         "additional_flags": [
             ["--no-git"],
         ],
         "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} --file {react_files}"
     },
-    "ui-lib_SASS": {
+    "DOC_UI_SASS": {
         "additional_flags": [
             ["--no-git"], 
         ],
         "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} --file {sass_files}"
     },
-    "ui-lib_STORYBOOK": {
+    "DOC_UI_STORYBOOK": {
         "additional_flags": [
             ["--no-git"], 
         ],
@@ -206,7 +206,7 @@ def build_aider_command(command_type: str, model_key: str, **kwargs) -> str:
     Build an aider command based on template and parameters.
     
     Args:
-        command_type: Type of command ("CHANGELOG", "ui-lib_REACT", "ui-lib_SASS", "ui-lib_STORYBOOK")
+        command_type: Type of command ("CHANGELOG", "DOC_UI_REACT", "DOC_UI_SASS", "DOC_UI_STORYBOOK")
         model_key: Model to use
         **kwargs: Additional parameters for command template
         
@@ -215,7 +215,7 @@ def build_aider_command(command_type: str, model_key: str, **kwargs) -> str:
         
     Examples:
         >>> cmd = build_aider_command(
-        ...     "CHANGELOG",
+        ...     "DOC_UI_REACT",
         ...     "CLAUDE_4_SONNET",
         ...     log_file="git.log",
         ...     prompt_file="prompt.md",
