@@ -411,6 +411,19 @@ class ChangesTracker:
     def _get_ahead_behind(self) -> Optional[Tuple[int, int]]:
         """Get ahead/behind commit count."""
         try:
+            # First check if we're in detached HEAD state
+            branch = self._get_current_branch()
+            if not branch:
+                # In detached HEAD state, no upstream comparison possible
+                return None
+            
+            # Check if upstream exists
+            try:
+                self._run_git_command(["git", "rev-parse", "@{upstream}"])
+            except subprocess.CalledProcessError:
+                # No upstream configured
+                return None
+            
             result = self._run_git_command(["git", "rev-list", "--left-right", "--count", "HEAD...@{upstream}"])
             parts = result.strip().split('\t')
             if len(parts) == 2:
