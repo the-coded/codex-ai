@@ -69,8 +69,9 @@ codex-ai doc-ui [OPTIONS]
 
 #### Path Mode
 - **Triggers**: When `--path` flag is used
-- **Processes**: All relevant files in specified path
-- **Use Case**: Targeted documentation generation
+- **Processes**: ALL relevant files in specified path (bypasses auto-detect)
+- **Behavior**: Ignores Git status - processes every matching file found
+- **Use Case**: Targeted documentation generation, independent of Git changes
 
 ### File Type Patterns
 

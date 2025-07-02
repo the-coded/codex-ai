@@ -218,9 +218,11 @@ codex-ai uidocs --model claude_3_7_sonnet --output-dir ./docs
 **Key Features:**
 - 🤖 Intelligent file detection (React, Sass, Storybook)
 - 🔄 Cross-type triggers (React + Storybook)
-- 📍 Path-based processing
+- 📍 Path-based processing (bypasses auto-detect when used)
 - 🧠 Sibling detection
 - ⚡ Incremental updates
+
+**💡 Note**: When using `--path`, the command processes all relevant files in the specified path, bypassing the normal mode auto-detection (local/pipeline).
 
 ### 📊 Project Analysis
 ```bash

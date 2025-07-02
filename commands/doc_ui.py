@@ -632,7 +632,8 @@ def run_doc_ui(
             mode = "path"
             if verbose:
                 print(f"🎯 Processing specific path: {path}")
-                print(f"📊 Found {len(all_files)} files to analyze")
+                print(f"📊 Found {len(all_files)} files to analyze (ignoring Git status)")
+                print(f"📁 Path mode: ALL files in path will be considered for processing")
         else:
             # Auto-detect mode if not specified (following map_tree pattern)
             if mode is None:
@@ -658,7 +659,8 @@ def run_doc_ui(
             for file_type, files in categorized_files.items():
                 if files:
                     pattern_desc = DOC_UI_FILE_PATTERNS[file_type]["description"]
-                    print(f"   • {file_type.title()}: {len(files)} files ({pattern_desc})")
+                    mode_desc = "found in path" if mode == "path" else "changed"
+                    print(f"   • {file_type.title()}: {len(files)} files {mode_desc} ({pattern_desc})")
         
         # Filter by doc (following map_tree pattern)
         if doc != "all":
@@ -674,7 +676,11 @@ def run_doc_ui(
         # Check if we have files to process
         total_files = sum(len(files) for files in categorized_files.values())
         if total_files == 0:
-            print(f"📭 No {doc} files found to process")
+            if mode == "path":
+                print(f"📭 No {doc} files found in path: {path}")
+                print(f"💡 Tip: Check if the path contains files matching the doc type patterns")
+            else:
+                print(f"📭 No {doc} files found to process")
             return True
         
         # Select model (following changelog pattern)
