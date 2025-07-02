@@ -72,7 +72,7 @@ AIDER_COMMAND_TEMPLATES = {
             ["--no-git"], 
             ["--thinking-tokens", "4k"]
         ],
-        "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} {output_file}"
+        "pattern": "aider {base_flags} --read {log_file} --message-file {prompt_file} --file {output_file}"
     },
     "DOC_UI_REACT": {
         "additional_flags": [
@@ -205,22 +205,26 @@ def build_aider_command(command_type: str, model_key: str, **kwargs) -> str:
     """
     Build an aider command based on template and parameters.
     
+    Automatically expands --file parameters with multiple files.
+    
     Args:
         command_type: Type of command ("CHANGELOG", "DOC_UI_REACT", "DOC_UI_SASS", "DOC_UI_STORYBOOK")
         model_key: Model to use
         **kwargs: Additional parameters for command template
         
     Returns:
-        str: Complete aider command
+        str: Complete aider command with expanded --file flags
         
     Examples:
-        >>> cmd = build_aider_command(
-        ...     "DOC_UI_REACT",
-        ...     "CLAUDE_4_SONNET",
-        ...     log_file="git.log",
-        ...     prompt_file="prompt.md",
-        ...     output_file="changelog.md"
-        ... )
+        >>> # Single file (no change)
+        >>> cmd = build_aider_command("CHANGELOG", "CLAUDE_4_SONNET", 
+        ...     output_file="CHANGELOG.md")
+        >>> # Result: "... --file CHANGELOG.md"
+        
+        >>> # Multiple files (expanded)
+        >>> cmd = build_aider_command("DOC_UI_STORYBOOK", "CLAUDE_4_SONNET",
+        ...     storybook_files="file1.tsx file2.tsx")  
+        >>> # Result: "... --file file1.tsx --file file2.tsx"
     """
     if command_type not in AIDER_COMMAND_TEMPLATES:
         raise ValueError(f"Unknown command type: {command_type}")
@@ -248,14 +252,59 @@ def build_aider_command(command_type: str, model_key: str, **kwargs) -> str:
     
     base_flags_str = " ".join(base_flags)
     
-    # Format command
+    # Format command with original parameters
     command = template["pattern"].format(
         base_flags=base_flags_str,
         model=model_name,
         **kwargs
     )
     
+    # POST-PROCESS: Expand --file with multiple files
+    command = _expand_file_flags_in_command(command)
+    
     return command
+
+
+def _expand_file_flags_in_command(command: str) -> str:
+    """
+    Expand --file flags that contain multiple files.
+    
+    Args:
+        command: Complete aider command string
+        
+    Returns:
+        str: Command with expanded --file flags
+        
+    Examples:
+        >>> cmd = "aider --model claude --file file1.tsx file2.tsx --read context.tsx"
+        >>> _expand_file_flags_in_command(cmd)
+        "aider --model claude --file file1.tsx --file file2.tsx --read context.tsx"
+        
+        >>> cmd = "aider --model claude --file single.tsx --read context.tsx"  
+        >>> _expand_file_flags_in_command(cmd)
+        "aider --model claude --file single.tsx --read context.tsx"  # No change
+    """
+    import re
+    
+    # Pattern to match --file followed by one or more file arguments
+    # Stops at next -- flag or end of string
+    pattern = r'--file\s+([^-][^\s]*(?:\s+[^-][^\s]*)*?)(?=\s+--|$)'
+    
+    def expand_match(match):
+        files_str = match.group(1).strip()
+        files = files_str.split()
+        
+        # If only one file, no expansion needed
+        if len(files) <= 1:
+            return f"--file {files_str}"
+        
+        # Multiple files: expand with --file for each
+        return " ".join(f"--file {file}" for file in files)
+    
+    # Replace all --file occurrences
+    expanded_command = re.sub(pattern, expand_match, command)
+    
+    return expanded_command
 
 
 def get_all_model_names() -> List[str]:
@@ -402,6 +451,7 @@ __all__ = [
     "select_model_by_tokens",
     "get_effective_token_limit",
     "build_aider_command",
+    "_expand_file_flags_in_command",
     "get_all_model_names",
     "get_model_by_name",
     "get_cli_model_choices",
