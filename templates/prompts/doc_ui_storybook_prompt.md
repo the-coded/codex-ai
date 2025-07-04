@@ -1446,6 +1446,15 @@ export const Interactive: Story = {
 - Import only what is used (action only if using event handlers)
 - Use config values throughout
 - Include action handlers for interactive elements
+- Import order should follow:
+  1. node "builtin" modules
+  2. "external" modules
+  3. "internal" modules (if you have configured your path or webpack to handle your internal paths differently) 
+  4. modules from a "parent" directory
+  5. "sibling" modules from the same or a sibling's directory
+  6. "index" of the current directory
+  7. "object"-imports (only available in TypeScript)
+  8. "type" imports (only available in Flow and TypeScript)
 </output_format>
 
 <examples>
