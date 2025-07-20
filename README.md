@@ -241,18 +241,18 @@ The system automatically cascades through modes:
 
 ```
 codex-ai/
-├── commands/         # CLI command implementations
-├── constants/        # Configuration constants
-├── core/             # Core business logic
-│   ├── ai/           # AI model integration
-│   ├── config/       # Configuration management
-│   └── git/          # Git operations and analysis
-├── docs/             # Documentation
-├── templates/        # AI prompts and templates
-│   └── prompts/      # AI prompt templates
+├── src/              # Source code (Python best practice)
+│   ├── commands/     # CLI command implementations
+│   ├── constants/    # Configuration constants
+│   ├── core/         # Core business logic
+│   │   ├── ai/       # AI model integration
+│   │   ├── config/   # Configuration management
+│   │   └── git/      # Git operations and analysis
+│   └── templates/    # AI prompts and templates
+│       └── prompts/  # AI prompt templates
 ├── tests/            # Test suite
-├── utils/            # Utility functions
-└── old/              # Legacy code (for reference)
+├── docs/             # Documentation
+└── pyproject.toml    # Modern Python packaging
 ```
 
 ## 🧪 Development

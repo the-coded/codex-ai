@@ -57,8 +57,9 @@ codex-ai = "cli:main"
 [tool.setuptools]
 packages = [
     "commands", "core", "core.git", "core.ai", "core.config",
-    "constants", "utils", "templates", "templates.prompts"
+    "constants", "templates", "templates.prompts"
 ]
+package-dir = {"" = "src"}
 py-modules = ["cli", "__main__"]
 
 [tool.setuptools.package-data]

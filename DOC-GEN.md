@@ -264,8 +264,8 @@ from constants.ai import (
 
 ### **✅ Checklist - Criar Arquivos com Constantes:**
 
-#### **📝 C10: Criar commands/doc_gen.py (só constantes)**
-- [ ] **C10.1**: Criar arquivo `commands/doc_gen.py`
+#### **📝 C10: Criar src/commands/doc_gen.py (só constantes)**
+- [ ] **C10.1**: Criar arquivo `src/commands/doc_gen.py`
 - [ ] **C10.2**: Adicionar todas constantes C1-C5
 - [ ] **C10.3**: Adicionar imports C7-C9
 - [ ] **C10.4**: Adicionar docstrings e type hints
@@ -284,7 +284,7 @@ from constants.ai import (
 
 ### **✅ Checklist - Criar core/git/ Modular:**
 
-#### **📝 1.1: Adicionar funções ao core/git/changes_tracker.py**
+#### **📝 1.1: Adicionar funções ao src/core/git/changes_tracker.py**
 - [ ] **1.1.1**: Copiar `auto_detect_mode()` do doc_ui.py para final do changes_tracker.py
 - [ ] **1.1.2**: Copiar `get_files_for_mode()` do doc_ui.py para final do changes_tracker.py
 - [ ] **1.1.3**: Copiar `get_files_for_path()` do doc_ui.py para final do changes_tracker.py
@@ -292,7 +292,7 @@ from constants.ai import (
 - [ ] **1.1.5**: Importar dependências necessárias (`os`, `Path`, `Optional`, `List`)
 - [ ] **1.1.6**: Manter docstrings e type hints
 
-#### **📝 1.2: Atualizar core/git/__init__.py**
+#### **📝 1.2: Atualizar src/core/git/__init__.py**
 - [ ] **1.2.1**: Adicionar `auto_detect_mode` nos imports do changes_tracker
 - [ ] **1.2.2**: Adicionar `get_files_for_mode` nos imports do changes_tracker
 - [ ] **1.2.3**: Adicionar `get_files_for_path` nos imports do changes_tracker
@@ -330,25 +330,25 @@ from constants.ai import (
 ### **✅ Checklist - Templates de Prompts:**
 
 #### **📝 2.1: doc_gen_folder_readme_prompt.md**
-- [ ] **2.1.1**: Criar `templates/prompts/doc_gen_folder_readme_prompt.md`
+- [ ] **2.1.1**: Criar `src/templates/prompts/doc_gen_folder_readme_prompt.md`
 - [ ] **2.1.2**: Template para README.md de pastas
 - [ ] **2.1.3**: Seção para docs separadas (docs/) - overview + índice incorporado
 - [ ] **2.1.4**: Seção para docs inline (./docs/) - overview simples + link INDEX.md
 - [ ] **2.1.5**: Instruções para análise de arquivos da pasta
 
 #### **📝 2.2: doc_gen_folder_index_prompt.md**
-- [ ] **2.2.1**: Criar `templates/prompts/doc_gen_folder_index_prompt.md`
+- [ ] **2.2.1**: Criar `src/templates/prompts/doc_gen_folder_index_prompt.md`
 - [ ] **2.2.2**: Template para INDEX.md (só modo inline)
 - [ ] **2.2.3**: Navegação para documentação técnica
 - [ ] **2.2.4**: Categorização e links organizados
 
 #### **📝 2.3: doc_gen_file_detailed_prompt.md**
-- [ ] **2.3.1**: Criar `templates/prompts/doc_gen_file_detailed_prompt.md`
+- [ ] **2.3.1**: Criar `src/templates/prompts/doc_gen_file_detailed_prompt.md`
 - [ ] **2.3.2**: Template para docs individuais
 - [ ] **2.3.3**: Seções obrigatórias (purpose, functions, dependencies, usage)
 - [ ] **2.3.4**: Exemplos de código e notas de implementação
 
-#### **📝 2.4: Atualizar templates/__init__.py**
+#### **📝 2.4: Atualizar src/templates/__init__.py**
 - [ ] **2.4.1**: Adicionar imports dos novos templates
 - [ ] **2.4.2**: Atualizar `__all__` list
 

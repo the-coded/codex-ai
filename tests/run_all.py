@@ -40,7 +40,7 @@ TEST_CATEGORIES = {
     "utils": [
     ],
     "cli": [
-        "tests/cli.py"
+        "tests/test_cli.py"
     ]
 }
 

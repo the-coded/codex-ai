@@ -31,7 +31,7 @@ def _load_pyproject_data():
         FileNotFoundError: If pyproject.toml is not found
         tomllib.TOMLDecodeError: If pyproject.toml is invalid
     """
-    pyproject_path = Path(__file__).parent.parent / "pyproject.toml"
+    pyproject_path = Path(__file__).parent.parent.parent / "pyproject.toml"
     
     if not pyproject_path.exists():
         raise FileNotFoundError(f"pyproject.toml not found at {pyproject_path}")
