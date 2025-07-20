@@ -22,7 +22,6 @@ sys.path.insert(0, str(project_root))
 TEST_CATEGORIES = {
     "commands": [
         "tests/commands_config.py",
-        "tests/commands_map_tree.py", 
         "tests/commands_timetrack.py",
         "tests/commands_doc_ui.py",
         "tests/commands_changelog.py"

@@ -25,7 +25,6 @@ def create_parser() -> argparse.ArgumentParser:
 Examples:
   codex-ai changelog                     # Generate AI-powered changelog
   codex-ai timetrack --report           # Analyze development time
-  codex-ai map-tree --all               # Map project structure  
   codex-ai doc-ui                       # Generate documentation
   codex-ai config --api-key YOUR_KEY    # Configure settings
 
@@ -218,38 +217,6 @@ Environment Variables:
             help='Save report to file (format auto-detected from extension)'
         )
     
-    # Map-tree command
-    map_tree_parser = subparsers.add_parser(
-        'map-tree',
-        help='Map project structure and changes for AI analysis'
-    )
-    
-    # Import and add map-tree arguments
-    try:
-        from commands.map_tree import add_map_tree_arguments
-        add_map_tree_arguments(map_tree_parser)
-    except ImportError:
-        # Fallback to basic arguments if import fails
-        map_tree_parser.add_argument(
-            '--all',
-            action='store_true',
-            help='Generate all tree structures (default)'
-        )
-        map_tree_parser.add_argument(
-            '--project',
-            action='store_true',
-            help='Generate project structure only'
-        )
-        map_tree_parser.add_argument(
-            '--git',
-            action='store_true',
-            help='Generate git changes only'
-        )
-        map_tree_parser.add_argument(
-            '--output', '-o',
-            type=str,
-            help='Save to custom file'
-        )
     
     # Doc-UI command (intelligent documentation generation)
     doc_ui_parser = subparsers.add_parser(
@@ -380,19 +347,6 @@ def run_doc_ui_command(args, config: CodexConfig) -> int:
         return 1
 
 
-def run_map_tree_command(args, config: CodexConfig) -> int:
-    """Run map-tree analysis command."""
-    try:
-        # Import here to avoid circular imports
-        from commands.map_tree import run_map_tree
-        return run_map_tree(args, config)
-    except ImportError as e:
-        print(f"❌ Map-tree command not yet implemented: {e}")
-        print("🚧 This feature is under development")
-        return 1
-    except Exception as e:
-        print(f"❌ Error running map-tree command: {e}")
-        return 1
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -428,7 +382,6 @@ def main(argv: Optional[List[str]] = None) -> int:
         'config': run_config_command,
         'changelog': run_changelog_command,
         'timetrack': run_timetrack_command,
-        'map-tree': run_map_tree_command,
         'doc-ui': run_doc_ui_command,
     }
     
