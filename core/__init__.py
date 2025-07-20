@@ -3,7 +3,7 @@ Core functionality for Codex-AI.
 
 This module provides the main business logic and processing capabilities
 for all Codex-AI operations including git analysis, AI integration,
-time tracking, and documentation generation.
+and documentation generation.
 """
 
 # ===== GIT OPERATIONS =====
@@ -52,28 +52,6 @@ except ImportError:
     TokenManager = None
     PromptProcessor = None
 
-# ===== TIME TRACKING =====
-#
-# 📊 EXPLANATION:
-# Time tracking and complexity analysis functionality.
-# Ports JavaScript timetracker algorithms to Python.
-
-try:
-    from .timetracker import (
-        TimeCalculator,
-        ComplexityAnalyzer,
-        TimeReportGenerator,
-        TimeAlgorithms
-    )
-    TIMETRACKER_AVAILABLE = True
-except ImportError:
-    # Timetracker modules not yet implemented
-    TIMETRACKER_AVAILABLE = False
-    TimeCalculator = None
-    ComplexityAnalyzer = None
-    TimeReportGenerator = None
-    TimeAlgorithms = None
-
 # ===== DOC-UI DOCUMENTATION =====
 #
 # 📊 EXPLANATION:
@@ -98,7 +76,6 @@ SourceManager = None
 CORE_STATUS = {
     "git": GIT_AVAILABLE,
     "ai": AI_AVAILABLE,
-    "timetracker": TIMETRACKER_AVAILABLE,
     "doc-ui": DOC_UI_AVAILABLE
 }
 
@@ -130,8 +107,8 @@ def is_module_available(module_name: str) -> bool:
         bool: True if module is available
         
     Examples:
-        >>> if is_module_available('timetracker'):
-        ...     calculator = TimeCalculator()
+        >>> if is_module_available('git'):
+        ...     analyzer = GitLogAnalyzer()
     """
     return CORE_STATUS.get(module_name, False)
 
@@ -146,7 +123,7 @@ def get_core_status() -> dict:
     Examples:
         >>> status = get_core_status()
         >>> print(status)
-        {'git': True, 'ai': False, 'timetracker': False, 'doc-ui': True}
+        {'git': True, 'ai': False, 'doc-ui': True}
     """
     return CORE_STATUS.copy()
 
@@ -186,11 +163,6 @@ __all__ = [
     "TokenManager", 
     "PromptProcessor",
     
-    # Time tracking
-    "TimeCalculator",
-    "ComplexityAnalyzer",
-    "TimeReportGenerator",
-    "TimeAlgorithms",
     
     # uidocs documentation
     "uidocsProcessor",
@@ -210,7 +182,6 @@ __all__ = [
     # Availability flags
     "GIT_AVAILABLE",
     "AI_AVAILABLE",
-    "TIMETRACKER_AVAILABLE",
     "DOC_UI_AVAILABLE"
 ]
 

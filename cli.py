@@ -2,7 +2,7 @@
 CLI interface for Codex-AI.
 
 Main entry point for the command-line interface using argparse.
-Supports all commands: changelog, timetrack, map-tree, doc-ui.
+Supports all commands: changelog, config, doc-ui.
 """
 
 import argparse
@@ -24,7 +24,6 @@ def create_parser() -> argparse.ArgumentParser:
         epilog="""
 Examples:
   codex-ai changelog                     # Generate AI-powered changelog
-  codex-ai timetrack --report           # Analyze development time
   codex-ai doc-ui                       # Generate documentation
   codex-ai config --api-key YOUR_KEY    # Configure settings
 
@@ -173,50 +172,6 @@ Environment Variables:
         help='Custom template file path'
     )
     
-    # Timetrack command
-    timetrack_parser = subparsers.add_parser(
-        'timetrack',
-        help='Analyze development time from Git commits'
-    )
-    
-    # Import and add timetrack arguments
-    try:
-        from commands.timetrack import add_timetrack_arguments
-        add_timetrack_arguments(timetrack_parser)
-    except ImportError:
-        # Fallback to basic arguments if import fails
-        timetrack_parser.add_argument(
-            '--report',
-            action='store_true',
-            help='Generate detailed time tracking report'
-        )
-        timetrack_parser.add_argument(
-            '--format',
-            choices=['json', 'markdown', 'csv', 'html'],
-            default='markdown',
-            help='Output format for reports (default: markdown)'
-        )
-        timetrack_parser.add_argument(
-            '--author',
-            type=str,
-            help='Filter commits by author name (partial match)'
-        )
-        timetrack_parser.add_argument(
-            '--since',
-            type=str,
-            help='Filter commits since date (YYYY-MM-DD format)'
-        )
-        timetrack_parser.add_argument(
-            '--until',
-            type=str,
-            help='Filter commits until date (YYYY-MM-DD format)'
-        )
-        timetrack_parser.add_argument(
-            '--output', '-o',
-            type=str,
-            help='Save report to file (format auto-detected from extension)'
-        )
-    
     
     # Doc-UI command (intelligent documentation generation)
     doc_ui_parser = subparsers.add_parser(
@@ -307,21 +262,6 @@ def run_changelog_command(args, config: CodexConfig) -> int:
         return 1
 
 
-def run_timetrack_command(args, config: CodexConfig) -> int:
-    """Run timetrack analysis command."""
-    try:
-        # Import here to avoid circular imports
-        from commands.timetrack import run_timetrack
-        return run_timetrack(args, config)
-    except ImportError as e:
-        print(f"❌ Timetrack command not yet implemented: {e}")
-        print("🚧 This feature is under development")
-        return 1
-    except Exception as e:
-        print(f"❌ Error running timetrack command: {e}")
-        return 1
-
-
 def run_doc_ui_command(args, config: CodexConfig) -> int:
     """Run Doc-UI documentation generation command."""
 
@@ -381,7 +321,6 @@ def main(argv: Optional[List[str]] = None) -> int:
     command_handlers = {
         'config': run_config_command,
         'changelog': run_changelog_command,
-        'timetrack': run_timetrack_command,
         'doc-ui': run_doc_ui_command,
     }
     

@@ -29,8 +29,8 @@ def main():
     try:
         from cli import (
             create_parser, main as cli_main, 
-            run_config_command, run_changelog_command, run_timetrack_command,
-            run_doc_ui_command, run_map_tree_command
+            run_config_command, run_changelog_command,
+            run_doc_ui_command
         )
         print("✅ CLI module imported successfully")
         test_results['passed'] += 1
@@ -81,8 +81,6 @@ def main():
         test_commands = [
             ['config', '--list'],
             ['changelog', '--dry-run'],
-            ['timetrack', '--report'],
-            ['map-tree', '--all'],
             ['doc-ui', '--dry-run', '--doc', 'react']
         ]
         
@@ -132,9 +130,7 @@ def main():
         handlers = [
             ('config', run_config_command),
             ('changelog', run_changelog_command),
-            ('timetrack', run_timetrack_command),
-            ('doc-ui', run_doc_ui_command),
-            ('map-tree', run_map_tree_command)
+            ('doc-ui', run_doc_ui_command)
         ]
         
         for cmd_name, handler_func in handlers:
@@ -210,7 +206,7 @@ def main():
         
         # Test the logic that validates API keys for AI commands
         ai_commands = ['changelog', 'doc-ui']
-        non_ai_commands = ['config', 'timetrack', 'map-tree']
+        non_ai_commands = ['config']
         
         print(f"✅ AI commands identified: {ai_commands}")
         print(f"✅ Non-AI commands identified: {non_ai_commands}")
@@ -222,8 +218,6 @@ def main():
         valid_combinations = [
             ['config', '--list'],
             ['changelog', '--dry-run', '--since', 'HEAD~5'],
-            ['timetrack', '--report', '--format', 'json'],
-            ['map-tree', '--all', '--output', 'test.md'],
             ['doc-ui', '--doc', 'react', '--mode', 'local', '--dry-run']
         ]
         

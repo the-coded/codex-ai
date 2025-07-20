@@ -12,80 +12,68 @@ from typing import Dict, List, Any
 #
 # 📊 EXPLANATION:
 # Based on Conventional Commits specification (conventionalcommits.org)
-# These patterns help categorize commits for changelog generation and time tracking
+# These patterns help categorize commits for changelog generation
 #
 # Each type has:
 # - emoji: Visual representation for reports
 # - description: What this commit type represents
 # - changelog_section: Where it appears in changelog
-# - time_impact: Relative time complexity (used with timetrack constants)
 
 CONVENTIONAL_COMMIT_TYPES = {
     "feat": {
         "emoji": "✨",
         "description": "New feature",
-        "changelog_section": "Features",
-        "time_impact": "high"
+        "changelog_section": "Features"
     },
     "fix": {
         "emoji": "🐛", 
         "description": "Bug fix",
-        "changelog_section": "Bug Fixes",
-        "time_impact": "medium"
+        "changelog_section": "Bug Fixes"
     },
     "docs": {
         "emoji": "📚",
         "description": "Documentation changes",
-        "changelog_section": "Documentation", 
-        "time_impact": "low"
+        "changelog_section": "Documentation"
     },
     "style": {
         "emoji": "💄",
         "description": "Code style changes (formatting, etc)",
-        "changelog_section": "Styles",
-        "time_impact": "low"
+        "changelog_section": "Styles"
     },
     "refactor": {
         "emoji": "♻️",
         "description": "Code refactoring",
-        "changelog_section": "Code Refactoring",
-        "time_impact": "medium"
+        "changelog_section": "Code Refactoring"
     },
     "perf": {
         "emoji": "⚡",
         "description": "Performance improvements",
-        "changelog_section": "Performance",
-        "time_impact": "medium"
+        "changelog_section": "Performance"
     },
     "test": {
         "emoji": "✅",
         "description": "Test changes",
-        "changelog_section": "Tests",
-        "time_impact": "medium"
+        "changelog_section": "Tests"
     },
     "build": {
         "emoji": "👷",
         "description": "Build system changes",
-        "changelog_section": "Build System",
-        "time_impact": "low"
+        "changelog_section": "Build System"
     },
     "ci": {
         "emoji": "💚",
         "description": "CI/CD changes",
-        "changelog_section": "Continuous Integration",
-        "time_impact": "low"
+        "changelog_section": "Continuous Integration"
     },
     "chore": {
         "emoji": "🔧",
         "description": "Maintenance tasks",
-        "changelog_section": "Chores",
-        "time_impact": "low"
+        "changelog_section": "Chores"
     },
     "revert": {
         "emoji": "⏪",
         "description": "Revert previous commit",
-        "changelog_section": "Reverts",
-        "time_impact": "low"
+        "changelog_section": "Reverts"
     }
 }
 
@@ -304,7 +292,7 @@ GIT_DIFF_COMMANDS = {
     "with_stats": {
         "command": "git diff --stat {range}",
         "description": "Changes with line count statistics",
-        "use_case": "timetrack analysis - quantify changes"
+        "use_case": "changelog analysis - quantify changes"
     }
 }
 
@@ -339,10 +327,6 @@ GIT_LOG_FORMATS = {
     "structured": {
         "format": "%h|%an|%ad|%s",
         "use_case": "Machine-readable format for parsing"
-    },
-    "timetrack": {
-        "format": "%h|%an|%ad|%s",
-        "use_case": "Time tracking analysis with structured data"
     }
 }
 
@@ -350,7 +334,7 @@ GIT_LOG_FORMATS = {
 #
 # 📊 EXPLANATION:
 # Patterns and commands for detecting and handling merge commits.
-# Merge commits require special handling in changelog and time tracking.
+# Merge commits require special handling in changelog generation.
 #
 # Detection methods:
 # - parent_count: Count parents to identify merge commits (>1 parent = merge)

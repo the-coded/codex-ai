@@ -22,7 +22,6 @@ sys.path.insert(0, str(project_root))
 TEST_CATEGORIES = {
     "commands": [
         "tests/commands_config.py",
-        "tests/commands_timetrack.py",
         "tests/commands_doc_ui.py",
         "tests/commands_changelog.py"
     ],
@@ -33,17 +32,12 @@ TEST_CATEGORIES = {
         "tests/core_git_log_analyzer.py",
         "tests/core_git_release_analyzer.py",
         "tests/core_git_tree_generator.py",
-        "tests/core_timetracker_calculator.py",
-        "tests/core_timetracker_report_generator.py",
         "tests/core_ai_aider_interface.py",
         "tests/core_ai_model_selector.py",
         "tests/core_ai_prompt_processor.py",
         "tests/core_ai_token_manager.py"
     ],
     "utils": [
-        "tests/utils_get_base_path.py",
-        "tests/utils_get_token_count.py",
-        "tests/utils_load_json.py"
     ],
     "cli": [
         "tests/cli.py"

@@ -12,7 +12,7 @@
 
 ## 🔭 Overview
 
-**Codex-AI** is a centralized AI-powered development toolkit that serves as the core hub of intelligent automation across development workflows. Inspired by ancient codices—volumes of knowledge meticulously compiled and preserved—Codex-AI is designed to be the modern evolution of development intelligence, bringing together AI-driven changelog generation, time tracking analysis, and documentation automation in one organized platform.
+**Codex-AI** is a centralized AI-powered development toolkit that serves as the core hub of intelligent automation across development workflows. Inspired by ancient codices—volumes of knowledge meticulously compiled and preserved—Codex-AI is designed to be the modern evolution of development intelligence, bringing together AI-driven changelog generation and documentation automation in one organized platform.
 
 Just as ancient codices preserved humanity's knowledge through generations, our Codex-AI aims to preserve and evolve development insights through intelligent automation and AI-powered analysis.
 
@@ -43,7 +43,7 @@ Codex-AI is more than just a development toolkit; it is a **strategic intelligen
 - **🏛️ Centralized Intelligence**: Generate, analyze, and organize development insights through AI-powered automation in one unified platform.
 - **🤖 Advanced AI Integration**: Leverages Claude-4, Claude-3.7, and Claude-3.5 models with intelligent fallback chains for robust automation.
 - **🔄 Universal Compatibility**: Works seamlessly across languages, frameworks, and development workflows, making it a universal tool for modern development teams.
-- **📊 Deep Analytics**: Transforms raw Git data into actionable insights through intelligent time tracking and complexity analysis.
+- **📊 Deep Analytics**: Transforms raw Git data into actionable insights through intelligent analysis and complexity metrics.
 
 ## 🚀 Quick Start
 
@@ -57,17 +57,13 @@ codex-ai config --api-key sk-ant-your-key-here
 # Generate AI-powered changelog
 codex-ai changelog
 
-# Analyze development time
-codex-ai timetrack --report
-
-# Generate uidocs documentation (auto-detects types)
-codex-ai uidocs
+# Generate documentation (auto-detects types)
+codex-ai doc-ui
 ```
 
 ## ✨ Features
 
 - **📝 Smart Changelogs**: AI-generated from Git history using Claude models
-- **⏱️ Time Tracking**: Intelligent commit time analysis with complexity factors
 - **📚 Documentation**: Auto-generate docs for React, Sass, and Storybook
 - **📊 Code Analysis**: Project insights, Git analysis, and complexity metrics
 - **🔧 Flexible Configuration**: Environment variables, config files, and CLI options
@@ -171,76 +167,34 @@ codex-ai changelog --model claude_3_7_sonnet
 - **Without tags**: Analyzes entire Git history (first release scenario)
 - **Manual override**: Use `--since` to specify custom starting point
 
-### ⏱️ Time Tracking
-```bash
-# Basic time analysis
-codex-ai timetrack
-
-# Generate detailed report
-codex-ai timetrack --report
-
-# Filter by author
-codex-ai timetrack --author "John Doe" --report
-
-# Date range analysis
-codex-ai timetrack --since "2024-01-01" --until "2024-12-31"
-
-# Different output formats
-codex-ai timetrack --report --format json
-codex-ai timetrack --report --format html
-codex-ai timetrack --report --format csv
-```
-
-### 📚 uidocs Documentation Generation
-
-**📖 [Complete uidocs Documentation](commands/uidocs.md)**
+### 📚 Doc-UI Documentation Generation
 
 ```bash
 # Auto-detect and generate all documentation types
-codex-ai uidocs
+codex-ai doc-ui
 
 # Process specific path  
-codex-ai uidocs --path react/src/components/Button
+codex-ai doc-ui --path react/src/components/Button
 
 # Generate only React documentation
-codex-ai uidocs --doc react
+codex-ai doc-ui --doc react
 
 # Pipeline mode with specific commit
-codex-ai uidocs --pipeline --since v1.2.0
+codex-ai doc-ui --mode pipeline
 
 # Preview without costs
-codex-ai uidocs --dry-run --verbose
+codex-ai doc-ui --dry-run --verbose
 
 # Custom AI model and output directory
-codex-ai uidocs --model claude_3_7_sonnet --output-dir ./docs
+codex-ai doc-ui --model claude_3_7_sonnet --output-dir ./docs
 ```
 
 **Key Features:**
 - 🤖 Intelligent file detection (React, Sass, Storybook)
 - 🔄 Cross-type triggers (React + Storybook)
-- 📍 Path-based processing (bypasses auto-detect when used)
+- 📍 Path-based processing 
 - 🧠 Sibling detection
 - ⚡ Incremental updates
-
-**💡 Note**: When using `--path`, the command processes all relevant files in the specified path, bypassing the normal mode auto-detection (local/pipeline).
-
-### 📊 Project Analysis
-```bash
-# Project structure mapping
-codex-ai map-tree --project
-
-# Git changes analysis
-codex-ai map-tree --git
-
-# Release changes analysis  
-codex-ai map-tree --release
-
-# Sibling files analysis
-codex-ai map-tree --siblings
-
-# Combined analysis with custom output
-codex-ai map-tree --project --git --output analysis.json
-```
 
 ## 🔧 Environment Variables
 
@@ -291,10 +245,8 @@ codex-ai/
 ├── constants/        # Configuration constants
 ├── core/             # Core business logic
 │   ├── ai/           # AI model integration
-│   ├── uidocs/        # Documentation generation (in development)
 │   ├── config/       # Configuration management
-│   ├── git/          # Git operations and analysis
-│   └── timetracker/  # Time tracking algorithms
+│   └── git/          # Git operations and analysis
 ├── docs/             # Documentation
 ├── templates/        # AI prompts and templates
 │   └── prompts/      # AI prompt templates
@@ -302,17 +254,6 @@ codex-ai/
 ├── utils/            # Utility functions
 └── old/              # Legacy code (for reference)
 ```
-
-## 🔄 Migration from Legacy Version
-
-If you're migrating from the old shell script version:
-
-1. **Install Codex-AI**: `pip install codex-ai`
-2. **Set API Key**: `codex-ai config --api-key sk-ant-your-key-here`
-3. **Replace Commands**:
-   - `./bin/changelog.sh` → `codex-ai changelog`
-   - `./pkg/timetracker/` → `codex-ai timetrack`
-   - `./pkg/uidocs/` → `codex-ai uidocs`
 
 ## 🧪 Development
 
@@ -395,14 +336,11 @@ codex-ai config --api-key sk-ant-your-key-here
 # 2. Generate changelog for release
 codex-ai changelog --since "v1.0.0" --output CHANGELOG.md
 
-# 3. Analyze development time for sprint
-codex-ai timetrack --since "2024-01-01" --report --format html
+# 3. Generate documentation
+codex-ai doc-ui --output-dir ./docs
 
-# 4. Generate documentation
-codex-ai uidocs --output-dir ./docs
-
-# 5. Project analysis for review
-codex-ai map-tree --project --git --output analysis.json
+# 4. View configuration
+codex-ai config --list
 ```
 
 ### Pipeline Integration (GitHub Actions)

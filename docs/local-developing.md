@@ -84,7 +84,7 @@ vim cli.py  # or any file
 # 2. Test immediately (no reinstall needed!)
 codex-ai --help
 codex-ai config --list
-codex-ai uidocs --help
+codex-ai doc-ui --help
 
 # 3. Run tests (when available)
 pytest
@@ -107,9 +107,8 @@ codex-ai config --model claude_3_7_sonnet
 
 # Test commands (when implemented)
 codex-ai changelog --dry-run
-codex-ai timetrack --help
-codex-ai uidocs --help
-codex-ai analyze --help
+codex-ai doc-ui --help
+codex-ai config --help
 ```
 
 ## 🧪 Testing Commands
@@ -119,9 +118,8 @@ codex-ai analyze --help
 # Help system
 codex-ai --help
 codex-ai changelog --help
-codex-ai timetrack --help
-codex-ai uidocs --help
-codex-ai analyze --help
+codex-ai doc-ui --help
+codex-ai config --help
 
 # Version and info
 codex-ai --version
@@ -154,7 +152,7 @@ codex-ai changelog
 codex-ai invalid-command
 
 # Test invalid arguments
-codex-ai uidocs --invalid-arg
+codex-ai doc-ui --invalid-arg
 ```
 
 ## 🐛 Troubleshooting

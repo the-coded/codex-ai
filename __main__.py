@@ -3,9 +3,8 @@ Entry point for running codex-ai as a module.
 
 Usage:
     python -m codex_ai changelog
-    python -m codex_ai timetrack
     python -m codex_ai doc-ui
-    python -m codex_ai map-tree
+    python -m codex_ai config
 """
 
 from cli import main
