@@ -12,13 +12,199 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Any, Union
 from datetime import datetime
+import re
 
-from constants.tree import (
-    EXCLUDE_DIRECTORIES, TREE_OUTPUTS, GIT_CHANGE_TYPES, TREE_STRUCTURE,
-    DEFAULT_CONFIG, is_excluded_directory, get_output_filename, 
-    is_change_type, validate_file_path, split_file_path
-)
 from constants.git import EXCLUDE_PATTERNS
+
+# ===== TREE GENERATION CONSTANTS =====
+# Moved from constants/tree.py - these are specific to tree generation
+
+# Directory exclusion patterns for tree generation
+TREE_EXCLUDE_DIRECTORIES = [
+    "dist",
+    "node_modules", 
+    "venv",
+    "examples",
+    ".git",
+    ".vscode",
+    ".tmp",
+    ".github",
+    ".aider.tags.cache.v3",
+    "__pycache__",
+    ".idea",
+    ".next",
+    ".nuxt",
+    "build",
+    "out",
+    "coverage",
+    ".nyc_output",
+    "logs",
+    ".DS_Store"
+]
+
+# Tree output configurations
+TREE_OUTPUTS = {
+    "project": {
+        "filename": "tree_project.json",
+        "description": "Complete project structure",
+        "source": "tree_project.sh"
+    },
+    "git_changed": {
+        "filename": "tree_git_changed.json", 
+        "description": "Files changed in last commit",
+        "source": "tree_git_changes.sh"
+    },
+    "git_removed": {
+        "filename": "tree_git_removed.json",
+        "description": "Files removed in last commit", 
+        "source": "tree_git_changes.sh"
+    },
+    "git_all": {
+        "filename": "tree_git_all.json",
+        "description": "All git changes (changed + removed)",
+        "source": "tree_git_changes.sh"
+    },
+    "release_changed": {
+        "filename": "tree_release_changed.json",
+        "description": "Files changed between releases",
+        "source": "tree_git_release_changes.sh"
+    },
+    "release_removed": {
+        "filename": "tree_release_removed.json",
+        "description": "Files removed between releases",
+        "source": "tree_git_release_changes.sh"
+    },
+    "release_all": {
+        "filename": "tree_release_all.json",
+        "description": "All release changes",
+        "source": "tree_git_release_changes.sh"
+    },
+    "git_siblings": {
+        "filename": "tree_git_siblings.json",
+        "description": "Sibling files of changed files",
+        "source": "tree_git_siblings.sh"
+    }
+}
+
+# Git change types
+GIT_CHANGE_TYPES = {
+    "CHANGED": ["A", "M", "R", "C", "U"],  # Files that exist after change
+    "REMOVED": ["D"],                       # Files that no longer exist
+    "RENAMED": ["R"],                       # Special handling for renames
+    "ALL": ["A", "M", "D", "R", "C", "U"]  # All possible changes
+}
+
+# Tree structure patterns
+TREE_STRUCTURE = {
+    "root_files_key": "files",
+    "directory_separator": "/",
+    "max_depth": None,  # No limit by default
+    "sort_arrays": True,
+    "include_empty_dirs": False
+}
+
+# Default configurations for tree generation
+DEFAULT_CONFIG = {
+    "output_directory": ".tmp",
+    "create_output_dir": True,
+    "overwrite_existing": True,
+    "validate_git_repo": True,
+    "require_jq": False,  # We'll implement in Python, no jq needed
+    "sort_output": True,
+    "pretty_print": True,
+    "indent": 2
+}
+
+# ===== TREE GENERATION HELPER FUNCTIONS =====
+
+def is_tree_excluded_directory(dirname: str) -> bool:
+    """
+    Check if a directory should be excluded from tree generation.
+    
+    Args:
+        dirname: Directory name to check
+        
+    Returns:
+        True if directory should be excluded
+    """
+    return dirname in TREE_EXCLUDE_DIRECTORIES
+
+
+def get_output_filename(tree_type: str) -> str:
+    """
+    Get the output filename for a specific tree type.
+    
+    Args:
+        tree_type: Type of tree (project, git_changed, etc.)
+        
+    Returns:
+        Output filename or None if type not found
+    """
+    config = TREE_OUTPUTS.get(tree_type)
+    return config["filename"] if config else None
+
+
+def is_change_type(status: str, change_category: str) -> bool:
+    """
+    Check if a Git status code belongs to a change category.
+    
+    Args:
+        status: Git status code (A, M, D, R, etc.)
+        change_category: Category to check (CHANGED, REMOVED, etc.)
+        
+    Returns:
+        True if status belongs to category
+    """
+    return status in GIT_CHANGE_TYPES.get(change_category, [])
+
+
+def validate_file_path(filepath: str) -> bool:
+    """
+    Validate a file path for tree generation.
+    
+    Args:
+        filepath: File path to validate
+        
+    Returns:
+        True if path is valid
+    """
+    # Validation patterns
+    VALIDATION = {
+        "invalid_path_patterns": [
+            r"\.\.\/",  # Parent directory traversal
+            r"\/\/",    # Double slashes
+            r"^\/"      # Absolute paths (should be relative)
+        ],
+        "max_path_length": 260,  # Windows compatibility
+    }
+    
+    # Check length limits
+    if len(filepath) > VALIDATION["max_path_length"]:
+        return False
+    
+    # Check for invalid patterns
+    for pattern in VALIDATION["invalid_path_patterns"]:
+        if re.search(pattern, filepath):
+            return False
+    
+    return True
+
+
+def split_file_path(filepath: str) -> tuple:
+    """
+    Split a file path into directory parts and filename.
+    
+    Args:
+        filepath: File path to split
+        
+    Returns:
+        Tuple of (directory_parts, filename)
+    """
+    if "/" not in filepath:
+        return ([], filepath)
+    
+    parts = filepath.split("/")
+    return (parts[:-1], parts[-1])
 
 
 @dataclass
@@ -263,7 +449,7 @@ class GitTreeGenerator:
                     continue
                 
                 if item.is_dir():
-                    if not is_excluded_directory(item.name):
+                    if not is_tree_excluded_directory(item.name):
                         directories.append(item)
                 elif item.is_file():
                     files.append(item)

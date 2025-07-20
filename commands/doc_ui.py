@@ -16,8 +16,53 @@ from core.ai.token_manager import count_tokens
 from core.ai.aider_interface import run_doc_ui_generation
 from constants.ai import get_effective_token_limit
 from constants.git import GIT_STATUS_COMMANDS, GIT_DIFF_COMMANDS
-from constants.tree import EXCLUDE_DIRECTORIES, is_excluded_directory
 from core import GIT_AVAILABLE
+
+# ===== DOC-UI SPECIFIC CONSTANTS =====
+# These are specific to documentation processing and differ from tree generation needs
+
+# Doc-UI specific exclusion patterns
+DOC_UI_EXCLUDE_DIRECTORIES = [
+    # Build/dist directories
+    "dist", "build", "out", ".next", ".nuxt",
+    
+    # Dependencies
+    "node_modules", "venv",
+    
+    # IDE/editor files
+    ".vscode", ".idea",
+    
+    # Version control
+    ".git", ".github",
+    
+    # Cache directories
+    "__pycache__", ".tmp", ".aider.tags.cache.v3",
+    
+    # Test directories (specific for doc-ui)
+    "tests", "test", "__tests__",
+    
+    # Coverage/logs
+    "coverage", ".nyc_output", "logs",
+    
+    # OS files
+    ".DS_Store",
+    
+    # Documentation build (avoid recursion)
+    "docs/build", "docs/dist"
+]
+
+
+def is_doc_ui_excluded_directory(dirname: str) -> bool:
+    """
+    Check if a directory should be excluded from doc-ui processing.
+    
+    Args:
+        dirname: Directory name to check
+        
+    Returns:
+        True if directory should be excluded
+    """
+    return dirname in DOC_UI_EXCLUDE_DIRECTORIES
 
 
 # File type detection patterns (following constants pattern)
@@ -105,7 +150,7 @@ def detect_file_types(files: List[str]) -> Dict[str, List[str]]:
             
         # Check if file is in excluded directory
         path_obj = Path(file_path)
-        if any(is_excluded_directory(part) for part in path_obj.parts):
+        if any(is_doc_ui_excluded_directory(part) for part in path_obj.parts):
             continue
         
         # Cross-type trigger logic
@@ -562,7 +607,7 @@ def get_files_for_path(path: str) -> List[str]:
         # Walk directory for relevant files
         for root, dirs, filenames in os.walk(path):
             # Skip excluded directories
-            dirs[:] = [d for d in dirs if not is_excluded_directory(d)]
+            dirs[:] = [d for d in dirs if not is_doc_ui_excluded_directory(d)]
             
             for filename in filenames:
                 file_path = os.path.join(root, filename)
