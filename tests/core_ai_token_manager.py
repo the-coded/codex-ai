@@ -25,8 +25,12 @@ def main():
     }
     
     try:
-        from core.ai.token_manager import count_tokens, should_use_detailed_git_log
-        from core.ai.model_selector import ModelInfo
+        from core.ai.token_manager import (
+            count_tokens, get_token_count, get_token_count_from_text,
+            get_multiple_files_token_count, get_total_token_count,
+            estimate_model_for_token_count, validate_token_count_for_model,
+            get_token_count_summary
+        )
         print("✅ AI token manager imported successfully")
         test_results['passed'] += 1
         
@@ -114,65 +118,94 @@ def main():
         test_results['failed'] += 1
         test_results['errors'].append(f"Large text test error: {e}")
     
-    # Test 4: Git log mode decision - small commit count
-    print("\n📊 Test 4: Git log mode decision - small commit count...")
+    # Test 4: get_token_count_from_text function
+    print("\n📊 Test 4: get_token_count_from_text function...")
     try:
-        model = ModelInfo(name="test-model", aider_model="test", max_tokens=100000)
-        small_count = 10
+        test_text = "Testing the get_token_count_from_text function."
+        result = get_token_count_from_text(test_text, use_api=False)
         
-        use_detailed, reasoning = should_use_detailed_git_log(small_count, model)
-        
-        if isinstance(use_detailed, bool) and isinstance(reasoning, str):
-            if use_detailed:  # Should use detailed for small count
-                print(f"✅ Small count ({small_count}) uses detailed: {reasoning}")
-                test_results['passed'] += 1
-            else:
-                print(f"⚠️  Small count uses simple (might be valid): {reasoning}")
-                test_results['passed'] += 1  # Could be valid depending on model limits
+        if isinstance(result, int) and result > 0:
+            print(f"✅ get_token_count_from_text: {result} tokens")
+            test_results['passed'] += 1
         else:
-            print(f"❌ FAIL: Wrong return types: {type(use_detailed)}, {type(reasoning)}")
+            print(f"❌ FAIL: get_token_count_from_text returned invalid result: {result}")
             test_results['failed'] += 1
-            test_results['errors'].append(f"Wrong return types for small count")
+            test_results['errors'].append(f"get_token_count_from_text failed: {result}")
             
     except Exception as e:
-        print(f"❌ ERROR: Small count test crashed: {e}")
+        print(f"❌ ERROR: get_token_count_from_text test crashed: {e}")
         test_results['failed'] += 1
-        test_results['errors'].append(f"Small count test error: {e}")
+        test_results['errors'].append(f"get_token_count_from_text error: {e}")
     
-    # Test 5: Git log mode decision - large commit count
-    print("\n📊 Test 5: Git log mode decision - large commit count...")
+    # Test 5: get_multiple_files_token_count function
+    print("\n📊 Test 5: get_multiple_files_token_count function...")
     try:
-        model = ModelInfo(name="test-model", aider_model="test", max_tokens=10000)  # Small model
-        large_count = 1000
+        # Create temp test files
+        import tempfile
+        import os
         
-        use_detailed, reasoning = should_use_detailed_git_log(large_count, model)
-        
-        if isinstance(use_detailed, bool) and isinstance(reasoning, str):
-            if not use_detailed:  # Should use simple for large count + small model
-                print(f"✅ Large count ({large_count}) uses simple: {reasoning}")
-                test_results['passed'] += 1
-            else:
-                print(f"⚠️  Large count uses detailed: {reasoning}")
-                # This could be valid if model is very large, but with 10K tokens it's suspicious
-                if "200000" in reasoning or "detailed would be" in reasoning:
-                    print(f"✅ Reasoning includes token calculation")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            file1 = os.path.join(temp_dir, "test1.txt")
+            file2 = os.path.join(temp_dir, "test2.txt")
+            
+            with open(file1, 'w') as f:
+                f.write("First test file content.")
+            with open(file2, 'w') as f:
+                f.write("Second test file content.")
+            
+            result = get_multiple_files_token_count([file1, file2], use_api=False)
+            
+            if isinstance(result, dict) and len(result) == 2:
+                if all(isinstance(count, int) and count > 0 for count in result.values()):
+                    print(f"✅ get_multiple_files_token_count: {result}")
                     test_results['passed'] += 1
                 else:
-                    print(f"❌ FAIL: Large count decision lacks proper reasoning")
+                    print(f"❌ FAIL: Invalid token counts in result: {result}")
                     test_results['failed'] += 1
-                    test_results['errors'].append("Large count decision unreasonable")
-        else:
-            print(f"❌ FAIL: Wrong return types: {type(use_detailed)}, {type(reasoning)}")
-            test_results['failed'] += 1
-            test_results['errors'].append(f"Wrong return types for large count")
+                    test_results['errors'].append(f"Invalid multiple files result: {result}")
+            else:
+                print(f"❌ FAIL: get_multiple_files_token_count wrong format: {result}")
+                test_results['failed'] += 1
+                test_results['errors'].append(f"Multiple files wrong format: {result}")
             
     except Exception as e:
-        print(f"❌ ERROR: Large count test crashed: {e}")
+        print(f"❌ ERROR: get_multiple_files_token_count test crashed: {e}")
         test_results['failed'] += 1
-        test_results['errors'].append(f"Large count test error: {e}")
+        test_results['errors'].append(f"Multiple files test error: {e}")
     
-    # Test 6: Token count consistency
-    print("\n🔄 Test 6: Token count consistency...")
+    # Test 6: get_total_token_count function
+    print("\n📊 Test 6: get_total_token_count function...")
+    try:
+        # Create temp test files
+        import tempfile
+        import os
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            file1 = os.path.join(temp_dir, "test1.txt")
+            file2 = os.path.join(temp_dir, "test2.txt")
+            
+            with open(file1, 'w') as f:
+                f.write("First test file content.")
+            with open(file2, 'w') as f:
+                f.write("Second test file content.")
+            
+            result = get_total_token_count([file1, file2], use_api=False)
+            
+            if isinstance(result, int) and result > 0:
+                print(f"✅ get_total_token_count: {result} total tokens")
+                test_results['passed'] += 1
+            else:
+                print(f"❌ FAIL: get_total_token_count invalid result: {result}")
+                test_results['failed'] += 1
+                test_results['errors'].append(f"Total token count failed: {result}")
+            
+    except Exception as e:
+        print(f"❌ ERROR: get_total_token_count test crashed: {e}")
+        test_results['failed'] += 1
+        test_results['errors'].append(f"Total token count error: {e}")
+    
+    # Test 7: Token count consistency
+    print("\n🔄 Test 7: Token count consistency...")
     try:
         test_text = "Consistency test for token counting functionality."
         result1 = count_tokens(test_text)
@@ -191,8 +224,8 @@ def main():
         test_results['failed'] += 1
         test_results['errors'].append(f"Consistency test error: {e}")
     
-    # Test 7: Edge cases for token counting
-    print("\n⚡ Test 7: Edge cases for token counting...")
+    # Test 8: Edge cases for token counting
+    print("\n⚡ Test 8: Edge cases for token counting...")
     try:
         edge_cases = [
             ("a", "single character"),
@@ -228,54 +261,72 @@ def main():
         test_results['failed'] += 1
         test_results['errors'].append(f"Edge cases test error: {e}")
     
-    # Test 8: Git log decision with zero commits
-    print("\n🔹 Test 8: Git log decision with zero commits...")
+    # Test 9: estimate_model_for_token_count function
+    print("\n🚀 Test 9: estimate_model_for_token_count function...")
     try:
-        model = ModelInfo(name="test-model", aider_model="test", max_tokens=50000)
-        zero_count = 0
+        result = estimate_model_for_token_count(50000)
         
-        use_detailed, reasoning = should_use_detailed_git_log(zero_count, model)
-        
-        if isinstance(use_detailed, bool) and isinstance(reasoning, str):
-            print(f"✅ Zero commits handled: detailed={use_detailed}, reasoning='{reasoning}'")
+        if isinstance(result, str) and result:
+            print(f"✅ Model recommendation for 50K tokens: {result}")
             test_results['passed'] += 1
         else:
-            print(f"❌ FAIL: Zero commits wrong types: {type(use_detailed)}, {type(reasoning)}")
+            print(f"❌ FAIL: estimate_model_for_token_count invalid result: {result}")
             test_results['failed'] += 1
-            test_results['errors'].append("Zero commits wrong types")
+            test_results['errors'].append(f"Model estimation failed: {result}")
             
     except Exception as e:
-        print(f"❌ ERROR: Zero commits test crashed: {e}")
+        print(f"❌ ERROR: estimate_model_for_token_count test crashed: {e}")
         test_results['failed'] += 1
-        test_results['errors'].append(f"Zero commits test error: {e}")
+        test_results['errors'].append(f"Model estimation error: {e}")
     
-    # Test 9: Very large model capacity
-    print("\n🚀 Test 9: Very large model capacity...")
+    # Test 10: validate_token_count_for_model function
+    print("\n✅ Test 10: validate_token_count_for_model function...")
     try:
-        large_model = ModelInfo(name="large-model", aider_model="large", max_tokens=1000000)
-        medium_count = 100
+        result = validate_token_count_for_model(10000, "claude-4-sonnet")
         
-        use_detailed, reasoning = should_use_detailed_git_log(medium_count, large_model)
+        if isinstance(result, bool):
+            print(f"✅ Token validation for 10K tokens: {result}")
+            test_results['passed'] += 1
+        else:
+            print(f"❌ FAIL: validate_token_count_for_model wrong type: {type(result)}")
+            test_results['failed'] += 1
+            test_results['errors'].append(f"Token validation wrong type: {type(result)}")
+            
+    except Exception as e:
+        print(f"❌ ERROR: validate_token_count_for_model test crashed: {e}")
+        test_results['failed'] += 1
+        test_results['errors'].append(f"Token validation error: {e}")
+    
+    # Test 11: get_token_count_summary function
+    print("\n📊 Test 11: get_token_count_summary function...")
+    try:
+        # Create temp test files
+        import tempfile
+        import os
         
-        if isinstance(use_detailed, bool) and isinstance(reasoning, str):
-            if use_detailed:
-                print(f"✅ Large model uses detailed for {medium_count} commits: {reasoning}")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            file1 = os.path.join(temp_dir, "test1.txt")
+            
+            with open(file1, 'w') as f:
+                f.write("Test content for summary.")
+            
+            result = get_token_count_summary([file1])
+            
+            if isinstance(result, dict) and 'total_tokens' in result:
+                print(f"✅ Token count summary: {result['total_tokens']} total tokens")
                 test_results['passed'] += 1
             else:
-                print(f"⚠️  Large model uses simple (unexpected but not wrong): {reasoning}")
-                test_results['passed'] += 1
-        else:
-            print(f"❌ FAIL: Large model wrong types: {type(use_detailed)}, {type(reasoning)}")
-            test_results['failed'] += 1
-            test_results['errors'].append("Large model wrong types")
+                print(f"❌ FAIL: get_token_count_summary invalid format: {result}")
+                test_results['failed'] += 1
+                test_results['errors'].append(f"Token summary failed: {result}")
             
     except Exception as e:
-        print(f"❌ ERROR: Large model test crashed: {e}")
+        print(f"❌ ERROR: get_token_count_summary test crashed: {e}")
         test_results['failed'] += 1
-        test_results['errors'].append(f"Large model test error: {e}")
+        test_results['errors'].append(f"Token summary error: {e}")
     
-    # Test 10: Token calculation validation
-    print("\n🧮 Test 10: Token calculation validation...")
+    # Test 12: Token calculation validation
+    print("\n🧮 Test 12: Token calculation validation...")
     try:
         # Test with known text that should have predictable token count
         known_text = "The quick brown fox jumps over the lazy dog."  # Common test phrase
