@@ -61,7 +61,6 @@ except ImportError:
 # Doc-UI functionality is implemented in commands/doc_ui.py
 # No separate core module needed - follows same pattern as other commands
 DOC_UI_AVAILABLE = True
-uidocsProcessor = None
 ReactProcessor = None
 SassProcessor = None
 StorybookProcessor = None
@@ -164,8 +163,7 @@ __all__ = [
     "PromptProcessor",
     
     
-    # uidocs documentation
-    "uidocsProcessor",
+    # Doc-UI documentation
     "ReactProcessor",
     "SassProcessor",
     "StorybookProcessor",

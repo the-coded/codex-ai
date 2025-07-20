@@ -17,10 +17,17 @@ Usage:
     codex-ai config     # Manage configuration
 """
 
-__version__ = "1.0.0"
-__author__ = "the-coded"
-__email__ = "gabriel@laplanta.com.br"
-__description__ = "AI-powered development toolkit for changelog generation, documentation, and code analysis"
+from constants.project import (
+    get_version, 
+    get_author, 
+    get_author_email, 
+    get_description
+)
+
+__version__ = get_version()
+__author__ = get_author()
+__email__ = get_author_email()
+__description__ = get_description()
 
 # Package metadata
 __all__ = [

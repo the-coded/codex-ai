@@ -204,8 +204,8 @@ def main():
         test_results['failed'] += 1
         test_results['errors'].append(f"Non-existent prompt error: {e}")
     
-    # Test 7: uidocs prompt with doc type
-    print("\n🎯 Test 7: uidocs prompt with doc type...")
+    # Test 7: Doc-UI prompt with doc type
+    print("\n🎯 Test 7: Doc-UI prompt with doc type...")
     try:
         doc_types = ["react", "sass", "storybook"]
         valid_results = 0
@@ -216,14 +216,14 @@ def main():
                 if isinstance(result, str) and len(result) > 0:
                     valid_results += 1
                 else:
-                    print(f"❌ FAIL: uidocs {doc_type} prompt invalid: {type(result)}")
+                    print(f"❌ FAIL: Doc-UI {doc_type} prompt invalid: {type(result)}")
                     test_results['failed'] += 1
-                    test_results['errors'].append(f"uidocs {doc_type} prompt invalid")
+                    test_results['errors'].append(f"Doc-UI {doc_type} prompt invalid")
                     break
             except Exception as doc_e:
-                print(f"❌ FAIL: uidocs {doc_type} prompt crashed: {doc_e}")
+                print(f"❌ FAIL: Doc-UI {doc_type} prompt crashed: {doc_e}")
                 test_results['failed'] += 1
-                test_results['errors'].append(f"uidocs {doc_type} prompt crashed")
+                test_results['errors'].append(f"Doc-UI {doc_type} prompt crashed")
                 break
         
         if valid_results == len(doc_types):
@@ -231,9 +231,9 @@ def main():
             test_results['passed'] += 1
             
     except Exception as e:
-        print(f"❌ ERROR: uidocs prompt test crashed: {e}")
+        print(f"❌ ERROR: Doc-UI prompt test crashed: {e}")
         test_results['failed'] += 1
-        test_results['errors'].append(f"uidocs prompt error: {e}")
+        test_results['errors'].append(f"Doc-UI prompt error: {e}")
     
     # Test 8: Prompt consistency
     print("\n🔄 Test 8: Prompt consistency...")
