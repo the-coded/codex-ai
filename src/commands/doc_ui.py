@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 
-from core.git import ChangesTracker, get_repository_state, get_changes_since_commit
+from core.git import ChangesTracker, get_repository_state, get_changes_since_commit, auto_detect_mode, get_files_for_mode, get_files_for_path
 from core.ai.model_selector import get_default_model, get_model_by_name
 from core.ai.token_manager import count_tokens
 from core.ai.aider_interface import run_doc_ui_generation
@@ -509,112 +509,6 @@ def map_files_for_doc_type(file_type: str, changed_files: List[str]) -> Dict[str
         'context_files': context_files,
         'output_files': output_files
     }
-
-
-def auto_detect_mode() -> str:
-    """
-    Auto-detect whether to use local or pipeline mode.
-    Following map_tree pattern for consistency.
-    
-    Returns:
-        str: "local" if has staged/modified files, "pipeline" otherwise
-    """
-    if not GIT_AVAILABLE:
-        return "local"  # Fallback to local mode
-    
-    try:
-        state = get_repository_state()
-        return "local" if state.has_changes else "pipeline"
-    except Exception as e:
-        # Handle detached HEAD and other git issues gracefully
-        if "HEAD does not point to a branch" in str(e):
-            print("⚠️ Aviso: Você está em um estado 'detached HEAD' (não em uma branch)")
-            print("   Isso pode acontecer quando você faz checkout para uma tag específica")
-            print("   O comando doc-ui funcionará normalmente, mas comparações com upstream não estão disponíveis")
-            return "local"  # Default to local mode in detached HEAD
-        else:
-            print(f"⚠️ Aviso: Problema ao detectar estado do repositório Git: {e}")
-            print("   Continuando em modo local...")
-            return "local"
-
-
-def get_files_for_mode(mode: str, since_commit: Optional[str] = None) -> List[str]:
-    """
-    Get files based on detection mode using core/git modules.
-    Following map_tree and constants/git patterns.
-    
-    Args:
-        mode: Detection mode ("local" or "pipeline")
-        since_commit: For pipeline mode - compare since this commit
-        
-    Returns:
-        List[str]: List of file paths
-    """
-    if not GIT_AVAILABLE:
-        return []
-    
-    files = []
-    
-    if mode == "local":
-        # Use core/git to get local changes (staged + modified)
-        state = get_repository_state()
-        
-        # Combine staged and modified files, excluding deleted
-        all_changes = state.staged_changes + state.modified_changes
-        for change in all_changes:
-            if not change.is_deleted and os.path.exists(change.path):
-                files.append(change.path)
-        
-    elif mode == "pipeline":
-        # Use core/git to get changes since commit
-        if since_commit:
-            changes = get_changes_since_commit(since_commit)
-        else:
-            # Default: compare with origin/main or origin/master
-            try:
-                changes = get_changes_since_commit("origin/main")
-            except:
-                try:
-                    changes = get_changes_since_commit("origin/master")
-                except:
-                    changes = []
-        
-        # Extract file paths, excluding deleted files
-        for change in changes:
-            if not change.is_deleted and os.path.exists(change.path):
-                files.append(change.path)
-    
-    return files
-
-
-def get_files_for_path(path: str) -> List[str]:
-    """
-    Get all doc-ui-relevant files in specified path.
-    
-    Args:
-        path: Directory or file path to process
-        
-    Returns:
-        List[str]: List of relevant file paths
-    """
-    if not os.path.exists(path):
-        return []
-    
-    files = []
-    if os.path.isfile(path):
-        files.append(path)
-    else:
-        # Walk directory for relevant files
-        for root, dirs, filenames in os.walk(path):
-            # Skip excluded directories
-            dirs[:] = [d for d in dirs if not is_doc_ui_excluded_directory(d)]
-            
-            for filename in filenames:
-                file_path = os.path.join(root, filename)
-                if _is_doc_ui_relevant_file(file_path):
-                    files.append(file_path)
-    
-    return files
 
 
 def _is_doc_ui_relevant_file(file_path: str) -> bool:

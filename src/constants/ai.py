@@ -91,6 +91,13 @@ AIDER_COMMAND_TEMPLATES = {
             ["--no-git"], 
         ],
         "pattern": "aider {base_flags} --model {model} --read {context_path} --message-file {prompt_file} --file {storybook_files}"
+    },
+    "DOC_GEN": {
+        "additional_flags": [
+            ["--no-git"],
+            ["--thinking-tokens", "4k"]
+        ],
+        "pattern": "aider {base_flags} --model {model} --read {context_files} --message-file {prompt_file} --file {output_file}"
     }
 }
 

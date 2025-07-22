@@ -465,6 +465,39 @@ GIT_LOG_LIMITS = {
     "MEDIUM_TRUNCATION_MARKER": "... [truncated]"  # Marker for truncated content
 }
 
+# ===== PIPELINE DEFAULT BRANCHES =====
+#
+# 📊 EXPLANATION:
+# Default branches to compare against in pipeline mode for doc-gen and doc-ui.
+# These are tried in order until one is found that exists in the repository.
+#
+# Order of preference:
+# 1. origin/main - Modern default branch (GitHub, GitLab)  
+# 2. origin/master - Traditional default branch
+# 3. origin/production - Production branch (common in enterprises)
+# 4. main - Local main branch (if no remote)
+# 5. master - Local master branch (if no remote)
+# 6. production - Local production branch (if no remote)
+# 7. HEAD~1 - Last commit (fallback if no branches)
+
+PIPELINE_DEFAULT_BRANCHES = [
+    "origin/main",
+    "origin/master",
+    "origin/production", 
+    "main",
+    "master",
+    "production",
+    "HEAD~1"
+]
+
+# ===== DOC-GEN DEFAULT BRANCHES =====
+#
+# 📊 EXPLANATION:
+# Same as PIPELINE_DEFAULT_BRANCHES but specifically for doc-gen command.
+# Kept separate for potential future customization.
+
+DOC_GEN_DEFAULT_BRANCHES = PIPELINE_DEFAULT_BRANCHES.copy()
+
 # ===== EXPORT ALL CONSTANTS =====
 
 __all__ = [
@@ -478,6 +511,8 @@ __all__ = [
     "MERGE_COMMIT_DETECTION",
     "REPOSITORY_VALIDATION",
     "GIT_LOG_LIMITS",
+    "PIPELINE_DEFAULT_BRANCHES",
+    "DOC_GEN_DEFAULT_BRANCHES",
     
     # Helper functions
     "build_exclude_pathspec",

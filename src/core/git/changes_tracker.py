@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Set, Tuple, Any, Union
 from enum import Enum
 from datetime import datetime
 
-from constants.git import EXCLUDE_PATTERNS, GIT_STATUS_COMMANDS, GIT_DIFF_COMMANDS
+from constants.git import EXCLUDE_PATTERNS, GIT_STATUS_COMMANDS, GIT_DIFF_COMMANDS, PIPELINE_DEFAULT_BRANCHES
 
 
 class ChangeType(Enum):
@@ -610,3 +610,176 @@ def analyze_repository_changes(repo_path: str = ".") -> Dict[str, Any]:
     """Analyze current repository changes."""
     analyzer = ChangeAnalyzer(repo_path)
     return analyzer.analyze_repository_state()
+
+
+class FileDetector:
+    """
+    File detection and mode analysis for doc-gen and doc-ui.
+    
+    Provides intelligent file detection based on Git state, paths, and modes.
+    Supports both local (staged/modified) and pipeline (branch comparison) modes.
+    """
+    
+    def __init__(self, repo_path: str = "."):
+        """
+        Initialize file detector.
+        
+        Args:
+            repo_path: Path to Git repository (default: current directory)
+        """
+        self.repo_path = repo_path
+        self.tracker = ChangesTracker(repo_path)
+    
+    def auto_detect_mode(self) -> str:
+        """
+        Auto-detect whether to use local or pipeline mode.
+        Following map_tree pattern for consistency.
+        
+        Returns:
+            str: "local" if has staged/modified files, "pipeline" otherwise
+        """
+        try:
+            state = self.tracker.get_repository_state()
+            return "local" if state.has_changes else "pipeline"
+        except Exception as e:
+            # Handle detached HEAD and other git issues gracefully
+            if "HEAD does not point to a branch" in str(e):
+                print("⚠️ Aviso: Você está em um estado 'detached HEAD' (não em uma branch)")
+                print("   Isso pode acontecer quando você faz checkout para uma tag específica")
+                print("   O comando funcionará normalmente, mas comparações com upstream não estão disponíveis")
+                return "local"  # Default to local mode in detached HEAD
+            else:
+                print(f"⚠️ Aviso: Problema ao detectar estado do repositório Git: {e}")
+                print("   Continuando em modo local...")
+                return "local"
+    
+    def get_files_for_mode(self, mode: str, since_commit: Optional[str] = None) -> List[str]:
+        """
+        Get files based on detection mode using core/git modules.
+        Following map_tree and constants/git patterns.
+        
+        Args:
+            mode: Detection mode ("local" or "pipeline")
+            since_commit: For pipeline mode - compare since this commit
+            
+        Returns:
+            List[str]: List of file paths
+        """
+        files = []
+        
+        if mode == "local":
+            # Use core/git to get local changes (staged + modified)
+            state = self.tracker.get_repository_state()
+            
+            # Combine staged and modified files, excluding deleted
+            all_changes = state.staged_changes + state.modified_changes
+            for change in all_changes:
+                if not change.is_deleted and Path(change.path).exists():
+                    files.append(change.path)
+            
+        elif mode == "pipeline":
+            # Use core/git to get changes since commit
+            if since_commit:
+                changes = self.tracker.get_changes_since_commit(since_commit)
+            else:
+                # Try pipeline default branches from constants/git.py in order
+                changes = []
+                for branch in PIPELINE_DEFAULT_BRANCHES:
+                    try:
+                        changes = self.tracker.get_changes_since_commit(branch)
+                        break  # Success, stop trying other branches
+                    except:
+                        continue  # Try next branch
+            
+            # Extract file paths, excluding deleted files
+            for change in changes:
+                if not change.is_deleted and Path(change.path).exists():
+                    files.append(change.path)
+        
+        return files
+    
+    def get_files_for_path(self, path: str, shallow: bool = False) -> List[str]:
+        """
+        Get all relevant files in specified path.
+        
+        Args:
+            path: Directory or file path to process
+            shallow: If True, don't recurse into subdirectories (default: False)
+            
+        Returns:
+            List[str]: List of file paths
+        """
+        if not Path(path).exists():
+            return []
+        
+        files = []
+        path_obj = Path(path)
+        
+        if path_obj.is_file():
+            files.append(str(path_obj))
+        else:
+            # Walk directory for files
+            if shallow:
+                # Only process files in the immediate directory
+                try:
+                    for item in path_obj.iterdir():
+                        if item.is_file():
+                            files.append(str(item))
+                except PermissionError:
+                    pass
+            else:
+                # Recursive processing (default)
+                for root, dirs, filenames in path_obj.walk():
+                    # Skip excluded directories using the same patterns as ChangesTracker
+                    dirs[:] = [d for d in dirs if not any(pattern in d for pattern in EXCLUDE_PATTERNS)]
+                    
+                    for filename in filenames:
+                        file_path = root / filename
+                        files.append(str(file_path))
+        
+        return files
+
+# Convenience functions for backward compatibility - these delegate to FileDetector class
+
+def auto_detect_mode() -> str:
+    """
+    Auto-detect whether to use local or pipeline mode.
+    Convenience wrapper around FileDetector.auto_detect_mode().
+    
+    Returns:
+        str: "local" if has staged/modified files, "pipeline" otherwise
+    """
+    detector = FileDetector()
+    return detector.auto_detect_mode()
+
+
+def get_files_for_mode(mode: str, since_commit: Optional[str] = None) -> List[str]:
+    """
+    Get files based on detection mode using core/git modules.
+    Convenience wrapper around FileDetector.get_files_for_mode().
+    
+    Args:
+        mode: Detection mode ("local" or "pipeline")
+        since_commit: For pipeline mode - compare since this commit
+        
+    Returns:
+        List[str]: List of file paths
+    """
+    detector = FileDetector()
+    return detector.get_files_for_mode(mode, since_commit)
+
+
+def get_files_for_path(path: str, shallow: bool = False) -> List[str]:
+    """
+    Get all relevant files in specified path.
+    Convenience wrapper around FileDetector.get_files_for_path().
+    
+    Args:
+        path: Directory or file path to process
+        shallow: If True, don't recurse into subdirectories (default: False)
+        
+    Returns:
+        List[str]: List of file paths
+    """
+    detector = FileDetector()
+    return detector.get_files_for_path(path, shallow)

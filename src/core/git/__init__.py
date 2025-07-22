@@ -37,6 +37,7 @@ from .commit_parser import (
 from .changes_tracker import (
     ChangesTracker,
     ChangeAnalyzer,
+    FileDetector,
     FileChange,
     RepositoryState,
     ChangeType,
@@ -44,7 +45,10 @@ from .changes_tracker import (
     CommitRange,
     get_repository_state,
     get_changes_since_commit,
-    analyze_repository_changes
+    analyze_repository_changes,
+    auto_detect_mode,
+    get_files_for_mode,
+    get_files_for_path
 )
 
 __all__ = [
@@ -77,6 +81,7 @@ __all__ = [
     # Changes Tracking
     'ChangesTracker',
     'ChangeAnalyzer',
+    'FileDetector',
     'FileChange',
     'RepositoryState',
     'ChangeType',
@@ -84,5 +89,9 @@ __all__ = [
     'CommitRange',
     'get_repository_state',
     'get_changes_since_commit',
-    'analyze_repository_changes'
+    'analyze_repository_changes',
+    # File Detection (Doc-Gen Integration)
+    'auto_detect_mode',
+    'get_files_for_mode',
+    'get_files_for_path'
 ]

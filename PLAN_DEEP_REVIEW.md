@@ -17,7 +17,7 @@
 
 ### 🚨 **PROBLEMAS IDENTIFICADOS PARA CORREÇÃO:**
 - **Funções duplicadas** fazendo a mesma coisa
-- **Arquivo com muitas responsabilidades** (`commands/doc_ui.py`)
+- **Arquivo com muitas responsabilidades** (`src/commands/doc_ui.py`)
 - **Código git duplicado** (`_run_git_command` em 4 classes)
 - **Possível código não utilizado** (precisa análise)
 
@@ -51,9 +51,9 @@
 ### **0.2 Focar em Módulos Problemáticos**
 ```markdown
 ✅ PRIORIZAR ANÁLISE:
-- core/ai/token_manager.py (3 funções similares)
-- commands/doc_ui.py (18 funções em 1 arquivo)
-- core/git/*.py (_run_git_command duplicado)
+- src/core/ai/token_manager.py (3 funções similares)
+- src/commands/doc_ui.py (18 funções em 1 arquivo)
+- src/core/git/*.py (_run_git_command duplicado)
 - Funções *_legacy() (verificar se são usadas)
 - Wrappers de conveniência (verificar necessidade)
 ```
@@ -77,7 +77,7 @@
 *(Só executar após Fase 0 completada)*
 
 ### **1.1 Consolidar Funções de Token**
-**Problema:** `core/ai/token_manager.py` tem 3 funções fazendo a mesma coisa:
+**Problema:** `src/core/ai/token_manager.py` tem 3 funções fazendo a mesma coisa:
 ```python
 # ❌ ATUAL:
 get_token_count_from_text() - 150+ linhas de lógica
@@ -95,7 +95,7 @@ get_token_count_legacy() - implementação diferente
 **Problema:** 18 funções em 1 arquivo, múltiplas responsabilidades
 ```python
 # ✅ ESTRUTURA PROPOSTA:
-commands/doc_ui/
+src/commands/doc_ui/
 ├── __init__.py           # API pública (manter from commands.doc_ui import run_doc_ui)
 ├── file_detector.py      # detect_file_types, has_stories_file
 ├── workspace_manager.py  # detect_workspace_root, find_workspace_configs
@@ -108,7 +108,7 @@ commands/doc_ui/
 ### **1.3 Consolidar Git Command Runners**
 **Problema:** `_run_git_command()` duplicado em 4 classes
 ```python
-# ✅ CRIAR: core/git/base.py
+# ✅ CRIAR: src/core/git/base.py
 class GitCommandRunner:
     def _run_git_command(self, command: List[str]) -> str:
         """Implementação única com melhor tratamento de erros."""
@@ -129,6 +129,44 @@ class GitTreeGenerator(GitCommandRunner)
 - Manter wrappers se tiverem uso público
 ```
 
+### **1.5 Padronizar Templates Dinâmicos**
+**Problema:** changelog e doc-ui usam templates estáticos vs doc-gen usa dinâmicos
+```python
+# ✅ SOLUÇÃO:
+- Implementar .format() em changelog.py e doc_ui.py
+- Adicionar variáveis {git_range}, {target_version}, {file_type} nos templates
+- Seguir padrão do doc-gen para contexto específico
+```
+**Impacto:** Templates mais contextuais e informativos
+**Arquivos:** src/commands/changelog.py, src/commands/doc_ui.py, templates/prompts/*.md
+
+### **1.6 Unificar AiderInterface**
+**Problema:** doc-ui usa run_doc_ui_generation() específico vs doc-gen usa genérico
+```python
+# ❌ ATUAL:
+result = run_doc_ui_generation(model, file_type, files, prompt_file, output_dir, verbose)
+
+# ✅ SOLUÇÃO:
+aider = AiderInterface(model)
+template = AIDER_COMMAND_TEMPLATES["DOC_UI_REACT"]  # ou SASS/STORYBOOK
+result = aider.run_with_message_file(prompt_file, read_files, output_files, additional_flags, verbose)
+```
+**Impacto:** Interface unificada para todos comandos, menos código específico
+**Arquivos:** src/commands/doc_ui.py, src/core/ai/aider_interface.py
+
+### **1.7 Consolidar Classes vs Convenience Functions**
+**Problema:** APIs duplicadas - às vezes função, às vezes classe
+```python
+# ❌ ATUAL:
+from .changes_tracker import ChangesTracker, get_files_for_mode, auto_detect_mode
+
+# ✅ SOLUÇÃO:
+from .changes_tracker import FileDetector  # Apenas classes
+```
+**Análise Fase 0:** Mapear quais convenience functions são realmente usadas
+**Impacto:** Uma forma de fazer cada coisa (SOLID compliance)
+**Arquivos:** core/git/__init__.py, core/ai/__init__.py, commands/*.py
+
 ---
 
 ## 🔶 **FASE 2: OTIMIZAÇÃO INTELIGENTE**
@@ -146,6 +184,28 @@ class GitTreeGenerator(GitCommandRunner)
 - Documentação de funções críticas
 - Tratamento de erros consistente
 ```
+
+### **2.3 Implementar Command Pattern Consistente**
+**Objetivo:** Estrutura padronizada em todos comandos
+**Análise na implementação:** ⚠️ Revisar changelog.py, doc_ui.py, doc_gen.py para identificar melhor pattern
+```python
+# ✅ ESTRUTURA PROPOSTA:
+def run_command(args, config: CodexConfig) -> int:
+    """Main command logic with error handling"""
+    try:
+        # 1. Input validation & mode detection
+        # 2. File discovery using core.git utilities  
+        # 3. AI model selection & token limits
+        # 4. Content generation using core.ai interfaces
+        # 5. Output handling & cleanup
+        return 0  # Success
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        return 1  # Failure
+```
+**Impacto:** Código mais previsível e maintível com estrutura clara
+**Nota:** ⚠️ **Analisar melhor cenário durante implementação**
+**Arquivos:** src/commands/changelog.py, src/commands/doc_ui.py, src/commands/doc_gen.py
 
 ---
 
@@ -270,7 +330,7 @@ class GitTreeGenerator:
 
 #### **Funções Legacy Identificadas:**
 ```python
-# core/ai/token_manager.py
+# src/core/ai/token_manager.py
 def get_token_count_legacy(file_path: str) -> int:  # ❌ Candidato à remoção
 
 # Wrappers de conveniência possivelmente desnecessários:
@@ -299,7 +359,7 @@ def run_doc_ui()                        # Execução principal
 
 #### **Over-Engineering Identificado:**
 ```python
-# core/git/log_analyzer.py - 20+ métodos para funcionalidade simples:
+# src/core/git/log_analyzer.py - 20+ métodos para funcionalidade simples:
 class GitLogAnalyzer:
     def get_last_commit_hash()
     def get_latest_tag()
@@ -345,20 +405,20 @@ class GitLogAnalyzer:
 ARQUIVOS PRIORITÁRIOS PARA REFATORAÇÃO:
 
 🔥 ALTA PRIORIDADE:
-├── core/ai/token_manager.py (3 funções duplicadas)
-├── commands/doc_ui.py (18 funções, múltiplas responsabilidades)
-├── core/git/log_analyzer.py (over-engineering, 20+ métodos)
-└── core/git/*.py (4 classes com _run_git_command duplicado)
+├── src/core/ai/token_manager.py (3 funções duplicadas)
+├── src/commands/doc_ui.py (18 funções, múltiplas responsabilidades)
+├── src/core/git/log_analyzer.py (over-engineering, 20+ métodos)
+└── src/core/git/*.py (4 classes com _run_git_command duplicado)
 
 🔶 MÉDIA PRIORIDADE:
-├── core/git/changes_tracker.py (enums possivelmente complexos demais)
-├── core/git/tree_generator.py (500+ linhas para JSON simples)
+├── src/core/git/changes_tracker.py (enums possivelmente complexos demais)
+├── src/core/git/tree_generator.py (500+ linhas para JSON simples)
 └── Wrappers de conveniência (verificar uso real)
 
 🔵 BAIXA PRIORIDADE:
 ├── Imports não utilizados (vários arquivos)
 ├── Type hints inconsistentes (alguns arquivos)
-└── Constantes não referenciadas (constants/*.py)
+└── Constantes não referenciadas (src/constants/*.py)
 ```
 
 ---

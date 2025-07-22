@@ -2,7 +2,7 @@
 CLI interface for Codex-AI.
 
 Main entry point for the command-line interface using argparse.
-Supports all commands: changelog, config, doc-ui.
+Supports all commands: changelog, config, doc-ui, doc-gen.
 """
 
 import argparse
@@ -213,6 +213,51 @@ Environment Variables:
             help='Preview mode - analyze files but don\'t generate documentation'
         )
     
+    # Doc-Gen command (generic documentation generation)
+    doc_gen_parser = subparsers.add_parser(
+        'doc-gen',
+        help='Generate AI-powered documentation for any project/language'
+    )
+    
+    # Import and add doc-gen arguments
+    try:
+        from commands.doc_gen import add_doc_gen_arguments
+        add_doc_gen_arguments(doc_gen_parser)
+    except ImportError:
+        # Fallback to basic arguments if import fails
+        doc_gen_parser.add_argument(
+            '--mode',
+            choices=['simple', 'detailed'],
+            required=True,
+            help='Documentation mode: simple (README per folder) or detailed (README + individual docs)'
+        )
+        doc_gen_parser.add_argument(
+            '--path',
+            type=str,
+            help='Process specific directory/file path instead of git changes'
+        )
+        doc_gen_parser.add_argument(
+            '--preset',
+            choices=['python', 'javascript'],
+            help='File preset (default: all presets merged)'
+        )
+        doc_gen_parser.add_argument(
+            '--docs-dir',
+            type=str,
+            default='docs/',
+            help='Output directory (default: docs/)'
+        )
+        doc_gen_parser.add_argument(
+            '--model',
+            type=str,
+            help='AI model to use (overrides config)'
+        )
+        doc_gen_parser.add_argument(
+            '--dry-run',
+            action='store_true',
+            help='Preview mode - analyze files but don\'t generate documentation'
+        )
+    
     return parser
 
 
@@ -287,6 +332,29 @@ def run_doc_ui_command(args, config: CodexConfig) -> int:
         return 1
 
 
+def run_doc_gen_command(args, config: CodexConfig) -> int:
+    """Run Doc-Gen documentation generation command."""
+    try:
+        # Import here to avoid circular imports
+        from commands.doc_gen import doc_gen_command
+        
+        # Set defaults from config
+        verbose = config.get_verbose(cli_value=args.verbose)
+        args.verbose = verbose
+        
+        # Call doc-gen command handler
+        success = doc_gen_command(args)
+        
+        return 0 if success else 1
+        
+    except ImportError as e:
+        print(f"❌ Doc-Gen command not yet implemented: {e}")
+        print("🚧 This feature is under development")
+        return 1
+    except Exception as e:
+        print(f"❌ Error running doc-gen command: {e}")
+        return 1
+
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -308,7 +376,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 0
     
     # Validate API key for AI commands
-    ai_commands = ['changelog', 'doc-ui']
+    ai_commands = ['changelog', 'doc-ui', 'doc-gen']
     if args.command in ai_commands:
         api_key = config.get_api_key(cli_value=args.api_key)
         if not api_key:
@@ -322,6 +390,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         'config': run_config_command,
         'changelog': run_changelog_command,
         'doc-ui': run_doc_ui_command,
+        'doc-gen': run_doc_gen_command,
     }
     
     handler = command_handlers.get(args.command)

@@ -5,6 +5,7 @@ Interface to run Aider commands using templates from constants.
 """
 
 import os
+import re
 import subprocess
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass
@@ -139,6 +140,57 @@ class AiderInterface:
         
         return self._execute_command(command)
     
+    def run_with_message_file(
+        self, 
+        prompt_file: str, 
+        read_files: List[str] = None, 
+        output_files: List[str] = None,
+        additional_flags: List[List[str]] = None,
+        verbose: bool = False
+    ) -> AiderResult:
+        """
+        Generic method to run Aider with message file.
+        
+        @TODO Refactor existing methods (run_changelog, run_doc_ui_*) to use this generic method
+        instead of duplicating command building logic. This would eliminate code duplication
+        and provide a single point of maintenance for Aider execution.
+        
+        Args:
+            prompt_file: Path to prompt file
+            read_files: Files to read for context (optional)
+            output_files: Files to write/modify (optional)
+            additional_flags: Additional flags from template (optional)
+            verbose: Enable verbose logging
+            
+        Returns:
+            AiderResult with execution details
+        """
+        cmd = ["aider"] + AIDER_BASE_FLAGS.copy()
+        cmd.extend(["--model", self.model.name])
+        
+        # Adicionar flags específicas do template
+        if additional_flags:
+            for flag_item in additional_flags:
+                if len(flag_item) == 1:
+                    cmd.append(flag_item[0])  # Flag sem valor
+                elif len(flag_item) == 2:
+                    cmd.extend([flag_item[0], flag_item[1]])  # Flag com valor
+        
+        cmd.extend(["--message-file", prompt_file])
+        
+        # Explícito: --read para cada arquivo de contexto
+        if read_files:
+            for read_file in read_files:
+                cmd.extend(["--read", read_file])
+        
+        # Explícito: --file para cada arquivo de output  
+        if output_files:
+            for output_file in output_files:
+                cmd.extend(["--file", output_file])
+        
+        command = " ".join(cmd)
+        return self._execute_command(command, verbose=verbose)
+    
     def run_custom(self, prompt: str, files: List[str] = None, read_files: List[str] = None) -> AiderResult:
         """
         Run Aider with custom parameters.
@@ -172,6 +224,85 @@ class AiderInterface:
         model_map = get_model_name_mapping()
         return model_map.get(self.model.name, "CLAUDE_4_SONNET")
     
+    def _post_process_markdown_code_blocks(self, file_path: str) -> bool:
+        """
+        Convert [CODE_BLOCK] markers to standard triple backticks.
+        
+        This solves the issue where Aider interprets triple backticks as file delimiters
+        and breaks generated markdown into multiple files.
+        
+        Args:
+            file_path: Path to markdown file to process
+            
+        Returns:
+            bool: True if successful, False if failed
+        """
+        try:
+            if not os.path.exists(file_path):
+                return False
+            
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Convert [CODE_BLOCK:lang] to ```lang
+            content = re.sub(r'\[CODE_BLOCK:(\w+)\]', r'```\1', content)
+            
+            # Convert [CODE_BLOCK] (without language) to ```
+            content = content.replace('[CODE_BLOCK]', '```')
+            
+            # Convert [/CODE_BLOCK] to ```
+            content = content.replace('[/CODE_BLOCK]', '```')
+            
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            return True
+            
+        except Exception as e:
+            # Non-critical error, just log and continue
+            return False
+    
+    def _auto_process_generated_markdown(self, command: str, verbose: bool = False):
+        """
+        Automatically post-process all .md files mentioned in --file flags.
+        
+        This function extracts all .md file paths from the aider command
+        and applies markdown code block post-processing to each one.
+        
+        Args:
+            command: The aider command that was executed
+            verbose: Enable verbose logging
+        """
+        try:
+            # Extract all --file arguments from command
+            file_pattern = r'--file\s+([^\s]+)'
+            file_matches = re.findall(file_pattern, command)
+            
+            markdown_files = []
+            for file_path in file_matches:
+                if file_path.endswith('.md'):
+                    markdown_files.append(file_path)
+            
+            if not markdown_files:
+                return
+            
+            processed_count = 0
+            for md_file in markdown_files:
+                if self._post_process_markdown_code_blocks(md_file):
+                    processed_count += 1
+                    if verbose:
+                        print(f"📝 Post-processed code blocks: {md_file}")
+                else:
+                    if verbose:
+                        print(f"⚠️ Failed to post-process: {md_file}")
+            
+            if verbose and processed_count > 0:
+                print(f"✅ Post-processed {processed_count}/{len(markdown_files)} markdown files")
+                
+        except Exception as e:
+            if verbose:
+                print(f"⚠️ Warning: Auto-processing failed: {e}")
+    
     def _execute_command(self, command: str, verbose: bool = False) -> AiderResult:
         """Execute aider command."""
         try:
@@ -194,6 +325,10 @@ class AiderInterface:
                 error=result.stderr,
                 command=command
             )
+            
+            # SEMPRE pós-processar arquivos .md gerados automaticamente
+            if aider_result.success:
+                self._auto_process_generated_markdown(command, verbose)
             
             # Log Aider response in verbose mode
             if verbose:
