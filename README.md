@@ -258,11 +258,28 @@ codex-ai/
 ## 🧪 Development
 
 ### Setup Development Environment
+
+#### Quick Development Setup (Recommended)
+```bash
+git clone https://github.com/the-coded/codex-ai.git
+cd codex-ai
+./dev-install.sh  # 🚀 Smart installer - auto-detects and removes conflicts
+```
+
+**Why use dev-install.sh?**
+- 🔍 **Auto-detects** all locally installed editable packages
+- 🧹 **Removes conflicts** automatically (like context-ai)
+- ✅ **Installs cleanly** without dependency issues
+- 🎯 **Verifies installation** and tests functionality
+
+#### Manual Setup (Alternative)
 ```bash
 git clone https://github.com/the-coded/codex-ai.git
 cd codex-ai
 pip install -e ".[all]"  # Install with all optional dependencies for development
 ```
+
+**Note**: If you encounter import errors or conflicts with other local packages, use `./dev-install.sh` instead.
 
 ### Local Development & Testing
 📖 **[Local Development Guide](docs/local-developing.md)** - Complete guide for:
