@@ -6,7 +6,7 @@
 
 [![PyPI version](https://badge.fury.io/py/codex-ai.svg)](https://pypi.org/project/codex-ai/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](LICENSE)
 
 </div>
 
@@ -81,17 +81,6 @@ pip install codex-ai
 git clone https://github.com/the-coded/codex-ai.git
 cd codex-ai
 pip install -e .
-```
-
-### Development Dependencies (Optional)
-```bash
-# Basic installation (required dependencies only)
-pip install -e .
-
-# Enhanced installation with optional dependencies
-pip install -e ".[all]"          # All optional dependencies
-pip install -e ".[performance]"  # ujson, orjson for better performance
-pip install -e ".[rich]"         # rich, colorama for enhanced CLI output
 ```
 
 ## ⚙️ Configuration
@@ -276,13 +265,13 @@ cd codex-ai
 ```bash
 git clone https://github.com/the-coded/codex-ai.git
 cd codex-ai
-pip install -e ".[all]"  # Install with all optional dependencies for development
+pip install -e .
 ```
 
 **Note**: If you encounter import errors or conflicts with other local packages, use `./dev-install.sh` instead.
 
 ### Local Development & Testing
-📖 **[Local Development Guide](docs/local-developing.md)** - Complete guide for:
+📖 **[Local Development Guide](docs/development/local-setup.md)** - Complete guide for:
 - Installing in development mode (`pip install -e .`)
 - Verifying installation type (local vs PyPI)
 - Development workflow and testing commands
@@ -299,8 +288,8 @@ python tests/run_all.py --category commands
 # Run with verbose output
 python tests/run_all.py --verbose
 
-# Run ui-lib integration tests
-python tests/run_all.py --ui-lib-integration
+# Run doc-ui integration tests
+python tests/run_all.py --doc-ui-integration
 
 # Alternative: Use pytest (if available)
 pytest
@@ -337,10 +326,10 @@ pytest
 - **📈 Vantagens do ruff**: Usado por Pydantic, FastAPI, Pandas - ferramenta emergente de 2024
 
 ### Future Migration to Poetry (TODO: Avaliar)
-📖 **[Poetry Migration Guide](docs/poetry-migration.md)** - Guia completo para migração de setuptools para Poetry, incluindo comparações detalhadas, cronograma de migração e benefícios para o developer experience moderno.
+📖 **[Poetry Migration Guide](docs/development/poetry-migration.md)** - Guia completo para migração de setuptools para Poetry, incluindo comparações detalhadas, cronograma de migração e benefícios para o developer experience moderno.
 
 ### Package Publishing Guide
-📦 **[Python Publishing Guide](docs/publishing-guide.md)** - Documentação completa sobre publicação de pacotes Python no PyPI, comparando com npm para desenvolvedores Node.js. Inclui workflows, CI/CD, troubleshooting e casos práticos.
+📦 **[Python Publishing Guide](docs/development/publishing-guide.md)** - Documentação completa sobre publicação de pacotes Python no PyPI, comparando com npm para desenvolvedores Node.js. Inclui workflows, CI/CD, troubleshooting e casos práticos.
 
 ## 📋 Examples
 
@@ -376,7 +365,7 @@ jobs:
       - run: codex-ai changelog --output CHANGELOG.md
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      - run: codex-ai uidocs
+      - run: codex-ai doc-ui
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 ```
@@ -392,7 +381,11 @@ jobs:
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+Codex-AI is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+
+You may use, copy, modify and distribute it freely for **noncommercial purposes**
+(personal projects, research, education, nonprofits). **Commercial use requires a
+separate license**: contact gabriel@laplanta.com.br.
 
 ## 🆘 Support
 
@@ -404,7 +397,6 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 - **1.0.0** - Initial release with full feature parity
   - AI-powered changelog generation
-  - Time tracking analysis
   - Documentation generation (React, Sass, Storybook)
   - Project analysis tools
   - Complete CLI interface

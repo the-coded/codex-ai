@@ -7,12 +7,12 @@ name = "codex-ai"
 version = "1.0.0"
 description = "AI-powered development toolkit for changelog generation, documentation, and code analysis"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "PolyForm-Noncommercial-1.0.0"}
 authors = [
-    {name = "Codex-AI Team", email = "gabriel@laplanta.com.br"}
+    {name = "Gabriel Mule", email = "gabriel@laplanta.com.br"}
 ]
 maintainers = [
-    {name = "Codex-AI Team", email = "gabriel@laplanta.com.br"}
+    {name = "Gabriel Mule", email = "gabriel@laplanta.com.br"}
 ]
 requires-python = ">=3.8"
 
