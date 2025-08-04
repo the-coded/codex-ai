@@ -5,8 +5,13 @@ Loads prompt templates from markdown files.
 """
 
 import os
-import pkg_resources
 from pathlib import Path
+try:
+    # Python 3.9+
+    from importlib.resources import files
+except ImportError:
+    # Python 3.7-3.8 compatibility
+    from importlib_resources import files
 
 
 def load_prompt(prompt_name: str) -> str:
@@ -20,15 +25,16 @@ def load_prompt(prompt_name: str) -> str:
         Prompt content as string
     """
     try:
-        # Use pkg_resources to get absolute path from installed package
-        prompt_path = pkg_resources.resource_filename(
-            'codex_ai', 
-            f'templates/prompts/{prompt_name}.md'
-        )
+        # Use importlib.resources to get content from installed package
+        template_files = files('templates.prompts')
+        prompt_file = template_files / f"{prompt_name}.md"
         
-        with open(prompt_path, 'r', encoding='utf-8') as f:
-            return f.read().strip()
-    except (FileNotFoundError, pkg_resources.DistributionNotFound, ModuleNotFoundError):
+        if prompt_file.is_file():
+            return prompt_file.read_text(encoding='utf-8').strip()
+        else:
+            raise FileNotFoundError(f"Prompt file not found: {prompt_name}.md")
+            
+    except (ImportError, FileNotFoundError, AttributeError):
         # Fallback: try relative path (for development mode)
         try:
             prompt_file = Path("templates/prompts") / f"{prompt_name}.md"

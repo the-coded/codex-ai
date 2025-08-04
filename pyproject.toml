@@ -23,6 +23,9 @@ classifiers = []
 keywords = ["ai", "git", "changelog", "documentation", "code-analysis"]
 
 dependencies = [
+    # ═══ SISTEMA E SETUP ═══
+    "setuptools>=61.0",        # Ferramentas de build e pkg_resources (runtime dependency)
+    
     # ═══ PROCESSAMENTO DE DADOS ═══
     "PyYAML>=6.0.2",           # Leitura/escrita YAML - configs, CI/CD, metadados
     
@@ -42,7 +45,8 @@ dependencies = [
     
     # ═══ TIPAGEM E COMPATIBILIDADE ═══
     "typing-extensions>=4.13.0", # Recursos de tipagem para Python < 3.11
-    "tomli>=2.2.0; python_version<'3.11'" # Parser TOML (built-in no Python 3.11+)
+    "tomli>=2.2.0; python_version<'3.11'", # Parser TOML (built-in no Python 3.11+)
+    "importlib_resources>=5.0.0; python_version<'3.9'" # Backport do importlib.resources para Python < 3.9
 ]
 
 [project.urls]
